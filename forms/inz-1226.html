@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>INZ 1226 - Student Visa Declaration Form</title>
+    <link rel="stylesheet" href="../css/forms.css">
+</head>
+<body>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <div class="loading-text">Submitting your form...</div>
+    </div>
+
+    <!-- Auto-save Indicator -->
+    <div class="autosave-indicator" id="autosaveIndicator">
+        ✓ Draft saved
+    </div>
+
+    <div class="container">
+        <!-- Header -->
+        <div class="form-header">
+            <h1>Student Visa Declaration Form</h1>
+            <p>A declaration for student visa applicants if another person is applying online on their behalf</p>
+            <span class="form-code">INZ 1226</span>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="progress-container">
+            <div class="progress-steps">
+                <div class="progress-step active" data-step="1">
+                    <div class="step-circle">1</div>
+                    <div class="step-label">Declaration</div>
+                </div>
+                <div class="progress-step" data-step="2">
+                    <div class="step-circle">2</div>
+                    <div class="step-label">Authority</div>
+                </div>
+                <div class="progress-step" data-step="3">
+                    <div class="step-circle">3</div>
+                    <div class="step-label">Review</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Form Content -->
+        <div class="form-content">
+            <form id="inz1226Form" novalidate>
+                <!-- Hidden token field -->
+                <input type="hidden" id="formToken" name="formToken" value="">
+
+                <!-- Section A: Student Visa Declaration -->
+                <div class="form-section active" data-section="1">
+                    <h2 class="section-title">Section A: Student Visa Declaration</h2>
+                    
+                    <div class="section-description">
+                        Please read and acknowledge each statement below. By checking these boxes, you confirm your understanding and agreement with the declarations.
+                    </div>
+
+                    <h3 style="margin-bottom: 15px; color: var(--primary-color);">I agree:</h3>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="agree1" name="agree_changes" required>
+                            <label for="agree1">To tell Immigration New Zealand about any changes to my circumstances that occur after making this application</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="agree2" name="agree_leave" required>
+                            <label for="agree2">To leave New Zealand before my visa expires</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="agree3" name="agree_healthcare" required>
+                            <label for="agree3">That if I am not entitled to free health care in New Zealand, I will pay for any health care or medical assistance I may require in New Zealand</label>
+                        </div>
+                    </div>
+
+                    <h3 style="margin: 25px 0 15px; color: var(--primary-color);">I understand that:</h3>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="understand1" name="understand_deportation" required>
+                            <label for="understand1">If I remain in New Zealand after my visa has expired, I may be liable for deportation</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="understand2" name="understand_adviser" required>
+                            <label for="understand2">If I have received immigration advice from an immigration adviser and if that immigration adviser is not licensed under the Immigration Advisers Licensing Act 2007 when they should be, Immigration New Zealand will not further process my application</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="understand3" name="understand_visaview" required>
+                            <label for="understand3">Immigration New Zealand may provide information about my entitlement to work to potential employers via the online VisaView system</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="understand4" name="understand_insurance" required>
+                            <label for="understand4">If I am granted a visa with the condition I hold acceptable insurance, to arrange and hold insurance my education provider considers acceptable, from the period of my enrolment until the expiry of my student visa, unless I depart New Zealand earlier</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="understand5" name="understand_insurance_deportation" required>
+                            <label for="understand5">If I am granted a visa with the condition I hold acceptable insurance, I may become liable for deportation if I do not hold insurance</label>
+                        </div>
+                    </div>
+
+                    <h3 style="margin: 25px 0 15px; color: var(--primary-color);">I authorise:</h3>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="authorise1" name="authorise_health_to_inz" required>
+                            <label for="authorise1">Immigration New Zealand to provide information about my health and my immigration status to any health service agency</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="authorise2" name="authorise_health_from_agency" required>
+                            <label for="authorise2">Any health service agency to provide information about my health to Immigration New Zealand</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="authorise3" name="authorise_enquiries" required>
+                            <label for="authorise3">Immigration New Zealand to make any necessary enquiries about information on this form and/or accompanying documentation</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="authorise4" name="authorise_disclosure" required>
+                            <label for="authorise4">Any agency whether in New Zealand or overseas to disclose information to Immigration New Zealand or the Ministry of Business, Innovation and Employment</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="authorise5" name="authorise_education_provider" required>
+                            <label for="authorise5">Immigration New Zealand to provide information about my immigration status to my past, present or future education provider, including via the online VisaView system</label>
+                        </div>
+                    </div>
+
+                    <div class="info-box" style="margin-top: 25px;">
+                        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                        <div>
+                            <strong>Important:</strong> I confirm that all the information I have provided is true and correct, and that I have provided all the necessary documents. I understand that if false or misleading information is submitted, my application may be declined without further warning.
+                        </div>
+                    </div>
+
+                    <div class="checkbox-group" style="margin-top: 20px; background: #fff3cd; border: 1px solid #ffc107;">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="confirmAll" name="confirm_declaration" required>
+                            <label for="confirmAll"><strong>I agree with this declaration</strong></label>
+                        </div>
+                    </div>
+
+                    <div class="form-row" style="margin-top: 25px;">
+                        <div class="form-group">
+                            <label for="applicantSignatureDate">Date of Declaration <span class="required">*</span></label>
+                            <input type="date" id="applicantSignatureDate" name="applicant_signature_date" required data-default-today="true">
+                            <span class="error-message">Please select a date</span>
+                        </div>
+                        <div class="form-group">
+                            <label for="applicantName">Full Name (as in passport) <span class="required">*</span></label>
+                            <input type="text" id="applicantName" name="applicant_name" placeholder="Enter your full name" required>
+                            <span class="error-message">Please enter your full name</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Is the principal applicant under 18 years of age?</label>
+                        <div class="radio-group" style="margin-top: 10px;">
+                            <div class="radio-item">
+                                <input type="radio" id="under18No" name="under_18" value="no" checked>
+                                <label for="under18No">No</label>
+                            </div>
+                            <div class="radio-item">
+                                <input type="radio" id="under18Yes" name="under_18" value="yes">
+                                <label for="under18Yes">Yes</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="guardianSection" style="display: none; margin-top: 20px; padding: 20px; background: var(--light-bg); border-radius: 8px;">
+                        <h4 style="margin-bottom: 15px;">Parent/Guardian Details</h4>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="guardianName">Parent/Guardian Name</label>
+                                <input type="text" id="guardianName" name="guardian_name" placeholder="Enter parent/guardian name">
+                            </div>
+                            <div class="form-group">
+                                <label for="guardianSignatureDate">Date</label>
+                                <input type="date" id="guardianSignatureDate" name="guardian_signature_date">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-buttons">
+                        <div></div>
+                        <button type="button" class="btn btn-primary" onclick="handleNext()">
+                            Continue to Section B
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Section B: Authority to Act -->
+                <div class="form-section" data-section="2">
+                    <h2 class="section-title">Section B: Authority to Act</h2>
+                    
+                    <div class="section-description">
+                        Complete this section if an immigration adviser, lawyer or another person exempt from the requirement to be licensed will be submitting the online form on your behalf and will continue to act on your behalf throughout the processing of your application.
+                    </div>
+
+                    <div class="form-group">
+                        <label>Who is submitting this application on your behalf?</label>
+                        <div class="radio-group" style="margin-top: 10px; flex-direction: column; gap: 10px;">
+                            <div class="radio-item">
+                                <input type="radio" id="adviserTypeB" name="adviser_type" value="licensed_adviser" checked>
+                                <label for="adviserTypeB"><strong>Licensed immigration adviser or exempt person</strong> who will continue to act on my behalf</label>
+                            </div>
+                            <div class="radio-item">
+                                <input type="radio" id="adviserTypeC" name="adviser_type" value="assistant_only">
+                                <label for="adviserTypeC"><strong>Someone only assisting with form submission</strong> (not acting on my behalf)</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section B Fields -->
+                    <div id="sectionBFields">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="adviserName">Name of Immigration Adviser <span class="required">*</span></label>
+                                <input type="text" id="adviserName" name="adviser_name" placeholder="e.g., DAVID STEPHEN MASON" required>
+                                <span class="error-message">Please enter the adviser's name</span>
+                            </div>
+                            <div class="form-group">
+                                <label for="adviserLicence">Licence Number <span class="required">*</span></label>
+                                <input type="text" id="adviserLicence" name="adviser_licence" placeholder="e.g., 200800148" required>
+                                <span class="error-message">Please enter licence number</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="adviserOrg">Organisation Name</label>
+                            <input type="text" id="adviserOrg" name="adviser_organisation" placeholder="Enter organisation name">
+                        </div>
+
+                        <div class="form-group">
+                            <label>I also authorise all other licensed immigration advisers at the organisation named above to act on my behalf:</label>
+                            <div class="radio-group" style="margin-top: 10px;">
+                                <div class="radio-item">
+                                    <input type="radio" id="authoriseOthersYes" name="authorise_others" value="yes">
+                                    <label for="authoriseOthersYes">Yes (they will receive all communication from INZ)</label>
+                                </div>
+                                <div class="radio-item">
+                                    <input type="radio" id="authoriseOthersNo" name="authorise_others" value="no" checked>
+                                    <label for="authoriseOthersNo">No (only the person named above may act on my behalf)</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="sectionBSignatureDate">Date <span class="required">*</span></label>
+                            <input type="date" id="sectionBSignatureDate" name="section_b_signature_date" required data-default-today="true" style="max-width: 300px;">
+                            <span class="error-message">Please select a date</span>
+                        </div>
+                    </div>
+
+                    <!-- Section C Fields (Hidden by default) -->
+                    <div id="sectionCFields" style="display: none;">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="assistantName">Name of Person Assisting <span class="required">*</span></label>
+                                <input type="text" id="assistantName" name="assistant_name" placeholder="Enter full name">
+                                <span class="error-message">Please enter name</span>
+                            </div>
+                            <div class="form-group">
+                                <label for="assistantCompany">Company Name (if applicable)</label>
+                                <input type="text" id="assistantCompany" name="assistant_company" placeholder="Enter company name">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="nzbn">New Zealand Business Number (if applicable)</label>
+                                <input type="text" id="nzbn" name="nzbn" placeholder="NZBN">
+                            </div>
+                            <div class="form-group">
+                                <label for="sectionCSignatureDate">Date <span class="required">*</span></label>
+                                <input type="date" id="sectionCSignatureDate" name="section_c_signature_date" data-default-today="true">
+                                <span class="error-message">Please select a date</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-buttons">
+                        <button type="button" class="btn btn-secondary" onclick="handlePrev()">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+                            </svg>
+                            Back
+                        </button>
+                        <button type="button" class="btn btn-primary" onclick="handleNext()">
+                            Review & Submit
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Section 3: Review & Submit -->
+                <div class="form-section" data-section="3">
+                    <h2 class="section-title">Review & Submit</h2>
+                    
+                    <div class="section-description">
+                        Please review all your information before submitting. Once submitted, you will receive a confirmation email and the completed PDF will be generated.
+                    </div>
+
+                    <div id="reviewContent" style="background: var(--light-bg); padding: 20px; border-radius: 8px;">
+                        <!-- Review content will be populated by JavaScript -->
+                    </div>
+
+                    <div class="info-box success" style="margin-top: 25px;">
+                        <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                        <div>
+                            <strong>Ready to Submit:</strong> By clicking submit, you confirm that all information provided is accurate and complete. A PDF copy of this form will be generated and saved to your case file.
+                        </div>
+                    </div>
+
+                    <div class="form-buttons">
+                        <button type="button" class="btn btn-secondary" onclick="handlePrev()">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+                            </svg>
+                            Back to Edit
+                        </button>
+                        <button type="submit" class="btn btn-success" id="submitBtn">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                            </svg>
+                            Submit Declaration
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Success Section -->
+                <div class="form-section" data-section="success">
+                    <div class="success-message">
+                        <div class="success-icon">
+                            <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                        </div>
+                        <h2 style="color: var(--success-color); margin-bottom: 15px;">Form Submitted Successfully!</h2>
+                        <p style="margin-bottom: 20px;">Your Student Visa Declaration (INZ 1226) has been submitted and saved to your case file.</p>
+                        <p style="color: #666;">A PDF copy will be generated and attached to your application. You will receive a confirmation email shortly.</p>
+                        <p style="margin-top: 20px; font-size: 0.9rem; color: #999;">Reference: <span id="submissionRef">-</span></p>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="../js/form-utils.js"></script>
+    <script>
+        // Form-specific configuration
+        const FORM_CODE = 'INZ_1226';
+        const TOTAL_SECTIONS = 3;
+
+        // Initialize form on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize using shared utilities
+            if (!FormUtils.initForm(FORM_CODE, TOTAL_SECTIONS)) {
+                return; // Token error - page already shows error message
+            }
+
+            // Set up conditional fields
+            FormUtils.setupConditionalField('input[name="under_18"]', '#guardianSection', 'yes');
+            
+            // Toggle Section B/C fields
+            document.querySelectorAll('input[name="adviser_type"]').forEach(radio => {
+                radio.addEventListener('change', function() {
+                    const sectionB = document.getElementById('sectionBFields');
+                    const sectionC = document.getElementById('sectionCFields');
+                    
+                    if (this.value === 'licensed_adviser') {
+                        sectionB.style.display = 'block';
+                        sectionC.style.display = 'none';
+                        // Update required fields
+                        document.getElementById('adviserName').required = true;
+                        document.getElementById('adviserLicence').required = true;
+                        document.getElementById('sectionBSignatureDate').required = true;
+                        document.getElementById('assistantName').required = false;
+                    } else {
+                        sectionB.style.display = 'none';
+                        sectionC.style.display = 'block';
+                        // Update required fields
+                        document.getElementById('adviserName').required = false;
+                        document.getElementById('adviserLicence').required = false;
+                        document.getElementById('sectionBSignatureDate').required = false;
+                        document.getElementById('assistantName').required = true;
+                    }
+                });
+            });
+
+            // Form submission
+            document.getElementById('inz1226Form').addEventListener('submit', handleSubmit);
+
+            // Set default dates
+            FormUtils.setDefaultDates();
+        });
+
+        // Navigation handlers
+        function handleNext() {
+            if (FormUtils.validateSection(window.FormUtils.currentSection || 1)) {
+                const moved = FormUtils.nextSection(TOTAL_SECTIONS, () => true);
+                if (moved && (window.FormUtils.currentSection || 1) === TOTAL_SECTIONS) {
+                    populateReview();
+                }
+            }
+        }
+
+        function handlePrev() {
+            FormUtils.prevSection(TOTAL_SECTIONS);
+        }
+
+        // Populate review section
+        function populateReview() {
+            const form = document.getElementById('inz1226Form');
+            const reviewContent = document.getElementById('reviewContent');
+            
+            const applicantName = form.applicant_name.value;
+            const declarationDate = form.applicant_signature_date.value;
+            const adviserType = form.adviser_type.value;
+            
+            let adviserInfo = '';
+            if (adviserType === 'licensed_adviser') {
+                adviserInfo = `
+                    <p><strong>Type:</strong> Licensed Immigration Adviser</p>
+                    <p><strong>Name:</strong> ${form.adviser_name.value}</p>
+                    <p><strong>Licence Number:</strong> ${form.adviser_licence.value}</p>
+                    <p><strong>Organisation:</strong> ${form.adviser_organisation.value || 'N/A'}</p>
+                `;
+            } else {
+                adviserInfo = `
+                    <p><strong>Type:</strong> Person Assisting with Submission</p>
+                    <p><strong>Name:</strong> ${form.assistant_name.value}</p>
+                    <p><strong>Company:</strong> ${form.assistant_company.value || 'N/A'}</p>
+                `;
+            }
+            
+            reviewContent.innerHTML = `
+                <h4 style="margin-bottom: 15px; color: var(--primary-color);">Section A: Declaration</h4>
+                <p><strong>Applicant Name:</strong> ${applicantName}</p>
+                <p><strong>Declaration Date:</strong> ${FormUtils.formatDate(declarationDate)}</p>
+                <p><strong>All declarations accepted:</strong> ✓ Yes</p>
+                
+                <hr style="margin: 20px 0; border: none; border-top: 1px solid var(--border-color);">
+                
+                <h4 style="margin-bottom: 15px; color: var(--primary-color);">Section B: Authority to Act</h4>
+                ${adviserInfo}
+            `;
+        }
+
+        // Form submission handler
+        async function handleSubmit(e) {
+            e.preventDefault();
+
+            if (!FormUtils.validateSection(TOTAL_SECTIONS)) {
+                return;
+            }
+
+            const form = e.target;
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+
+            const result = await FormUtils.submitForm(FORM_CODE, form);
+
+            if (result.success) {
+                FormUtils.showSuccessPage(result.referenceNumber);
+            } else {
+                alert(result.error || 'There was an error submitting the form. Please try again.');
+                submitBtn.disabled = false;
+            }
+        }
+
+        // Track current section for FormUtils
+        window.FormUtils.currentSection = 1;
+        const originalNextSection = FormUtils.nextSection;
+        FormUtils.nextSection = function(total, validate) {
+            const result = originalNextSection(total, validate);
+            if (result) window.FormUtils.currentSection++;
+            return result;
+        };
+        const originalPrevSection = FormUtils.prevSection;
+        FormUtils.prevSection = function(total) {
+            const result = originalPrevSection(total);
+            if (result) window.FormUtils.currentSection--;
+            return result;
+        };
+    </script>
+</body>
+</html>

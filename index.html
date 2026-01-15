@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Immigration Forms Portal</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a5f7a 0%, #2c8fb5 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 16px;
+            padding: 50px;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        .logo {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 25px;
+            background: linear-gradient(135deg, #1a5f7a, #2c8fb5);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .logo svg {
+            width: 40px;
+            height: 40px;
+            fill: white;
+        }
+        h1 {
+            color: #1a5f7a;
+            margin-bottom: 15px;
+            font-size: 1.8rem;
+        }
+        p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+        .info-box {
+            background: #f0f7fa;
+            border: 1px solid #d0e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: left;
+        }
+        .info-box h3 {
+            color: #1a5f7a;
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+        .info-box ul {
+            color: #555;
+            padding-left: 20px;
+        }
+        .info-box li {
+            margin-bottom: 8px;
+        }
+        .footer {
+            margin-top: 30px;
+            color: #999;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <svg viewBox="0 0 24 24">
+                <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20M9,13V19H7V13H9M15,15V19H13V15H15M11,11V19H17V11H11Z"/>
+            </svg>
+        </div>
+        <h1>Immigration Forms Portal</h1>
+        <p>Welcome to the secure immigration forms portal. If you've received a link from your immigration advisor, please use that link directly to access your forms.</p>
+        
+        <div class="info-box">
+            <h3>How it works:</h3>
+            <ul>
+                <li>Your advisor sends you a personalized email</li>
+                <li>Click the secure link in your email</li>
+                <li>Complete your form online</li>
+                <li>Your progress is automatically saved</li>
+                <li>Submit when complete</li>
+            </ul>
+        </div>
+        
+        <p class="footer">If you haven't received a form link, please contact your immigration advisor.</p>
+    </div>
+</body>
+</html>
