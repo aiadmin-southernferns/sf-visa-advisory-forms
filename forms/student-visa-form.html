@@ -1,0 +1,1702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Visa Application</title>
+    <link rel="stylesheet" href="../css/forms.css">
+    <style>
+        /* ============================================
+           STUDENT VISA FORM - ADDITIONAL STYLES
+           ============================================ */
+
+        /* Stage Navigation (horizontal tab slider) */
+        .stage-nav {
+            background: white;
+            border-bottom: 1px solid var(--border-color);
+            overflow-x: auto;
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;
+        }
+
+        .stage-nav::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .stage-nav::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 2px;
+        }
+
+        .stage-tabs {
+            display: inline-flex;
+            min-width: 100%;
+        }
+
+        .stage-tab {
+            padding: 15px 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            cursor: default;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            opacity: 0.5;
+            position: relative;
+        }
+
+        .stage-tab.unlocked {
+            cursor: pointer;
+            opacity: 1;
+        }
+
+        .stage-tab.unlocked:hover {
+            color: var(--secondary-color);
+            background: rgba(44, 143, 181, 0.05);
+        }
+
+        .stage-tab.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+            font-weight: 600;
+            opacity: 1;
+        }
+
+        .stage-tab.completed {
+            color: var(--success-color);
+        }
+
+        .stage-tab.completed::after {
+            content: ' ✓';
+            font-size: 0.8rem;
+        }
+
+        /* Section sub-navigation within a stage */
+        .section-nav {
+            display: flex;
+            gap: 0;
+            background: var(--light-bg);
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 25px;
+        }
+
+        .section-nav-item {
+            flex: 1;
+            padding: 12px 15px;
+            text-align: center;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-bottom: 2px solid transparent;
+        }
+
+        .section-nav-item:hover {
+            color: var(--secondary-color);
+            background: rgba(44, 143, 181, 0.08);
+        }
+
+        .section-nav-item.active {
+            color: var(--secondary-color);
+            background: white;
+            border-bottom-color: var(--secondary-color);
+            font-weight: 600;
+        }
+
+        .section-nav-item.completed {
+            color: var(--success-color);
+        }
+
+        /* Sub-sections within a stage */
+        .sub-section {
+            display: none;
+        }
+
+        .sub-section.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        /* Conditional fields */
+        .conditional-group {
+            display: none;
+            margin-top: 15px;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .conditional-group.visible {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        /* Card-like subsections */
+        .form-card {
+            background: var(--light-bg);
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+
+        .form-card h3 {
+            font-size: 1.15rem;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        /* Question block */
+        .question-block {
+            margin-bottom: 22px;
+        }
+
+        .question-block label.question-label {
+            display: block;
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 4px;
+        }
+
+        .question-block .help-text {
+            color: var(--text-muted);
+            font-size: 0.88rem;
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        /* Mandatory indicator */
+        .mandatory::after {
+            content: ' *';
+            color: var(--error-color);
+        }
+
+        /* Repeater (Add Another Name) */
+        .repeater-container {
+            margin-top: 10px;
+        }
+
+        .repeater-item {
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .repeater-item .remove-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            color: var(--error-color);
+            cursor: pointer;
+            font-size: 0.85rem;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .repeater-item .remove-btn:hover {
+            background: rgba(220, 53, 69, 0.1);
+        }
+
+        .add-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: none;
+            border: 2px dashed var(--border-color);
+            color: var(--secondary-color);
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            font-family: inherit;
+            transition: all 0.2s;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .add-btn:hover {
+            border-color: var(--secondary-color);
+            background: rgba(44, 143, 181, 0.05);
+        }
+
+        /* Alert box */
+        .alert-box {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-top: 15px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .alert-box.alert-info {
+            background: #e8f5e9;
+            border-left: 4px solid var(--success-color);
+        }
+
+        .alert-box.alert-info .alert-title {
+            color: var(--success-color);
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        /* Country autocomplete */
+        .autocomplete-wrapper {
+            position: relative;
+        }
+
+        .autocomplete-wrapper input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .autocomplete-wrapper input:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 3px rgba(44, 143, 181, 0.1);
+        }
+
+        .autocomplete-wrapper input.error {
+            border-color: var(--error-color);
+        }
+
+        .autocomplete-list {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 0 0 8px 8px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 100;
+            display: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .autocomplete-list.show {
+            display: block;
+        }
+
+        .autocomplete-list div {
+            padding: 10px 15px;
+            cursor: pointer;
+            font-size: 0.95rem;
+        }
+
+        .autocomplete-list div:hover,
+        .autocomplete-list div.highlighted {
+            background: var(--light-bg);
+            color: var(--primary-color);
+        }
+
+        /* Modern Date Picker */
+        .date-picker-wrapper {
+            position: relative;
+            max-width: 300px;
+        }
+
+        .date-picker-wrapper input[type="date"] {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: inherit;
+            color: var(--text-color);
+            background: white;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+
+        .date-picker-wrapper input[type="date"]:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 3px rgba(44, 143, 181, 0.1);
+        }
+
+        .date-picker-wrapper input[type="date"].error {
+            border-color: var(--error-color);
+        }
+
+        .date-picker-wrapper input[type="date"]::-webkit-calendar-picker-indicator {
+            cursor: pointer;
+            opacity: 0.6;
+            transition: opacity 0.2s;
+        }
+
+        .date-picker-wrapper input[type="date"]::-webkit-calendar-picker-indicator:hover {
+            opacity: 1;
+        }
+
+        /* Month-Year picker */
+        .monthyear-wrapper {
+            max-width: 200px;
+        }
+
+        .monthyear-wrapper input[type="month"] {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: inherit;
+            color: var(--text-color);
+            background: white;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+
+        .monthyear-wrapper input[type="month"]:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 3px rgba(44, 143, 181, 0.1);
+        }
+
+        .monthyear-wrapper input[type="month"]::-webkit-calendar-picker-indicator {
+            cursor: pointer;
+            opacity: 0.6;
+        }
+
+        /* Passport info list */
+        .passport-info-list {
+            margin: 10px 0 20px 20px;
+            font-size: 0.92rem;
+            line-height: 1.8;
+        }
+
+        .passport-info-list li {
+            margin-bottom: 5px;
+        }
+
+        /* Photo Upload */
+        .photo-upload-area {
+            border: 2px dashed var(--border-color);
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .photo-upload-area:hover {
+            border-color: var(--secondary-color);
+            background: rgba(44, 143, 181, 0.03);
+        }
+
+        .photo-upload-area.has-file {
+            border-color: var(--success-color);
+            background: rgba(40, 167, 69, 0.05);
+        }
+
+        .photo-upload-area input[type="file"] {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .upload-btn-styled {
+            display: inline-block;
+            background: #9c1d5a;
+            color: white;
+            padding: 10px 25px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            pointer-events: none;
+            margin-top: 15px;
+        }
+
+        .photo-preview {
+            max-width: 150px;
+            max-height: 200px;
+            border-radius: 6px;
+            margin-top: 10px;
+            display: none;
+            border: 2px solid var(--border-color);
+        }
+
+        .photo-filename {
+            margin-top: 10px;
+            font-size: 0.85rem;
+            color: var(--success-color);
+            font-weight: 500;
+            display: none;
+        }
+
+        .photo-remove-btn {
+            display: none;
+            margin-top: 8px;
+            background: none;
+            border: 1px solid var(--error-color);
+            color: var(--error-color);
+            padding: 5px 15px;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .photo-remove-btn:hover {
+            background: var(--error-color);
+            color: white;
+        }
+
+        /* Validation error on radio groups */
+        .radio-group.has-error {
+            background: rgba(220, 53, 69, 0.05);
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid var(--error-color);
+        }
+
+        .field-error-msg {
+            color: var(--error-color);
+            font-size: 0.83rem;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .field-error-msg.show {
+            display: block;
+        }
+
+        /* Bottom buttons */
+        .form-buttons-bottom {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+            padding-top: 25px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .btn-save-exit {
+            background: white;
+            color: var(--text-color);
+            border: 2px solid var(--border-color);
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-save-exit:hover {
+            background: var(--light-bg);
+            border-color: var(--text-muted);
+        }
+
+        .btn-save-continue {
+            background: #9c1d5a;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-save-continue:hover {
+            background: #7d1648;
+            transform: translateY(-1px);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .stage-tab {
+                padding: 12px 14px;
+                font-size: 0.78rem;
+            }
+
+            .section-nav {
+                flex-direction: column;
+            }
+
+            .section-nav-item {
+                border-bottom: none;
+                border-left: 2px solid transparent;
+            }
+
+            .section-nav-item.active {
+                border-bottom: none;
+                border-left-color: var(--secondary-color);
+            }
+
+            .form-buttons-bottom {
+                flex-direction: column;
+            }
+
+            .btn-save-exit,
+            .btn-save-continue {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <div class="loading-text">Submitting your form...</div>
+    </div>
+
+    <!-- Auto-save Indicator -->
+    <div class="autosave-indicator" id="autosaveIndicator">
+        ✓ Draft saved
+    </div>
+
+    <div class="container">
+        <!-- Header -->
+        <div class="form-header">
+            <h1>Student Visa Application</h1>
+            <p>New Zealand Student Visa Application Form</p>
+            <span class="form-code">INZ 1012</span>
+        </div>
+
+        <!-- Stage Navigation (horizontal tabs) -->
+        <div class="stage-nav" id="stageNav">
+            <div class="stage-tabs">
+                <div class="stage-tab active unlocked" data-stage="1" onclick="navigateToStage(1)">Identity Details</div>
+                <div class="stage-tab" data-stage="2">Address and contact information</div>
+                <div class="stage-tab" data-stage="3">Eligibility</div>
+                <div class="stage-tab" data-stage="4">Character</div>
+                <div class="stage-tab" data-stage="5">Health</div>
+                <div class="stage-tab" data-stage="6">Education</div>
+                <div class="stage-tab" data-stage="7">Employment</div>
+                <div class="stage-tab" data-stage="8">Financial</div>
+                <div class="stage-tab" data-stage="9">Supporting documents</div>
+                <div class="stage-tab" data-stage="10">Declaration</div>
+                <div class="stage-tab" data-stage="11">Review & Submit</div>
+            </div>
+        </div>
+
+        <!-- Form Content -->
+        <div class="form-content">
+            <form id="studentVisaForm" novalidate>
+                <!-- Hidden token field -->
+                <input type="hidden" id="formToken" name="formToken" value="">
+
+                <!-- ============================================
+                     STAGE 1: IDENTITY DETAILS
+                     ============================================ -->
+                <div class="form-section active" data-stage="1">
+
+                    <h2 class="section-title">Identity Details</h2>
+
+                    <div class="section-description">
+                        We collect the information you enter in this section to check that you are eligible for the visa you are applying for.
+                    </div>
+
+                    <!-- Sub-section navigation -->
+                    <div class="section-nav" id="stage1SectionNav">
+                        <div class="section-nav-item active" data-subsection="identity" onclick="navigateSubSection('identity')">Identity information</div>
+                        <div class="section-nav-item" data-subsection="immigration" onclick="navigateSubSection('immigration')">NZ immigration history</div>
+                        <div class="section-nav-item" data-subsection="passport" onclick="navigateSubSection('passport')">Passport and birth details</div>
+                    </div>
+
+                    <!-- ==============================
+                         SUB-SECTION 1.1: Identity Information
+                         ============================== -->
+                    <div class="sub-section active" data-subsection="identity">
+                        <div class="form-card">
+                            <h3>Identity information</h3>
+
+                            <!-- Q: Mononym -->
+                            <div class="question-block" data-required="true">
+                                <label class="question-label mandatory">Do you have a mononym?</label>
+                                <p class="help-text">This is when your official name is one name. Select Yes if your entire name appears in only one field in your passport. Select No if your first name and surname appear in different fields in your passport.</p>
+                                <div class="radio-group" id="mononymRadioGroup" style="margin-top: 8px;">
+                                    <div class="radio-item">
+                                        <input type="radio" id="mononymYes" name="mononym" value="yes" required>
+                                        <label for="mononymYes">Yes</label>
+                                    </div>
+                                    <div class="radio-item">
+                                        <input type="radio" id="mononymNo" name="mononym" value="no">
+                                        <label for="mononymNo">No</label>
+                                    </div>
+                                </div>
+                                <div class="field-error-msg" id="mononymError">Please select an option</div>
+                            </div>
+
+                            <!-- CONDITIONAL: Mononym = Yes → single Name field -->
+                            <div class="conditional-group" id="mononymYesFields">
+                                <div class="question-block">
+                                    <label class="question-label mandatory">Name</label>
+                                    <p class="help-text">Enter your name exactly as it appears in your passport.</p>
+                                    <div class="form-group" style="margin-bottom:0;">
+                                        <input type="text" id="mononymName" name="mononym_name" maxlength="50" placeholder="Limited to 50 characters. If your name is longer, please type the first 50 characters.">
+                                        <span class="error-message">Please enter your name</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- CONDITIONAL: Mononym = No → Given, Middle, Surname fields -->
+                            <div class="conditional-group" id="mononymNoFields">
+                                <div class="question-block">
+                                    <label class="question-label mandatory">Given or first name</label>
+                                    <p class="help-text">Enter your Given or first name exactly as it appears in your passport.</p>
+                                    <div class="form-group" style="margin-bottom:0;">
+                                        <input type="text" id="givenName" name="given_name" maxlength="30" placeholder="Limited to 30 characters. If your given or first name is longer please type the first 30 characters.">
+                                        <span class="error-message">Please enter your given name</span>
+                                    </div>
+                                </div>
+
+                                <div class="question-block">
+                                    <label class="question-label">Middle names</label>
+                                    <p class="help-text">Enter your Middle names exactly as they appear in your passport. Leave blank if no middle name is displayed in your passport.</p>
+                                    <div class="form-group" style="margin-bottom:0;">
+                                        <input type="text" id="middleNames" name="middle_names" maxlength="30" placeholder="Limited to 30 characters. If your middle names are longer please type the first 30 characters.">
+                                    </div>
+                                </div>
+
+                                <div class="question-block">
+                                    <label class="question-label mandatory">Surname or family name</label>
+                                    <p class="help-text">Enter your Surname or family name exactly as it appears in your passport.</p>
+                                    <div class="form-group" style="margin-bottom:0;">
+                                        <input type="text" id="surname" name="surname" maxlength="50" placeholder="Limited to 50 characters. If your surname is longer, please type the first 50 characters.">
+                                        <span class="error-message">Please enter your surname</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Q: Other names -->
+                            <div class="question-block" style="margin-top: 22px;" data-required="true">
+                                <label class="question-label mandatory">Have you ever used any other names?</label>
+                                <p class="help-text">This includes your birth name, your name from marriage or from adoption, your English name, or other names you are known by.</p>
+                                <div class="radio-group" id="otherNamesRadioGroup" style="margin-top: 8px;">
+                                    <div class="radio-item">
+                                        <input type="radio" id="otherNamesYes" name="other_names" value="yes" required>
+                                        <label for="otherNamesYes">Yes</label>
+                                    </div>
+                                    <div class="radio-item">
+                                        <input type="radio" id="otherNamesNo" name="other_names" value="no">
+                                        <label for="otherNamesNo">No</label>
+                                    </div>
+                                </div>
+                                <div class="field-error-msg" id="otherNamesError">Please select an option</div>
+                            </div>
+
+                            <!-- CONDITIONAL: Other names = Yes → repeater -->
+                            <div class="conditional-group" id="otherNamesFields">
+                                <p style="font-weight: 600; margin-bottom: 15px; color: var(--primary-color);">Enter the other names you have used</p>
+
+                                <div class="repeater-container" id="otherNamesRepeater">
+                                    <div class="repeater-item" data-index="0">
+                                        <div class="form-group">
+                                            <label>Given or first name</label>
+                                            <input type="text" name="other_given_name_0" maxlength="30" placeholder="Limited to 30 characters.">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Middle names</label>
+                                            <input type="text" name="other_middle_names_0" maxlength="30" placeholder="Limited to 30 characters.">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Surname or family name</label>
+                                            <input type="text" name="other_surname_0" maxlength="50" placeholder="Limited to 50 characters.">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Name type</label>
+                                            <select name="other_name_type_0">
+                                                <option value="">-- Select --</option>
+                                                <option value="birth">Birth name</option>
+                                                <option value="marriage">Marriage name</option>
+                                                <option value="adoption">Adoption name</option>
+                                                <option value="english">English name</option>
+                                                <option value="preferred">Preferred name</option>
+                                                <option value="other">Other</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <button type="button" class="add-btn" onclick="addOtherName()">
+                                    + ADD ANOTHER NAME
+                                </button>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- ==============================
+                         SUB-SECTION 1.2: NZ Immigration History
+                         ============================== -->
+                    <div class="sub-section" data-subsection="immigration">
+                        <div class="form-card">
+                            <h3>New Zealand immigration history</h3>
+
+                            <!-- Q: Country when submitting -->
+                            <div class="question-block" data-required="true">
+                                <label class="question-label mandatory">What country or territory will you be in when this application is submitted?</label>
+                                <div class="autocomplete-wrapper">
+                                    <input type="text" id="submissionCountry" name="submission_country" placeholder="Start typing and select a country from the list..." autocomplete="off" data-validate="required">
+                                    <div class="autocomplete-list" id="submissionCountryList"></div>
+                                </div>
+                                <div class="field-error-msg" id="submissionCountryError">Please select a country</div>
+                            </div>
+
+                            <!-- Q: Previously applied -->
+                            <div class="question-block" data-required="true">
+                                <label class="question-label mandatory">Have you previously applied for a New Zealand visa?</label>
+                                <p class="help-text">This includes anyone applying for you on your behalf.</p>
+                                <div class="radio-group" id="prevAppliedRadioGroup" style="margin-top: 8px;">
+                                    <div class="radio-item">
+                                        <input type="radio" id="prevAppliedYes" name="previously_applied" value="yes" required>
+                                        <label for="prevAppliedYes">Yes</label>
+                                    </div>
+                                    <div class="radio-item">
+                                        <input type="radio" id="prevAppliedNo" name="previously_applied" value="no">
+                                        <label for="prevAppliedNo">No</label>
+                                    </div>
+                                </div>
+                                <div class="field-error-msg" id="prevAppliedError">Please select an option</div>
+                            </div>
+
+                            <!-- CONDITIONAL: Previously applied = Yes -->
+                            <div class="conditional-group" id="prevAppliedFields">
+                                <div class="question-block" style="margin-bottom:0;">
+                                    <label class="question-label">Previous client number</label>
+                                    <p class="help-text">This will be on any correspondence you have received from Immigration New Zealand. Client numbers have 8 numeric characters.</p>
+                                    <div class="form-group" style="margin-bottom:0;">
+                                        <input type="text" id="prevClientNumber" name="previous_client_number" maxlength="8" placeholder="8 digit client number">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Q: Previously requested NZeTA -->
+                            <div class="question-block" data-required="true">
+                                <label class="question-label mandatory">Have you previously requested an NZeTA (New Zealand Electronic Travel Authority)?</label>
+                                <p class="help-text">This includes anyone requesting one for you on your behalf.</p>
+                                <div class="radio-group" id="nzetaRadioGroup" style="margin-top: 8px;">
+                                    <div class="radio-item">
+                                        <input type="radio" id="nzetaYes" name="previously_nzeta" value="yes" required>
+                                        <label for="nzetaYes">Yes</label>
+                                    </div>
+                                    <div class="radio-item">
+                                        <input type="radio" id="nzetaNo" name="previously_nzeta" value="no">
+                                        <label for="nzetaNo">No</label>
+                                    </div>
+                                </div>
+                                <div class="field-error-msg" id="nzetaError">Please select an option</div>
+                            </div>
+
+                            <!-- CONDITIONAL: NZeTA = Yes -->
+                            <div class="conditional-group" id="nzetaFields">
+                                <div class="question-block" style="margin-bottom:0;">
+                                    <label class="question-label">Most recent NZeTA reference number</label>
+                                    <p class="help-text">Your reference number starts with E followed by numbers, for example E123456.</p>
+                                    <div class="form-group" style="margin-bottom:0;">
+                                        <input type="text" id="nzetaRef" name="nzeta_reference" placeholder="e.g. E123456">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Q: Ever travelled to NZ -->
+                            <div class="question-block" data-required="true">
+                                <label class="question-label mandatory">Have you ever travelled to New Zealand?</label>
+                                <div class="radio-group" id="travelledRadioGroup" style="margin-top: 8px;">
+                                    <div class="radio-item">
+                                        <input type="radio" id="travelledYes" name="ever_travelled_nz" value="yes" required>
+                                        <label for="travelledYes">Yes</label>
+                                    </div>
+                                    <div class="radio-item">
+                                        <input type="radio" id="travelledNo" name="ever_travelled_nz" value="no">
+                                        <label for="travelledNo">No</label>
+                                    </div>
+                                </div>
+                                <div class="field-error-msg" id="travelledError">Please select an option</div>
+                            </div>
+
+                            <!-- CONDITIONAL: Travelled = Yes -->
+                            <div class="conditional-group" id="travelledFields">
+                                <div class="question-block" style="margin-bottom:0;">
+                                    <label class="question-label">When did you last leave New Zealand?</label>
+                                    <p class="help-text">Enter month and year. Leave blank if you are still in New Zealand.</p>
+                                    <div class="monthyear-wrapper">
+                                        <input type="month" name="last_leave_nz" id="lastLeaveNZ">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Q: Total time 24 months+ -->
+                            <div class="question-block" data-required="true">
+                                <label class="question-label mandatory">Will your total time in New Zealand for all visits including this proposed visit equal 24 months or more?</label>
+                                <div class="radio-group" id="totalTime24RadioGroup" style="margin-top: 8px;">
+                                    <div class="radio-item">
+                                        <input type="radio" id="totalTime24Yes" name="total_time_24_months" value="yes" required>
+                                        <label for="totalTime24Yes">Yes</label>
+                                    </div>
+                                    <div class="radio-item">
+                                        <input type="radio" id="totalTime24No" name="total_time_24_months" value="no">
+                                        <label for="totalTime24No">No</label>
+                                    </div>
+                                </div>
+                                <div class="field-error-msg" id="totalTime24Error">Please select an option</div>
+                            </div>
+
+                            <!-- CONDITIONAL: Total time = No → Alert -->
+                            <div class="conditional-group" id="totalTimeAlert">
+                                <div class="alert-box alert-info">
+                                    <div>
+                                        <div class="alert-title">ALERT</div>
+                                        <p style="margin:0; font-size: 0.92rem;">Your total time in New Zealand helps to determine if a police certificate is required for your visa, and may affect the length of any visa granted.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Q: NZ Government Scholarship -->
+                            <div class="question-block" data-required="true">
+                                <label class="question-label mandatory">Do you currently hold, or in the past two years have you held, a visa to study, while supported by a New Zealand Government Scholarship?</label>
+                                <div class="radio-group" id="scholarshipRadioGroup" style="margin-top: 8px;">
+                                    <div class="radio-item">
+                                        <input type="radio" id="scholarshipYes" name="nz_govt_scholarship" value="yes" required>
+                                        <label for="scholarshipYes">Yes</label>
+                                    </div>
+                                    <div class="radio-item">
+                                        <input type="radio" id="scholarshipNo" name="nz_govt_scholarship" value="no">
+                                        <label for="scholarshipNo">No</label>
+                                    </div>
+                                </div>
+                                <div class="field-error-msg" id="scholarshipError">Please select an option</div>
+                            </div>
+
+                            <!-- CONDITIONAL: Scholarship = Yes -->
+                            <div class="conditional-group" id="scholarshipFields">
+                                <div class="question-block" style="margin-bottom:0;">
+                                    <label class="question-label mandatory">Was the scholarship a New Zealand Short Term Training Scholarship (NZSTTS) or a New Zealand English Language Training for Officials (NZELTO) scholarship?</label>
+                                    <div class="radio-group" id="nzsttsRadioGroup" style="margin-top: 8px;">
+                                        <div class="radio-item">
+                                            <input type="radio" id="nzsttsYes" name="nzstts_nzelto" value="yes">
+                                            <label for="nzsttsYes">Yes</label>
+                                        </div>
+                                        <div class="radio-item">
+                                            <input type="radio" id="nzsttsNo" name="nzstts_nzelto" value="no">
+                                            <label for="nzsttsNo">No</label>
+                                        </div>
+                                    </div>
+                                    <div class="field-error-msg" id="nzsttsError">Please select an option</div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- ==============================
+                         SUB-SECTION 1.3: Passport and Birth Details
+                         ============================== -->
+                    <div class="sub-section" data-subsection="passport">
+                        <div class="form-card">
+                            <h3>Passport and birth details</h3>
+
+                            <div class="section-description" style="margin-bottom: 20px;">
+                                Enter the passport details as shown in the passport or travel document you will use to travel to and from New Zealand.<br>
+                                Your passport must remain valid for a minimum of:
+                            </div>
+
+                            <ul class="passport-info-list">
+                                <li><strong>three months</strong> past your intended date of departure from New Zealand; or</li>
+                                <li><strong>one month</strong> past your intended date of departure from New Zealand, if your government has an embassy or consulate in New Zealand that issues and renews travel documents.</li>
+                            </ul>
+
+                            <!-- Passport number -->
+                            <div class="question-block" data-required="true">
+                                <label class="question-label mandatory">Passport number</label>
+                                <p class="help-text">Generally found in the top right-hand corner of the identity page of your passport.</p>
+                                <div class="form-group" style="margin-bottom:0;">
+                                    <input type="text" id="passportNumber" name="passport_number" data-validate="required">
+                                    <span class="error-message">Please enter your passport number</span>
+                                </div>
+                            </div>
+
+                            <!-- Nationality -->
+                            <div class="question-block" data-required="true">
+                                <label class="question-label mandatory">Nationality as shown in passport</label>
+                                <div class="autocomplete-wrapper">
+                                    <input type="text" id="passportNationality" name="passport_nationality" placeholder="Start typing and select a country from the list..." autocomplete="off" data-validate="required">
+                                    <div class="autocomplete-list" id="passportNationalityList"></div>
+                                </div>
+                                <div class="field-error-msg" id="passportNationalityError">Please select your nationality</div>
+                            </div>
+
+                            <!-- Country of issue -->
+                            <div class="question-block" data-required="true">
+                                <label class="question-label mandatory">Country or territory of issue</label>
+                                <div class="autocomplete-wrapper">
+                                    <input type="text" id="passportCountryIssue" name="passport_country_issue" placeholder="Start typing and select a country from the list..." autocomplete="off" data-validate="required">
+                                    <div class="autocomplete-list" id="passportCountryIssueList"></div>
+                                </div>
+                                <div class="field-error-msg" id="passportCountryIssueError">Please select the country of issue</div>
+                            </div>
+
+                            <!-- Passport issue date -->
+                            <div class="question-block" data-required="true">
+                                <label class="question-label mandatory">Passport issue date</label>
+                                <div class="date-picker-wrapper">
+                                    <input type="date" id="passportIssueDate" name="passport_issue_date" data-validate="required">
+                                </div>
+                                <div class="field-error-msg" id="passportIssueDateError">Please enter the passport issue date</div>
+                            </div>
+
+                            <!-- Passport expiry date -->
+                            <div class="question-block" data-required="true">
+                                <label class="question-label mandatory">Passport expiry date</label>
+                                <div class="date-picker-wrapper">
+                                    <input type="date" id="passportExpiryDate" name="passport_expiry_date" data-validate="required">
+                                </div>
+                                <div class="field-error-msg" id="passportExpiryDateError">Please enter the passport expiry date</div>
+                            </div>
+
+                            <!-- Gender -->
+                            <div class="question-block" data-required="true">
+                                <label class="question-label mandatory">Gender</label>
+                                <p class="help-text">Sex, as it appears in your passport (M=Male, F=Female, X=Gender Diverse)</p>
+                                <div class="form-group" style="margin-bottom:0;">
+                                    <select id="gender" name="gender" data-validate="required">
+                                        <option value="">-- Select --</option>
+                                        <option value="M">Male</option>
+                                        <option value="F">Female</option>
+                                        <option value="X">Gender Diverse</option>
+                                    </select>
+                                    <span class="error-message">Please select your gender</span>
+                                </div>
+                            </div>
+
+                            <!-- Date of birth -->
+                            <div class="question-block" data-required="true">
+                                <label class="question-label mandatory">Date of birth as shown in passport</label>
+                                <p class="help-text">Enter your date of birth in day-month-year format: day (dd), month (mm), year (yyyy).</p>
+                                <div class="date-picker-wrapper">
+                                    <input type="date" id="dobDate" name="dob_date" data-validate="required">
+                                </div>
+                                <div class="field-error-msg" id="dobDateError">Please enter your date of birth</div>
+                            </div>
+
+                            <!-- Country of birth -->
+                            <div class="question-block" data-required="true">
+                                <label class="question-label mandatory">Country or territory of birth</label>
+                                <div class="autocomplete-wrapper">
+                                    <input type="text" id="birthCountry" name="birth_country" placeholder="Start typing and select a country from the list..." autocomplete="off" data-validate="required">
+                                    <div class="autocomplete-list" id="birthCountryList"></div>
+                                </div>
+                                <div class="field-error-msg" id="birthCountryError">Please select your country of birth</div>
+                            </div>
+
+                            <!-- CONDITIONAL: Birth country populated → State + Town -->
+                            <div class="conditional-group" id="birthLocationFields">
+                                <div class="question-block">
+                                    <label class="question-label mandatory">State or province or region of birth</label>
+                                    <div class="form-group" style="margin-bottom:0;">
+                                        <input type="text" id="birthState" name="birth_state" data-validate="required">
+                                        <span class="error-message">Please enter your state or province of birth</span>
+                                    </div>
+                                </div>
+
+                                <div class="question-block" style="margin-bottom: 0;">
+                                    <label class="question-label mandatory">Town or city of birth</label>
+                                    <div class="form-group" style="margin-bottom:0;">
+                                        <input type="text" id="birthCity" name="birth_city" data-validate="required">
+                                        <span class="error-message">Please enter your town or city of birth</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- CONDITIONAL: DOB populated → Upload photo (at bottom of section) -->
+                            <div class="conditional-group" id="photoUploadSection">
+                                <div class="form-card" style="margin-bottom: 0;">
+                                    <h3>Upload photo</h3>
+
+                                    <p style="margin-bottom: 15px; font-size: 0.92rem;">
+                                        Your visa photo must be less than 6 months old and must meet our photo requirements. Do not use the photo page of your passport.
+                                    </p>
+
+                                    <p style="margin-bottom: 10px; font-size: 0.92rem;">When you upload your photo, it must be:</p>
+                                    <ul style="margin: 0 0 20px 20px; font-size: 0.92rem; line-height: 1.8;">
+                                        <li>a .jpeg or .jpg file</li>
+                                        <li>between 500 KB and 3 MB</li>
+                                        <li>between 900 x 1200 pixels and 2250 x 3000 pixels.</li>
+                                    </ul>
+
+                                    <div class="photo-upload-area" id="photoUploadArea">
+                                        <input type="file" id="visaPhoto" name="visa_photo" accept=".jpg,.jpeg">
+                                        <div>
+                                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="1.5" style="margin-bottom: 8px;">
+                                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                                <polyline points="17 8 12 3 7 8"/>
+                                                <line x1="12" y1="3" x2="12" y2="15"/>
+                                            </svg>
+                                            <p style="color: var(--text-muted); font-size: 0.9rem;">Drag and drop or click to upload</p>
+                                        </div>
+                                        <div class="upload-btn-styled">UPLOAD PHOTO</div>
+                                        <img class="photo-preview" id="photoPreview" alt="Photo preview">
+                                        <div class="photo-filename" id="photoFilename"></div>
+                                        <button type="button" class="photo-remove-btn" id="photoRemoveBtn" onclick="removePhoto(event)">Remove photo</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="form-buttons-bottom">
+                        <button type="button" class="btn-save-exit" onclick="handleSaveAndExit()">Save and Exit</button>
+                        <button type="button" class="btn-save-continue" onclick="handleSaveAndContinue()">Save and Continue</button>
+                    </div>
+
+                </div><!-- /STAGE 1 -->
+
+                <!-- ============================================
+                     STAGES 2-11: PLACEHOLDER
+                     ============================================ -->
+                <div class="form-section" data-stage="2">
+                    <h2 class="section-title">Address and Contact Information</h2>
+                    <div class="section-description">This section will be implemented next.</div>
+                    <div class="form-buttons-bottom">
+                        <button type="button" class="btn-save-exit" onclick="handleSaveAndExit()">Save and Exit</button>
+                        <button type="button" class="btn-save-continue" onclick="handleSaveAndContinue()">Save and Continue</button>
+                    </div>
+                </div>
+
+                <div class="form-section" data-stage="3"><h2 class="section-title">Eligibility</h2><div class="section-description">This section will be implemented next.</div></div>
+                <div class="form-section" data-stage="4"><h2 class="section-title">Character</h2><div class="section-description">This section will be implemented next.</div></div>
+                <div class="form-section" data-stage="5"><h2 class="section-title">Health</h2><div class="section-description">This section will be implemented next.</div></div>
+                <div class="form-section" data-stage="6"><h2 class="section-title">Education</h2><div class="section-description">This section will be implemented next.</div></div>
+                <div class="form-section" data-stage="7"><h2 class="section-title">Employment</h2><div class="section-description">This section will be implemented next.</div></div>
+                <div class="form-section" data-stage="8"><h2 class="section-title">Financial</h2><div class="section-description">This section will be implemented next.</div></div>
+                <div class="form-section" data-stage="9"><h2 class="section-title">Supporting Documents</h2><div class="section-description">This section will be implemented next.</div></div>
+                <div class="form-section" data-stage="10"><h2 class="section-title">Declaration</h2><div class="section-description">This section will be implemented next.</div></div>
+                <div class="form-section" data-stage="11"><h2 class="section-title">Review & Submit</h2><div class="section-description">This section will be implemented next.</div></div>
+
+                <!-- Success Section -->
+                <div class="form-section" data-stage="success">
+                    <div class="success-message">
+                        <div class="success-icon">
+                            <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                        </div>
+                        <h2 style="color: var(--success-color); margin-bottom: 15px;">Application Submitted Successfully!</h2>
+                        <p style="margin-bottom: 20px;">Your Student Visa Application has been submitted and saved to your case file.</p>
+                        <p style="color: #666;">You will receive a confirmation email shortly.</p>
+                        <p style="margin-top: 20px; font-size: 0.9rem; color: #999;">Reference: <span id="submissionRef">-</span></p>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+    <script src="../js/form-utils.js"></script>
+    <script>
+        /* ============================================
+           STUDENT VISA FORM - CONTROLLER
+           ============================================ */
+
+        const FORM_CODE = 'INZ_1012';
+        const TOTAL_STAGES = 11;
+
+        // Track state
+        let currentStage = 1;
+        let currentSubSection = 'identity';
+        const subSectionOrder = ['identity', 'immigration', 'passport'];
+        const unlockedStages = new Set([1]);
+        const completedStages = new Set();
+        let otherNameCount = 1;
+
+        /* ============================================
+           COUNTRY LIST
+           ============================================ */
+        const COUNTRIES = [
+            "Afghanistan","Albania","Algeria","Andorra","Angola","Antigua and Barbuda","Argentina","Armenia","Australia","Austria",
+            "Azerbaijan","Bahamas","Bahrain","Bangladesh","Barbados","Belarus","Belgium","Belize","Benin","Bhutan",
+            "Bolivia","Bosnia and Herzegovina","Botswana","Brazil","Brunei","Bulgaria","Burkina Faso","Burundi","Cabo Verde","Cambodia",
+            "Cameroon","Canada","Central African Republic","Chad","Chile","China","Colombia","Comoros","Congo","Costa Rica",
+            "Croatia","Cuba","Cyprus","Czech Republic","Democratic Republic of the Congo","Denmark","Djibouti","Dominica","Dominican Republic","East Timor",
+            "Ecuador","Egypt","El Salvador","Equatorial Guinea","Eritrea","Estonia","Eswatini","Ethiopia","Fiji","Finland",
+            "France","Gabon","Gambia","Georgia","Germany","Ghana","Greece","Grenada","Guatemala","Guinea",
+            "Guinea-Bissau","Guyana","Haiti","Honduras","Hungary","Iceland","India","Indonesia","Iran","Iraq",
+            "Ireland","Israel","Italy","Jamaica","Japan","Jordan","Kazakhstan","Kenya","Kiribati","Kuwait",
+            "Kyrgyzstan","Laos","Latvia","Lebanon","Lesotho","Liberia","Libya","Liechtenstein","Lithuania","Luxembourg",
+            "Madagascar","Malawi","Malaysia","Maldives","Mali","Malta","Marshall Islands","Mauritania","Mauritius","Mexico",
+            "Micronesia","Moldova","Monaco","Mongolia","Montenegro","Morocco","Mozambique","Myanmar","Namibia","Nauru",
+            "Nepal","Netherlands","New Zealand","Nicaragua","Niger","Nigeria","North Korea","North Macedonia","Norway","Oman",
+            "Pakistan","Palau","Palestine","Panama","Papua New Guinea","Paraguay","Peru","Philippines","Poland","Portugal",
+            "Qatar","Romania","Russia","Rwanda","Saint Kitts and Nevis","Saint Lucia","Saint Vincent and the Grenadines","Samoa","San Marino","Sao Tome and Principe",
+            "Saudi Arabia","Senegal","Serbia","Seychelles","Sierra Leone","Singapore","Slovakia","Slovenia","Solomon Islands","Somalia",
+            "South Africa","South Korea","South Sudan","Spain","Sri Lanka","Sudan","Suriname","Sweden","Switzerland","Syria",
+            "Taiwan","Tajikistan","Tanzania","Thailand","Togo","Tonga","Trinidad and Tobago","Tunisia","Turkey","Turkmenistan",
+            "Tuvalu","Uganda","Ukraine","United Arab Emirates","United Kingdom","United States","Uruguay","Uzbekistan","Vanuatu","Vatican City",
+            "Venezuela","Vietnam","Yemen","Zambia","Zimbabwe"
+        ];
+
+        /* ============================================
+           INITIALIZATION
+           ============================================ */
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!FormUtils.initForm(FORM_CODE, TOTAL_STAGES)) {
+                return;
+            }
+
+            setupConditionalLogic();
+            setupValueConditionals();
+
+            // Country autocomplete fields
+            setupAutocomplete('submissionCountry', 'submissionCountryList');
+            setupAutocomplete('passportNationality', 'passportNationalityList');
+            setupAutocomplete('passportCountryIssue', 'passportCountryIssueList');
+            setupAutocomplete('birthCountry', 'birthCountryList');
+
+            // Photo upload handler
+            setupPhotoUpload();
+        });
+
+        /* ============================================
+           CONDITIONAL LOGIC - RADIO BASED
+           ============================================ */
+        function setupConditionalLogic() {
+            setupRadioConditional('mononym', {
+                'yes': ['mononymYesFields'],
+                'no': ['mononymNoFields']
+            });
+            setupRadioConditional('other_names', {
+                'yes': ['otherNamesFields'],
+                'no': []
+            });
+            setupRadioConditional('previously_applied', {
+                'yes': ['prevAppliedFields'],
+                'no': []
+            });
+            setupRadioConditional('previously_nzeta', {
+                'yes': ['nzetaFields'],
+                'no': []
+            });
+            setupRadioConditional('ever_travelled_nz', {
+                'yes': ['travelledFields'],
+                'no': []
+            });
+            setupRadioConditional('total_time_24_months', {
+                'yes': [],
+                'no': ['totalTimeAlert']
+            });
+            setupRadioConditional('nz_govt_scholarship', {
+                'yes': ['scholarshipFields'],
+                'no': []
+            });
+        }
+
+        function setupRadioConditional(radioName, valueToTargets) {
+            const radios = document.querySelectorAll(`input[name="${radioName}"]`);
+            radios.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    // Hide all targets
+                    Object.values(valueToTargets).flat().forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el) el.classList.remove('visible');
+                    });
+                    // Show targets for selected value
+                    const targets = valueToTargets[this.value] || [];
+                    targets.forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el) el.classList.add('visible');
+                    });
+                });
+            });
+        }
+
+        /* ============================================
+           CONDITIONAL LOGIC - VALUE BASED (DOB, Birth Country)
+           ============================================ */
+        function setupValueConditionals() {
+            // DOB populated → show photo upload
+            const dobInput = document.getElementById('dobDate');
+            if (dobInput) {
+                dobInput.addEventListener('change', function() {
+                    const section = document.getElementById('photoUploadSection');
+                    if (this.value) {
+                        section.classList.add('visible');
+                    } else {
+                        section.classList.remove('visible');
+                    }
+                });
+            }
+
+            // Birth country populated → show state + town
+            const birthCountryInput = document.getElementById('birthCountry');
+            if (birthCountryInput) {
+                // Listen for both input and the custom 'countrySelected' event
+                birthCountryInput.addEventListener('countrySelected', function() {
+                    toggleBirthLocationFields();
+                });
+                birthCountryInput.addEventListener('input', function() {
+                    // Only show if it's a valid country
+                    toggleBirthLocationFields();
+                });
+            }
+        }
+
+        function toggleBirthLocationFields() {
+            const val = document.getElementById('birthCountry').value.trim();
+            const section = document.getElementById('birthLocationFields');
+            if (val && COUNTRIES.includes(val)) {
+                section.classList.add('visible');
+            } else {
+                section.classList.remove('visible');
+            }
+        }
+
+        /* ============================================
+           VALIDATION
+           ============================================ */
+
+        /**
+         * Validate all mandatory fields in the given sub-section.
+         * Returns true if valid, false otherwise.
+         */
+        function validateSubSection(subsectionName) {
+            const subsection = document.querySelector(`.sub-section[data-subsection="${subsectionName}"]`);
+            if (!subsection) return true;
+
+            let isValid = true;
+            let firstErrorEl = null;
+
+            // Clear previous errors
+            subsection.querySelectorAll('.radio-group.has-error').forEach(el => el.classList.remove('has-error'));
+            subsection.querySelectorAll('.field-error-msg.show').forEach(el => el.classList.remove('show'));
+            subsection.querySelectorAll('input.error, select.error').forEach(el => el.classList.remove('error'));
+            subsection.querySelectorAll('.form-group.has-error').forEach(el => el.classList.remove('has-error'));
+
+            // 1. Validate required radio groups
+            const radioNames = new Set();
+            subsection.querySelectorAll('.question-block[data-required="true"] input[type="radio"]').forEach(r => {
+                radioNames.add(r.name);
+            });
+
+            radioNames.forEach(name => {
+                const checked = subsection.querySelector(`input[name="${name}"]:checked`);
+                if (!checked) {
+                    isValid = false;
+                    const group = subsection.querySelector(`input[name="${name}"]`).closest('.radio-group');
+                    if (group) group.classList.add('has-error');
+                    // Show field error
+                    const errorEl = group ? group.parentElement.querySelector('.field-error-msg') : null;
+                    if (errorEl) errorEl.classList.add('show');
+                    if (!firstErrorEl && group) firstErrorEl = group;
+                }
+            });
+
+            // 2. Validate conditional mandatory fields that are VISIBLE
+            // Mononym = yes → mononym_name required
+            if (isRadioChecked('mononym', 'yes')) {
+                if (!validateTextField(subsection, 'mononym_name')) {
+                    isValid = false;
+                    if (!firstErrorEl) firstErrorEl = document.getElementById('mononymName');
+                }
+            }
+            // Mononym = no → given_name and surname required
+            if (isRadioChecked('mononym', 'no')) {
+                if (!validateTextField(subsection, 'given_name')) {
+                    isValid = false;
+                    if (!firstErrorEl) firstErrorEl = document.getElementById('givenName');
+                }
+                if (!validateTextField(subsection, 'surname')) {
+                    isValid = false;
+                    if (!firstErrorEl) firstErrorEl = document.getElementById('surname');
+                }
+            }
+
+            // Scholarship = yes → nzstts_nzelto required
+            if (isRadioChecked('nz_govt_scholarship', 'yes')) {
+                const nzsttsChecked = subsection.querySelector('input[name="nzstts_nzelto"]:checked');
+                if (!nzsttsChecked) {
+                    isValid = false;
+                    const group = document.getElementById('nzsttsRadioGroup');
+                    if (group) group.classList.add('has-error');
+                    const errorEl = document.getElementById('nzsttsError');
+                    if (errorEl) errorEl.classList.add('show');
+                    if (!firstErrorEl) firstErrorEl = group;
+                }
+            }
+
+            // 3. Validate required text/select/date fields
+            subsection.querySelectorAll('[data-validate="required"]').forEach(field => {
+                // Skip if inside a hidden conditional-group
+                const condParent = field.closest('.conditional-group');
+                if (condParent && !condParent.classList.contains('visible')) return;
+
+                if (!field.value.trim()) {
+                    isValid = false;
+                    field.classList.add('error');
+                    const formGroup = field.closest('.form-group');
+                    if (formGroup) formGroup.classList.add('has-error');
+                    // Show sibling error message
+                    const errMsg = field.parentElement.querySelector('.field-error-msg') ||
+                                   field.closest('.question-block')?.querySelector('.field-error-msg');
+                    if (errMsg) errMsg.classList.add('show');
+                    if (!firstErrorEl) firstErrorEl = field;
+                }
+            });
+
+            // 4. Birth location fields (conditional on country being selected)
+            if (subsectionName === 'passport') {
+                const birthCountryVal = document.getElementById('birthCountry')?.value?.trim();
+                if (birthCountryVal && COUNTRIES.includes(birthCountryVal)) {
+                    const birthState = document.getElementById('birthState');
+                    const birthCity = document.getElementById('birthCity');
+                    if (birthState && !birthState.value.trim()) {
+                        isValid = false;
+                        birthState.classList.add('error');
+                        const fg = birthState.closest('.form-group');
+                        if (fg) fg.classList.add('has-error');
+                        if (!firstErrorEl) firstErrorEl = birthState;
+                    }
+                    if (birthCity && !birthCity.value.trim()) {
+                        isValid = false;
+                        birthCity.classList.add('error');
+                        const fg = birthCity.closest('.form-group');
+                        if (fg) fg.classList.add('has-error');
+                        if (!firstErrorEl) firstErrorEl = birthCity;
+                    }
+                }
+            }
+
+            if (firstErrorEl) {
+                firstErrorEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+
+            return isValid;
+        }
+
+        function isRadioChecked(name, value) {
+            const radio = document.querySelector(`input[name="${name}"][value="${value}"]:checked`);
+            return !!radio;
+        }
+
+        function validateTextField(container, name) {
+            const field = container.querySelector(`input[name="${name}"]`);
+            if (!field) return true;
+            if (!field.value.trim()) {
+                field.classList.add('error');
+                const fg = field.closest('.form-group');
+                if (fg) fg.classList.add('has-error');
+                return false;
+            }
+            return true;
+        }
+
+        /* ============================================
+           SUB-SECTION NAVIGATION (with validation)
+           ============================================ */
+        function navigateSubSection(targetName) {
+            const targetIndex = subSectionOrder.indexOf(targetName);
+            const currentIndex = subSectionOrder.indexOf(currentSubSection);
+
+            // Going forward → validate current section first
+            if (targetIndex > currentIndex) {
+                // Validate all sections between current (inclusive) and target (exclusive)
+                for (let i = currentIndex; i < targetIndex; i++) {
+                    if (!validateSubSection(subSectionOrder[i])) {
+                        return; // block navigation
+                    }
+                }
+            }
+
+            showSubSection(targetName);
+        }
+
+        function showSubSection(name) {
+            document.querySelectorAll('#stage1SectionNav .section-nav-item').forEach(item => {
+                item.classList.remove('active');
+                if (item.dataset.subsection === name) item.classList.add('active');
+            });
+
+            document.querySelectorAll('.sub-section').forEach(s => s.classList.remove('active'));
+            const target = document.querySelector(`.sub-section[data-subsection="${name}"]`);
+            if (target) target.classList.add('active');
+
+            currentSubSection = name;
+            document.querySelector('.form-content').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        /* ============================================
+           STAGE NAVIGATION
+           ============================================ */
+        function navigateToStage(stageNum) {
+            if (!unlockedStages.has(stageNum)) return;
+
+            document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
+            const target = document.querySelector(`.form-section[data-stage="${stageNum}"]`);
+            if (target) target.classList.add('active');
+
+            document.querySelectorAll('.stage-tab').forEach(tab => {
+                tab.classList.remove('active');
+                if (parseInt(tab.dataset.stage) === stageNum) tab.classList.add('active');
+            });
+
+            currentStage = stageNum;
+            if (stageNum === 1) showSubSection('identity');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function unlockStage(stageNum) {
+            unlockedStages.add(stageNum);
+            const tab = document.querySelector(`.stage-tab[data-stage="${stageNum}"]`);
+            if (tab) {
+                tab.classList.add('unlocked');
+                tab.setAttribute('onclick', `navigateToStage(${stageNum})`);
+            }
+        }
+
+        function markStageCompleted(stageNum) {
+            completedStages.add(stageNum);
+            const tab = document.querySelector(`.stage-tab[data-stage="${stageNum}"]`);
+            if (tab) tab.classList.add('completed');
+        }
+
+        /* ============================================
+           SAVE AND CONTINUE / EXIT
+           ============================================ */
+        function handleSaveAndContinue() {
+            const form = document.getElementById('studentVisaForm');
+
+            if (currentStage === 1) {
+                // Validate ALL sub-sections for stage 1
+                for (const sub of subSectionOrder) {
+                    if (!validateSubSection(sub)) {
+                        // Navigate to the failing sub-section
+                        showSubSection(sub);
+                        return;
+                    }
+                }
+
+                FormUtils.saveDraft(FORM_CODE, form);
+                markStageCompleted(1);
+                unlockStage(2);
+                navigateToStage(2);
+            } else if (currentStage < TOTAL_STAGES) {
+                FormUtils.saveDraft(FORM_CODE, form);
+                markStageCompleted(currentStage);
+                unlockStage(currentStage + 1);
+                navigateToStage(currentStage + 1);
+            }
+        }
+
+        function handleSaveAndExit() {
+            const form = document.getElementById('studentVisaForm');
+            FormUtils.saveDraft(FORM_CODE, form);
+
+            const overlay = document.getElementById('loadingOverlay');
+            if (overlay) {
+                overlay.querySelector('.loading-text').textContent = 'Your progress has been saved.';
+                overlay.classList.add('active');
+                setTimeout(() => {
+                    overlay.classList.remove('active');
+                    overlay.querySelector('.loading-text').textContent = 'Submitting your form...';
+                }, 2000);
+            }
+        }
+
+        /* ============================================
+           OTHER NAMES REPEATER
+           ============================================ */
+        function addOtherName() {
+            const container = document.getElementById('otherNamesRepeater');
+            const index = otherNameCount;
+            otherNameCount++;
+
+            const item = document.createElement('div');
+            item.className = 'repeater-item';
+            item.dataset.index = index;
+            item.innerHTML = `
+                <button type="button" class="remove-btn" onclick="removeOtherName(this)">✕ Remove</button>
+                <div class="form-group">
+                    <label>Given or first name</label>
+                    <input type="text" name="other_given_name_${index}" maxlength="30" placeholder="Limited to 30 characters.">
+                </div>
+                <div class="form-group">
+                    <label>Middle names</label>
+                    <input type="text" name="other_middle_names_${index}" maxlength="30" placeholder="Limited to 30 characters.">
+                </div>
+                <div class="form-group">
+                    <label>Surname or family name</label>
+                    <input type="text" name="other_surname_${index}" maxlength="50" placeholder="Limited to 50 characters.">
+                </div>
+                <div class="form-group">
+                    <label>Name type</label>
+                    <select name="other_name_type_${index}">
+                        <option value="">-- Select --</option>
+                        <option value="birth">Birth name</option>
+                        <option value="marriage">Marriage name</option>
+                        <option value="adoption">Adoption name</option>
+                        <option value="english">English name</option>
+                        <option value="preferred">Preferred name</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+            `;
+            container.appendChild(item);
+        }
+
+        function removeOtherName(btn) {
+            btn.closest('.repeater-item').remove();
+        }
+
+        /* ============================================
+           PHOTO UPLOAD
+           ============================================ */
+        function setupPhotoUpload() {
+            const fileInput = document.getElementById('visaPhoto');
+            if (!fileInput) return;
+
+            fileInput.addEventListener('change', function() {
+                const file = this.files[0];
+                if (!file) return;
+
+                // Validate file type
+                if (!file.type.match(/image\/jpe?g/)) {
+                    alert('Please upload a .jpg or .jpeg file only.');
+                    this.value = '';
+                    return;
+                }
+
+                // Validate file size (500KB - 3MB)
+                if (file.size < 500 * 1024 || file.size > 3 * 1024 * 1024) {
+                    alert('Photo must be between 500 KB and 3 MB.');
+                    this.value = '';
+                    return;
+                }
+
+                // Show preview
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('photoPreview');
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+
+                    document.getElementById('photoFilename').textContent = '✓ ' + file.name;
+                    document.getElementById('photoFilename').style.display = 'block';
+                    document.getElementById('photoRemoveBtn').style.display = 'inline-block';
+                    document.getElementById('photoUploadArea').classList.add('has-file');
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function removePhoto(e) {
+            e.stopPropagation();
+            document.getElementById('visaPhoto').value = '';
+            document.getElementById('photoPreview').style.display = 'none';
+            document.getElementById('photoFilename').style.display = 'none';
+            document.getElementById('photoRemoveBtn').style.display = 'none';
+            document.getElementById('photoUploadArea').classList.remove('has-file');
+        }
+
+        /* ============================================
+           COUNTRY AUTOCOMPLETE
+           ============================================ */
+        function setupAutocomplete(inputId, listId) {
+            const input = document.getElementById(inputId);
+            const list = document.getElementById(listId);
+            if (!input || !list) return;
+
+            let highlightedIndex = -1;
+
+            input.addEventListener('input', function() {
+                const val = this.value.toLowerCase().trim();
+                list.innerHTML = '';
+                highlightedIndex = -1;
+
+                if (val.length < 1) {
+                    list.classList.remove('show');
+                    return;
+                }
+
+                const matches = COUNTRIES.filter(c => c.toLowerCase().includes(val)).slice(0, 10);
+                if (matches.length === 0) {
+                    list.classList.remove('show');
+                    return;
+                }
+
+                matches.forEach(country => {
+                    const div = document.createElement('div');
+                    div.textContent = country;
+                    div.addEventListener('click', () => {
+                        input.value = country;
+                        list.classList.remove('show');
+                        // Fire custom event for conditional logic
+                        input.dispatchEvent(new Event('countrySelected'));
+                    });
+                    list.appendChild(div);
+                });
+
+                list.classList.add('show');
+            });
+
+            input.addEventListener('keydown', function(e) {
+                const items = list.querySelectorAll('div');
+                if (!items.length) return;
+
+                if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    highlightedIndex = Math.min(highlightedIndex + 1, items.length - 1);
+                    updateHighlight(items, highlightedIndex);
+                } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    highlightedIndex = Math.max(highlightedIndex - 1, 0);
+                    updateHighlight(items, highlightedIndex);
+                } else if (e.key === 'Enter') {
+                    e.preventDefault();
+                    if (highlightedIndex >= 0 && items[highlightedIndex]) {
+                        input.value = items[highlightedIndex].textContent;
+                        list.classList.remove('show');
+                        input.dispatchEvent(new Event('countrySelected'));
+                    }
+                }
+            });
+
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.autocomplete-wrapper')) {
+                    list.classList.remove('show');
+                }
+            });
+        }
+
+        function updateHighlight(items, index) {
+            items.forEach((item, i) => {
+                item.classList.toggle('highlighted', i === index);
+            });
+        }
+    </script>
+</body>
+</html>
