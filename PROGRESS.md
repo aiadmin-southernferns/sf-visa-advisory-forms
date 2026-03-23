@@ -1,7 +1,7 @@
 # Student Visa Form (INZ 1012) - Development Progress
 
 ## Form: `forms/student-visa-form.html`
-## Last Updated: Session 1
+## Last Updated: Session 5 - Stage 7 complete
 
 ---
 
@@ -9,13 +9,13 @@
 
 | # | Stage Name | Status | Notes |
 |---|-----------|--------|-------|
-| 1 | Identity Details | ✅ DONE | 3 sub-sections, all conditional logic implemented |
-| 2 | Address and contact information | ⬜ TODO | Placeholder only |
-| 3 | Eligibility | ⬜ TODO | Placeholder only |
-| 4 | Character | ⬜ TODO | Placeholder only |
-| 5 | Health | ⬜ TODO | Placeholder only |
-| 6 | Education | ⬜ TODO | Placeholder only |
-| 7 | Employment | ⬜ TODO | Placeholder only |
+| 1 | Identity Details | ✅ DONE | 3 sub-sections, full validation + conditional logic |
+| 2 | Address and contact information | ✅ DONE | 2 sections, postal conditional, validation |
+| 3 | Eligibility | ✅ DONE | 5 sections, complex conditionals, PhD details, situation & plans |
+| 4 | Character | ✅ DONE | 4 sections, repeaters, file uploads, nested conditionals |
+| 5 | Health | ✅ DONE | 5 sections, TB/medical care/length of stay/medical exams |
+| 6 | Education history | ✅ DONE | Tertiary education repeater with country autocomplete |
+| 7 | Employment history | ✅ DONE | 4 sections, current/previous work, unemployment repeaters |
 | 8 | Financial | ⬜ TODO | Placeholder only |
 | 9 | Supporting documents | ⬜ TODO | Placeholder only |
 | 10 | Declaration | ⬜ TODO | Placeholder only |
@@ -23,64 +23,67 @@
 
 ---
 
-## STAGE 1: Identity Details - COMPLETED
+## STAGE 6: Education History - COMPLETED
 
-### Sub-section 1.1: Identity Information
-- [x] Mononym question (Yes/No radio)
-  - Yes → Shows single "Name" field (50 char max)
-  - No → Shows Given name (30), Middle names (30), Surname (50)
-- [x] Other names question (Yes/No radio)
-  - Yes → Shows repeatable name entry (given, middle, surname, name type dropdown)
-  - Has "+ ADD ANOTHER NAME" button (repeater pattern)
-  - Each added entry has a remove button
+### Education Details
+- [x] Tertiary education? (Yes/No) MANDATORY
+  - Yes → Repeater with: qualification, start date (month), end date (month), institution name, country (autocomplete), state/province, town/city, qualification awarded? (Yes/No)
+  - + ADD MORE EDUCATION button
 
-### Sub-section 1.2: NZ Immigration History
-- [x] Country when submitting (autocomplete country search)
-- [x] Previously applied for NZ visa (Yes/No)
-  - Yes → Shows "Previous client number" (8 numeric chars)
-- [x] Previously requested NZeTA (Yes/No)
-  - Yes → Shows "Most recent NZeTA reference number" (starts with E)
-- [x] Ever travelled to NZ (Yes/No)
-  - Yes → Shows "When did you last leave NZ?" (mm/yyyy)
-- [x] Total time 24 months or more (Yes/No)
-  - No → Shows ALERT about police certificate
-- [x] NZ Government Scholarship (Yes/No)
-  - Yes → Shows NZSTTS/NZELTO sub-question (Yes/No)
+---
 
-### Sub-section 1.3: Passport and Birth Details
-- [x] Passport number (text)
-- [x] Nationality as shown in passport (autocomplete country)
-- [x] Country or territory of issue (autocomplete country)
-- [x] Passport issue date (dd/mm/yyyy split fields)
-- [x] Passport expiry date (dd/mm/yyyy split fields)
-- [x] Gender (select: Male/Female/Gender Diverse)
-- [x] Date of birth (dd/mm/yyyy split fields)
-- [x] Country or territory of birth (autocomplete country)
-- [x] Town or city of birth (text)
+## STAGE 7: Employment History - COMPLETED
+
+### Employment History
+- [x] Government employed? (Yes/No) MANDATORY
+- [x] Prison/detention guard? (Yes/No) MANDATORY
+
+### Current Employment
+- [x] Currently working? (Yes/No) MANDATORY
+  - Yes → start date, role/job title, duties description, country (autocomplete) → state/province (shows on country select), supervisor, industry, org country, org name, org address, employer phone, employer email
+
+### Previous Employment
+- [x] Previous employment/self-employment? (Yes/No) MANDATORY
+  - Yes → Repeater with: start/end dates, role, duties, country → state (shows on country select), supervisor, org name, industry, org country
+  - + ADD MORE EMPLOYMENT button
+  - State/province appears when country is populated (per entry)
+
+### Unemployment or Unpaid Service
+- [x] Time unemployed/not in education? (Yes/No) MANDATORY
+  - Yes → Repeater with: start/end dates, what were you doing? (textarea), financial support details (textarea)
+  - + ADD MORE UNPAID PERIOD button
+
+---
+
+## DEV MODE
+
+`const DEV_MODE = true;` at top of script block.
+- When true: all 11 stage tabs unlocked for click-navigation
+- All validations still fire on Save and Continue
+- Set to `false` before production deploy
 
 ---
 
 ## ARCHITECTURE NOTES
 
+- Single HTML file with inline CSS + JS
 - Uses shared `css/forms.css` and `js/form-utils.js`
-- Token-based security (same as INZ-1226)
-- Stage navigation: horizontal scrollable tabs at top
-- Sub-section navigation: tab-style nav within each stage
-- Conditional logic: `setupRadioConditional()` utility function
-- Country fields: autocomplete with full country list
-- Date fields: split dd/mm/yyyy with auto-advance
-- Repeater pattern: for "other names" with add/remove
-- Bottom buttons: "SAVE AND EXIT" and "SAVE AND CONTINUE"
-- Stages must be completed sequentially (stage N unlocks stage N+1)
-- Once unlocked, users can navigate back to previous stages
-- Additional form-specific CSS is inline in the HTML `<style>` tag
+- Token-based security, auto-save, sequential stage unlock
+- Conditional logic: `setupRadioConditional()` + custom value listeners
+- Country autocomplete with full country list + custom 'countrySelected' event
+- Native date pickers, month pickers for start/end dates
+- Repeater pattern: offences, refusals, citizenships, lived countries, education, prev employment, unemployment
+- Police cert upload blocks generated dynamically
+- Per-stage validation functions: validateSubSection, validateStage2/3/4/5/6/7
+- State/province fields appear conditionally when country is populated (birth, current work, prev work)
+- `setupPrevWorkCountryListener(idx)` handles dynamic state visibility for each prev work entry
 
 ---
 
 ## HOW TO CONTINUE NEXT SESSION
 
 1. Upload the project zip file
-2. Tell Claude: "Continue building the student visa form"
-3. Claude will read this PROGRESS.md to understand what's done
-4. Upload screenshots of the next stage to implement
-5. Claude will add to the existing student-visa-form.html
+2. Say: "Continue building the student visa form"
+3. Claude reads this PROGRESS.md
+4. Upload screenshots of next stage (Stage 8: Financial)
+5. Claude adds to student-visa-form.html
