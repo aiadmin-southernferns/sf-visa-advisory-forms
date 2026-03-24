@@ -621,10 +621,12 @@
                 <div class="stage-tab" data-stage="5">Health</div>
                 <div class="stage-tab" data-stage="6">Education</div>
                 <div class="stage-tab" data-stage="7">Employment</div>
-                <div class="stage-tab" data-stage="8">Financial</div>
-                <div class="stage-tab" data-stage="9">Supporting documents</div>
-                <div class="stage-tab" data-stage="10">Declaration</div>
-                <div class="stage-tab" data-stage="11">Review & Submit</div>
+                <div class="stage-tab" data-stage="8">Relationships</div>
+                <div class="stage-tab" data-stage="9">Background details</div>
+                <div class="stage-tab" data-stage="10">Financial</div>
+                <div class="stage-tab" data-stage="11">Supporting documents</div>
+                <div class="stage-tab" data-stage="12">Declaration</div>
+                <div class="stage-tab" data-stage="13">Review & Submit</div>
             </div>
         </div>
 
@@ -2394,10 +2396,320 @@
                         <button type="button" class="btn-save-continue" onclick="handleSaveAndContinue()">Save and Continue</button>
                     </div>
                 </div>
-                <div class="form-section" data-stage="8"><h2 class="section-title">Financial</h2><div class="section-description">This section will be implemented next.</div></div>
-                <div class="form-section" data-stage="9"><h2 class="section-title">Supporting Documents</h2><div class="section-description">This section will be implemented next.</div></div>
-                <div class="form-section" data-stage="10"><h2 class="section-title">Declaration</h2><div class="section-description">This section will be implemented next.</div></div>
-                <div class="form-section" data-stage="11"><h2 class="section-title">Review & Submit</h2><div class="section-description">This section will be implemented next.</div></div>
+                <div class="form-section" data-stage="8">
+                    <h2 class="section-title">Relationships</h2>
+                    <div class="section-description">We use the information you enter in this section to check that you genuinely intend to stay temporarily and for a lawful purpose.</div>
+
+                    <!-- Relationship status -->
+                    <div class="form-card">
+                        <h3>Relationship status</h3>
+                        <div class="question-block" data-required="true">
+                            <label class="question-label mandatory">What is your partnership status?</label>
+                            <p class="help-text">You must choose the option that best describes your current partnership status. <a href="#" style="color:var(--secondary-color);">Definition of partner</a></p>
+                            <div class="form-group" style="margin-bottom:0;">
+                                <select id="partnershipStatus" name="partnership_status" data-validate="required" data-stage="8">
+                                    <option value="">-- Select --</option>
+                                    <option value="single">Single</option>
+                                    <option value="married">Married / in civil union</option>
+                                    <option value="partner">Partner / de facto</option>
+                                    <option value="engaged">Engaged</option>
+                                    <option value="separated">Separated</option>
+                                    <option value="divorced">Divorced</option>
+                                    <option value="widowed">Widowed</option>
+                                </select>
+                                <span class="error-message">This is a required field</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Current partner (shows when married/partner/engaged) -->
+                    <div class="conditional-group" id="currentPartnerSection">
+                        <div class="form-card" style="margin-bottom:0;">
+                            <h3>Current partner</h3>
+                            <p style="font-weight:600;margin-bottom:5px;">Provide your partner's details</p>
+                            <p class="help-text" style="margin-bottom:20px;">As detailed in their passport (if they have one)</p>
+                            <div class="question-block"><label class="question-label mandatory">Partner's relationship to you. They are my:</label><div class="form-group" style="margin-bottom:0;"><select name="partner_relationship"><option value="">-- Select --</option><option value="partner">Partner</option><option value="husband">Husband</option><option value="wife">Wife</option><option value="de_facto">Partner / de facto</option><option value="fiance">Fiancé / Fiancée</option></select></div></div>
+                            <div class="question-block"><label class="question-label mandatory">Partner's given or first name</label><div class="form-group" style="margin-bottom:0;"><input type="text" name="partner_given_name" maxlength="30" placeholder="Limited to 30 characters."></div></div>
+                            <div class="question-block"><label class="question-label">Partner's middle names</label><div class="form-group" style="margin-bottom:0;"><input type="text" name="partner_middle_names" maxlength="30" placeholder="Limited to 30 characters."></div></div>
+                            <div class="question-block"><label class="question-label mandatory">Partner's surname or family name</label><p class="help-text">If your partner's name is only displayed in one field on their passport, enter their name here and leave the first and middle name fields blank.</p><div class="form-group" style="margin-bottom:0;"><input type="text" name="partner_surname" maxlength="50" placeholder="Limited to 50 characters."></div></div>
+                            <div class="question-block"><label class="question-label mandatory">Partner's gender</label><div class="form-group" style="margin-bottom:0;"><select name="partner_gender"><option value="">-- Select --</option><option value="M">Male</option><option value="F">Female</option><option value="X">Gender Diverse</option></select></div></div>
+                            <div class="question-block"><label class="question-label mandatory">Partner's date of birth</label><div class="date-picker-wrapper"><input type="date" name="partner_dob"></div></div>
+                            <div class="question-block"><label class="question-label mandatory">Partner's relationship status</label><div class="form-group" style="margin-bottom:0;"><select name="partner_rel_status"><option value="">-- Select --</option><option value="single">Single</option><option value="married">Married / in civil union</option><option value="partner">Partner / de facto</option><option value="engaged">Engaged</option><option value="separated">Separated</option><option value="divorced">Divorced</option><option value="widowed">Widowed</option></select></div></div>
+                            <div class="question-block"><label class="question-label mandatory">Partner's country or territory of birth</label><div class="autocomplete-wrapper"><input type="text" id="partnerBirthCountry" name="partner_birth_country" placeholder="Start typing and select a country from the list..." autocomplete="off"><div class="autocomplete-list" id="partnerBirthCountryList"></div></div></div>
+                            <div class="question-block"><label class="question-label">Partner's town or city of birth</label><div class="form-group" style="margin-bottom:0;"><input type="text" name="partner_birth_city"></div></div>
+                            <div class="question-block"><label class="question-label mandatory">Partner's nationality</label><div class="autocomplete-wrapper"><input type="text" id="partnerNationality" name="partner_nationality" placeholder="Start typing and select a country from the list..." autocomplete="off"><div class="autocomplete-list" id="partnerNationalityList"></div></div></div>
+                            <div class="question-block"><label class="question-label mandatory">Partner's country or territory of residence</label><div class="autocomplete-wrapper"><input type="text" id="partnerResidence" name="partner_residence" placeholder="Start typing and select a country from the list..." autocomplete="off"><div class="autocomplete-list" id="partnerResidenceList"></div></div></div>
+                            <div class="question-block"><label class="question-label">Partner's occupation</label><p class="help-text">If this person is not working, enter 'Not employed'.</p><div class="form-group" style="margin-bottom:0;"><input type="text" name="partner_occupation"></div></div>
+                            <div class="question-block" data-required="true"><label class="question-label mandatory">Does your partner hold a passport?</label><div class="radio-group" style="margin-top:8px;"><div class="radio-item"><input type="radio" id="partnerPassYes" name="partner_passport" value="yes"><label for="partnerPassYes">Yes</label></div><div class="radio-item"><input type="radio" id="partnerPassNo" name="partner_passport" value="no"><label for="partnerPassNo">No</label></div></div></div>
+                            <div class="conditional-group" id="partnerPassportFields">
+                                <div class="question-block"><label class="question-label mandatory">Passport number</label><p class="help-text">Generally found in the top right-hand corner of the identity page of their passport.</p><div class="form-group" style="margin-bottom:0;"><input type="text" name="partner_passport_number"></div></div>
+                                <div class="question-block"><label class="question-label mandatory">Country or territory of issue</label><p class="help-text">Enter the country the passport was issued by rather than the country it was issued in.</p><div class="autocomplete-wrapper"><input type="text" id="partnerPassportCountry" name="partner_passport_country" placeholder="Start typing and select a country from the list..." autocomplete="off"><div class="autocomplete-list" id="partnerPassportCountryList"></div></div></div>
+                                <div class="question-block"><label class="question-label mandatory">Passport issue date</label><div class="date-picker-wrapper"><input type="date" name="partner_passport_issue"></div></div>
+                                <div class="question-block" style="margin-bottom:0;"><label class="question-label mandatory">Passport expiry date</label><div class="date-picker-wrapper"><input type="date" name="partner_passport_expiry"></div></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Former partners -->
+                    <div class="form-card">
+                        <h3>Former partners</h3>
+                        <div class="question-block" data-required="true"><label class="question-label mandatory">Do you have any former partners, including any that are deceased, or you have divorced or are separated from?</label><div class="radio-group" id="s8FormerPartnerRadio" style="margin-top:8px;"><div class="radio-item"><input type="radio" id="formerPartnerYes" name="former_partners" value="yes"><label for="formerPartnerYes">Yes</label></div><div class="radio-item"><input type="radio" id="formerPartnerNo" name="former_partners" value="no"><label for="formerPartnerNo">No</label></div></div><div class="field-error-msg" id="formerPartnerError">Please select an option</div></div>
+                        <!-- WARNING for divorced/separated/widowed who say No -->
+                        <div class="conditional-group" id="formerPartnerWarning"><div class="alert-box" style="background:#f8d7da;border-left:4px solid #dc3545;"><div><div class="alert-title" style="color:#dc3545;">WARNING</div><p style="margin:0;font-size:0.92rem;">You indicated earlier that you have a former partner. Please select Yes and provide details of former partners.</p></div></div></div>
+                        <div class="conditional-group" id="formerPartnerFields">
+                            <p style="font-weight:600;margin-bottom:5px;color:var(--primary-color);">Detail all former partners</p>
+                            <p class="help-text" style="margin-bottom:20px;">Including any who are deceased, or who you have divorced or are separated from.</p>
+                            <div class="repeater-container" id="formerPartnerRepeater">
+                                <div class="repeater-item" data-index="0">
+                                    <div class="question-block"><label class="question-label mandatory">Former partner's given or first name</label><div class="form-group" style="margin-bottom:0;"><input type="text" name="fpartner_given_0" maxlength="30" placeholder="Limited to 30 characters."></div></div>
+                                    <div class="question-block"><label class="question-label">Former partner's middle names</label><div class="form-group" style="margin-bottom:0;"><input type="text" name="fpartner_middle_0" maxlength="30" placeholder="Limited to 30 characters."></div></div>
+                                    <div class="question-block"><label class="question-label mandatory">Former partner's surname or family name</label><p class="help-text">If your former partner's name is only displayed in one field on their passport, enter their name here and leave the first and middle name fields blank.</p><div class="form-group" style="margin-bottom:0;"><input type="text" name="fpartner_surname_0" maxlength="50" placeholder="Limited to 50 characters."></div></div>
+                                    <div class="question-block"><label class="question-label mandatory">Relationship when together. They were my:</label><div class="form-group" style="margin-bottom:0;"><select name="fpartner_relationship_0"><option value="">-- Select --</option><option value="partner">Partner</option><option value="husband">Husband</option><option value="wife">Wife</option><option value="de_facto">Partner / de facto</option><option value="fiance">Fiancé / Fiancée</option></select></div></div>
+                                    <div class="question-block"><label class="question-label mandatory">Are they deceased?</label><div class="radio-group" style="margin-top:8px;"><div class="radio-item"><input type="radio" name="fpartner_deceased_0" value="yes" onchange="updateFormerPartnerLabels(0)"><label>Yes</label></div><div class="radio-item"><input type="radio" name="fpartner_deceased_0" value="no" onchange="updateFormerPartnerLabels(0)"><label>No</label></div></div></div>
+                                    <div class="question-block"><label class="question-label mandatory">Former partner's gender</label><div class="form-group" style="margin-bottom:0;"><select name="fpartner_gender_0"><option value="">-- Select --</option><option value="M">Male</option><option value="F">Female</option><option value="X">Gender Diverse</option></select></div></div>
+                                    <div class="question-block"><label class="question-label">Former partner's date of birth</label><div class="date-picker-wrapper"><input type="date" name="fpartner_dob_0"></div><div style="margin-top:8px;"><label><input type="checkbox" name="fpartner_dob_unknown_0"> Date of birth unknown</label></div></div>
+                                    <div class="question-block"><label class="question-label" id="fpartnerRelLabel_0">Former partner's current relationship status (if known)</label><div class="form-group" style="margin-bottom:0;"><select name="fpartner_rel_status_0"><option value="">-- Select --</option><option value="single">Single</option><option value="married">Married / in civil union</option><option value="partner">Partner / de facto</option><option value="engaged">Engaged</option><option value="separated">Separated</option><option value="divorced">Divorced</option><option value="widowed">Widowed</option></select></div></div>
+                                    <div class="question-block"><label class="question-label" id="fpartnerBirthLabel_0">Former partner's country or territory of birth</label><div class="autocomplete-wrapper"><input type="text" id="fpartner_birth_country_0" name="fpartner_birth_country_0" placeholder="Start typing and select a country from the list..." autocomplete="off"><div class="autocomplete-list" id="fpartnerBirthCountryList_0"></div></div></div>
+                                    <div class="question-block"><label class="question-label" id="fpartnerCitizenLabel_0">Former partner's citizenship</label><div class="autocomplete-wrapper"><input type="text" id="fpartner_citizenship_0" name="fpartner_citizenship_0" placeholder="Start typing and select a country of citizenship from the list..." autocomplete="off"><div class="autocomplete-list" id="fpartnerCitizenList_0"></div></div></div>
+                                    <div class="question-block"><label class="question-label" id="fpartnerResLabel_0">Former partner's last country or territory of residence</label><div class="autocomplete-wrapper"><input type="text" id="fpartner_residence_0" name="fpartner_residence_0" placeholder="Start typing and select a country from the list..." autocomplete="off"><div class="autocomplete-list" id="fpartnerResList_0"></div></div></div>
+                                    <div class="question-block" style="margin-bottom:0;"><label class="question-label" id="fpartnerOccLabel_0">Former partner's last occupation (if known)</label><p class="help-text">If this person was not working, enter 'Not employed'.</p><div class="form-group" style="margin-bottom:0;"><input type="text" name="fpartner_occupation_0"></div></div>
+                                </div>
+                            </div>
+                            <button type="button" class="add-btn" onclick="addFormerPartnerEntry()">+ ADD ANOTHER FORMER PARTNER</button>
+                        </div>
+                    </div>
+
+                    <!-- Children -->
+                    <div class="form-card">
+                        <h3>Children</h3>
+                        <div class="question-block" data-required="true"><label class="question-label mandatory">Do you have any children?</label><p class="help-text">Including living biological, adoptive, and step children, and those from previous relationships.</p><div class="radio-group" id="s8ChildrenRadio" style="margin-top:8px;"><div class="radio-item"><input type="radio" id="childrenYes" name="has_children" value="yes"><label for="childrenYes">Yes</label></div><div class="radio-item"><input type="radio" id="childrenNo" name="has_children" value="no"><label for="childrenNo">No</label></div></div><div class="field-error-msg" id="childrenError">Please select an option</div></div>
+                        <div class="conditional-group" id="childrenFields">
+                            <p style="font-weight:600;margin-bottom:20px;color:var(--primary-color);">Provide children's details</p>
+                            <div class="repeater-container" id="childRepeater">
+                                <div class="repeater-item" data-index="0">
+                                    <div class="question-block"><label class="question-label mandatory">Child's given or first name</label><div class="form-group" style="margin-bottom:0;"><input type="text" name="child_given_0" maxlength="30"></div></div>
+                                    <div class="question-block"><label class="question-label">Child's middle names</label><div class="form-group" style="margin-bottom:0;"><input type="text" name="child_middle_0" maxlength="30"></div></div>
+                                    <div class="question-block"><label class="question-label mandatory">Child's surname or family name</label><p class="help-text">If your child's name is only displayed in one field on their passport, enter their name here and leave the first and middle name fields blank.</p><div class="form-group" style="margin-bottom:0;"><input type="text" name="child_surname_0" maxlength="50"></div></div>
+                                    <div class="question-block"><label class="question-label mandatory">Child's relationship to you. They are my:</label><div class="form-group" style="margin-bottom:0;"><select name="child_relationship_0"><option value="">-- Select --</option><option value="son">Son</option><option value="daughter">Daughter</option><option value="step_son">Step son</option><option value="step_daughter">Step daughter</option><option value="adopted_son">Adopted son</option><option value="adopted_daughter">Adopted daughter</option><option value="legal_guardianship">Child under legal guardianship</option></select></div></div>
+                                    <div class="question-block"><label class="question-label mandatory">Child's gender</label><p class="help-text">As stated in their passport (if they have one).</p><div class="form-group" style="margin-bottom:0;"><select name="child_gender_0"><option value="">-- Select --</option><option value="M">Male</option><option value="F">Female</option><option value="X">Gender Diverse</option></select></div></div>
+                                    <div class="question-block"><label class="question-label">Child's date of birth</label><div class="date-picker-wrapper"><input type="date" name="child_dob_0"></div><div style="margin-top:8px;"><label><input type="checkbox" name="child_dob_unknown_0"> Date of birth unknown</label></div></div>
+                                    <div class="question-block"><label class="question-label">Child's partnership status</label><div class="form-group" style="margin-bottom:0;"><select name="child_partnership_0"><option value="">-- Select --</option><option value="single">Single</option><option value="married">Married / in civil union</option><option value="partner">Partner / de facto</option><option value="engaged">Engaged</option><option value="separated">Separated</option><option value="divorced">Divorced</option><option value="widowed">Widowed</option></select></div></div>
+                                    <div class="question-block"><label class="question-label">Child's country or territory of birth</label><div class="autocomplete-wrapper"><input type="text" id="child_birth_country_0" name="child_birth_country_0" placeholder="Start typing and select a country from the list..." autocomplete="off"><div class="autocomplete-list" id="childBirthCountryList_0"></div></div></div>
+                                    <div class="question-block"><label class="question-label">Child's citizenship</label><div class="autocomplete-wrapper"><input type="text" id="child_citizenship_0" name="child_citizenship_0" placeholder="Start typing and select a country of citizenship from the list..." autocomplete="off"><div class="autocomplete-list" id="childCitizenList_0"></div></div></div>
+                                    <div class="question-block"><label class="question-label">Child's country or territory of residence</label><div class="autocomplete-wrapper"><input type="text" id="child_residence_0" name="child_residence_0" placeholder="Start typing and select a country from the list..." autocomplete="off"><div class="autocomplete-list" id="childResList_0"></div></div></div>
+                                    <div class="question-block" style="margin-bottom:0;"><label class="question-label">Child's occupation</label><p class="help-text">If this person is not working, enter 'Not employed'.</p><div class="form-group" style="margin-bottom:0;"><input type="text" name="child_occupation_0"></div></div>
+                                </div>
+                            </div>
+                            <button type="button" class="add-btn" onclick="addChildEntry()">+ ADD ANOTHER CHILD</button>
+                        </div>
+                    </div>
+
+                    <!-- Parents and legal guardians -->
+                    <div class="form-card">
+                        <h3>Parents and legal guardians</h3>
+                        <p style="font-weight:600;margin-bottom:20px;">Detail living and deceased parents and legal guardians (including any step or adoptive parents)</p>
+                        <div class="repeater-container" id="parentRepeater">
+                            <div class="repeater-item" data-index="0">
+                                <div class="question-block"><label class="question-label mandatory">Parent's given or first name</label><div class="form-group" style="margin-bottom:0;"><input type="text" name="parent_given_0" maxlength="30" placeholder="Limited to 30 characters."></div></div>
+                                <div class="question-block"><label class="question-label">Parent's middle names</label><div class="form-group" style="margin-bottom:0;"><input type="text" name="parent_middle_0" maxlength="30" placeholder="Limited to 30 characters."></div></div>
+                                <div class="question-block"><label class="question-label mandatory">Parent's surname or family name</label><p class="help-text">If your parent's name is only displayed in one field on their passport, enter their name here and leave the first and middle name fields blank.</p><div class="form-group" style="margin-bottom:0;"><input type="text" name="parent_surname_0" maxlength="50" placeholder="Limited to 50 characters."></div></div>
+                                <div class="question-block"><label class="question-label mandatory">Parent's relationship to you. They are my:</label><div class="form-group" style="margin-bottom:0;"><select name="parent_relationship_0"><option value="">-- Select --</option><option value="mother">Mother</option><option value="father">Father</option><option value="step_mother">Step mother</option><option value="step_father">Step father</option><option value="adoptive_mother">Adoptive mother</option><option value="adoptive_father">Adoptive father</option><option value="legal_guardian">Legal guardian</option></select></div></div>
+                                <div class="question-block"><label class="question-label mandatory">Are they deceased?</label><div class="radio-group" style="margin-top:8px;"><div class="radio-item"><input type="radio" name="parent_deceased_0" value="yes" onchange="updateParentLabels(0)"><label>Yes</label></div><div class="radio-item"><input type="radio" name="parent_deceased_0" value="no" onchange="updateParentLabels(0)"><label>No</label></div></div></div>
+                                <div class="question-block"><label class="question-label mandatory">Parent's gender</label><div class="form-group" style="margin-bottom:0;"><select name="parent_gender_0"><option value="">-- Select --</option><option value="M">Male</option><option value="F">Female</option><option value="X">Gender Diverse</option></select></div></div>
+                                <div class="question-block"><label class="question-label">Parent's date of birth</label><div class="date-picker-wrapper"><input type="date" name="parent_dob_0"></div><div style="margin-top:8px;"><label><input type="checkbox" name="parent_dob_unknown_0"> Date of birth unknown</label></div></div>
+                                <div class="question-block"><label class="question-label" id="parentRelLabel_0">Parent's relationship status</label><div class="form-group" style="margin-bottom:0;"><select name="parent_rel_status_0"><option value="">-- Select --</option><option value="single">Single</option><option value="married">Married / in civil union</option><option value="partner">Partner / de facto</option><option value="engaged">Engaged</option><option value="separated">Separated</option><option value="divorced">Divorced</option><option value="widowed">Widowed</option></select></div></div>
+                                <div class="question-block"><label class="question-label" id="parentBirthLabel_0">Parent's country or territory of birth</label><div class="autocomplete-wrapper"><input type="text" id="parent_birth_country_0" name="parent_birth_country_0" placeholder="Start typing and select a country from the list..." autocomplete="off"><div class="autocomplete-list" id="parentBirthCountryList_0"></div></div></div>
+                                <div class="question-block"><label class="question-label" id="parentCitizenLabel_0">Parent's citizenship</label><div class="autocomplete-wrapper"><input type="text" id="parent_citizenship_0" name="parent_citizenship_0" placeholder="Start typing and select a country of citizenship from the list..." autocomplete="off"><div class="autocomplete-list" id="parentCitizenList_0"></div></div></div>
+                                <div class="question-block"><label class="question-label" id="parentResLabel_0">Parent's country or territory of residence</label><div class="autocomplete-wrapper"><input type="text" id="parent_residence_0" name="parent_residence_0" placeholder="Start typing and select a country from the list..." autocomplete="off"><div class="autocomplete-list" id="parentResList_0"></div></div></div>
+                                <div class="question-block" style="margin-bottom:0;"><label class="question-label" id="parentOccLabel_0">Parent's occupation</label><p class="help-text">If this person is not working, enter 'Not employed'.</p><div class="form-group" style="margin-bottom:0;"><input type="text" name="parent_occupation_0"></div></div>
+                            </div>
+                        </div>
+                        <button type="button" class="add-btn" onclick="addParentEntry()">+ ADD ANOTHER PARENT</button>
+                    </div>
+
+                    <!-- Siblings -->
+                    <div class="form-card">
+                        <h3>Siblings</h3>
+                        <div class="question-block" data-required="true"><label class="question-label mandatory">Do you have any siblings?</label><p class="help-text">Including living half, step and adoptive brothers and sisters.</p><div class="radio-group" id="s8SiblingsRadio" style="margin-top:8px;"><div class="radio-item"><input type="radio" id="siblingsYes" name="has_siblings" value="yes"><label for="siblingsYes">Yes</label></div><div class="radio-item"><input type="radio" id="siblingsNo" name="has_siblings" value="no"><label for="siblingsNo">No</label></div></div><div class="field-error-msg" id="siblingsError">Please select an option</div></div>
+                        <div class="conditional-group" id="siblingsFields">
+                            <div class="repeater-container" id="siblingRepeater">
+                                <div class="repeater-item" data-index="0">
+                                    <div class="question-block"><label class="question-label mandatory">Sibling's given or first name</label><div class="form-group" style="margin-bottom:0;"><input type="text" name="sibling_given_0" maxlength="30"></div></div>
+                                    <div class="question-block"><label class="question-label">Sibling's middle names</label><div class="form-group" style="margin-bottom:0;"><input type="text" name="sibling_middle_0" maxlength="30"></div></div>
+                                    <div class="question-block"><label class="question-label mandatory">Sibling's surname or family name</label><div class="form-group" style="margin-bottom:0;"><input type="text" name="sibling_surname_0" maxlength="50"></div></div>
+                                    <div class="question-block"><label class="question-label mandatory">Sibling's relationship to you. They are my:</label><div class="form-group" style="margin-bottom:0;"><select name="sibling_relationship_0"><option value="">-- Select --</option><option value="brother">Brother</option><option value="sister">Sister</option><option value="half_brother">Half brother</option><option value="half_sister">Half sister</option><option value="step_brother">Step brother</option><option value="step_sister">Step sister</option><option value="adoptive_brother">Adoptive brother</option><option value="adoptive_sister">Adoptive sister</option></select></div></div>
+                                    <div class="question-block"><label class="question-label mandatory">Sibling's gender</label><div class="form-group" style="margin-bottom:0;"><select name="sibling_gender_0"><option value="">-- Select --</option><option value="M">Male</option><option value="F">Female</option><option value="X">Gender Diverse</option></select></div></div>
+                                    <div class="question-block"><label class="question-label">Sibling's date of birth</label><div class="date-picker-wrapper"><input type="date" name="sibling_dob_0"></div><div style="margin-top:8px;"><label><input type="checkbox" name="sibling_dob_unknown_0"> Date of birth unknown</label></div></div>
+                                    <div class="question-block"><label class="question-label">Sibling's relationship status</label><div class="form-group" style="margin-bottom:0;"><select name="sibling_rel_status_0"><option value="">-- Select --</option><option value="single">Single</option><option value="married">Married / in civil union</option><option value="partner">Partner / de facto</option><option value="engaged">Engaged</option><option value="separated">Separated</option><option value="divorced">Divorced</option><option value="widowed">Widowed</option></select></div></div>
+                                    <div class="question-block"><label class="question-label">Sibling's country or territory of birth</label><div class="autocomplete-wrapper"><input type="text" id="sibling_birth_country_0" name="sibling_birth_country_0" placeholder="Start typing and select a country from the list..." autocomplete="off"><div class="autocomplete-list" id="siblingBirthCountryList_0"></div></div></div>
+                                    <div class="question-block"><label class="question-label">Sibling's citizenship</label><div class="autocomplete-wrapper"><input type="text" id="sibling_citizenship_0" name="sibling_citizenship_0" placeholder="Start typing and select a country of citizenship from the list..." autocomplete="off"><div class="autocomplete-list" id="siblingCitizenList_0"></div></div></div>
+                                    <div class="question-block"><label class="question-label">Sibling's country or territory of residence</label><div class="autocomplete-wrapper"><input type="text" id="sibling_residence_0" name="sibling_residence_0" placeholder="Start typing and select a country from the list..." autocomplete="off"><div class="autocomplete-list" id="siblingResList_0"></div></div></div>
+                                    <div class="question-block" style="margin-bottom:0;"><label class="question-label">Sibling's occupation</label><p class="help-text">If this person is not working, enter 'Not employed'.</p><div class="form-group" style="margin-bottom:0;"><input type="text" name="sibling_occupation_0"></div></div>
+                                </div>
+                            </div>
+                            <button type="button" class="add-btn" onclick="addSiblingEntry()">+ ADD ANOTHER SIBLING</button>
+                        </div>
+                    </div>
+
+                    <!-- New Zealand contacts -->
+                    <div class="form-card">
+                        <h3>New Zealand contacts</h3>
+                        <div class="question-block" data-required="true"><label class="question-label mandatory">Do you have any contacts in New Zealand?</label><div class="radio-group" id="s8NzContactRadio" style="margin-top:8px;"><div class="radio-item"><input type="radio" id="nzContactYes" name="nz_contacts" value="yes"><label for="nzContactYes">Yes</label></div><div class="radio-item"><input type="radio" id="nzContactNo" name="nz_contacts" value="no"><label for="nzContactNo">No</label></div></div><div class="field-error-msg" id="nzContactError">Please select an option</div></div>
+                        <div class="conditional-group" id="nzContactFields">
+                            <p style="font-weight:600;margin-bottom:5px;color:var(--primary-color);">Provide the name, address and contact details of any friends, relatives or contacts you have in New Zealand</p>
+                            <p class="help-text" style="margin-bottom:20px;">It is not necessary to list all acquaintances. Contacts could include close friends and family.</p>
+                            <div class="repeater-container" id="nzContactRepeater">
+                                <div class="repeater-item" data-index="0">
+                                    <div class="question-block"><label class="question-label mandatory">Contact's given or first name</label><div class="form-group" style="margin-bottom:0;"><input type="text" name="contact_given_0" maxlength="30"></div></div>
+                                    <div class="question-block"><label class="question-label">Contact's middle names</label><div class="form-group" style="margin-bottom:0;"><input type="text" name="contact_middle_0" maxlength="30"></div></div>
+                                    <div class="question-block"><label class="question-label mandatory">Contact's surname or family name</label><div class="form-group" style="margin-bottom:0;"><input type="text" name="contact_surname_0" maxlength="50"></div></div>
+                                    <div class="question-block"><label class="question-label mandatory">Contact's relationship to you</label><div class="form-group" style="margin-bottom:0;"><select name="contact_relationship_0"><option value="">-- Select --</option><option value="family">Family</option><option value="friend">Friend</option><option value="other">Other</option></select></div></div>
+                                    <div class="question-block"><label class="question-label">Contact's date of birth</label><div class="date-picker-wrapper"><input type="date" name="contact_dob_0"></div></div>
+                                    <div class="question-block"><label class="question-label">Enter their address</label><div class="form-group" style="margin-bottom:0;"><input type="text" name="contact_address_0" placeholder="Start typing and select the complete address from the list. Select 'Enter manually...' if not found"></div></div>
+                                    <div class="question-block"><label class="question-label">Enter their contact number</label><p class="help-text">Enter country code, area code and phone number separated by spaces e.g. +64 123 9876544</p><div class="form-group" style="margin-bottom:0;"><input type="tel" name="contact_phone_0" maxlength="16"></div></div>
+                                    <div class="question-block" style="margin-bottom:0;"><label class="question-label">Enter their email address</label><div class="form-group" style="margin-bottom:0;"><input type="email" name="contact_email_0"></div></div>
+                                </div>
+                            </div>
+                            <button type="button" class="add-btn" onclick="addNzContactEntry()">+ ADD ANOTHER CONTACT</button>
+                        </div>
+                    </div>
+
+                    <div class="form-buttons-bottom">
+                        <button type="button" class="btn-back" onclick="handleBack()">Back</button>
+                        <button type="button" class="btn-save-exit" onclick="handleSaveAndExit()">Save and Exit</button>
+                        <button type="button" class="btn-save-continue" onclick="handleSaveAndContinue()">Save and Continue</button>
+                    </div>
+                </div>
+
+                <div class="form-section" data-stage="9">
+                    <h2 class="section-title">Background details</h2>
+                    <div class="section-description">We use the information you enter in this section to check that you meet the character requirements and genuinely intend to stay temporarily and for a lawful purpose.</div>
+
+                    <!-- Cultural positions -->
+                    <div class="form-card">
+                        <h3>Cultural positions</h3>
+                        <div class="question-block" data-required="true"><label class="question-label mandatory">Have you ever held any religious or cultural position in your community?</label><div class="radio-group" id="s9CulturalRadio" style="margin-top:8px;"><div class="radio-item"><input type="radio" id="culturalYes" name="cultural_position" value="yes"><label for="culturalYes">Yes</label></div><div class="radio-item"><input type="radio" id="culturalNo" name="cultural_position" value="no"><label for="culturalNo">No</label></div></div><div class="field-error-msg" id="culturalError">Please select an option</div></div>
+                        <div class="conditional-group" id="culturalFields">
+                            <p style="font-weight:600;margin-bottom:20px;color:var(--primary-color);">Provide details of all your religious or cultural positions</p>
+                            <div class="repeater-container" id="culturalRepeater">
+                                <div class="repeater-item" data-index="0">
+                                    <div class="question-block"><label class="question-label mandatory">Title of position</label><div class="form-group" style="margin-bottom:0;"><input type="text" name="cultural_title_0"></div></div>
+                                    <div class="question-block"><label class="question-label mandatory">Organisation</label><div class="form-group" style="margin-bottom:0;"><input type="text" name="cultural_org_0"></div></div>
+                                    <div class="question-block"><label class="question-label mandatory">Country or territory</label><div class="autocomplete-wrapper"><input type="text" id="cultural_country_0" name="cultural_country_0" placeholder="Start typing and select a country from the list..." autocomplete="off"><div class="autocomplete-list" id="culturalCountryList_0"></div></div></div>
+                                    <div class="question-block" style="margin-bottom:0;"><label class="question-label">Town or city</label><div class="form-group" style="margin-bottom:0;"><input type="text" name="cultural_city_0"></div></div>
+                                </div>
+                            </div>
+                            <button type="button" class="add-btn" onclick="addBgRepeater('culturalRepeater','cultural',['Title of position','Organisation'],['Country or territory'],['Town or city'])">+ ADD ANOTHER POSITION</button>
+                        </div>
+                    </div>
+
+                    <!-- Political appointments -->
+                    <div class="form-card">
+                        <h3>Political appointments</h3>
+                        <div class="question-block" data-required="true"><label class="question-label mandatory">Have you ever been employed in a position where the appointment to that role was made by an elected representative or political figure?</label><div class="radio-group" id="s9PoliticalApptRadio" style="margin-top:8px;"><div class="radio-item"><input type="radio" id="polApptYes" name="political_appointment" value="yes"><label for="polApptYes">Yes</label></div><div class="radio-item"><input type="radio" id="polApptNo" name="political_appointment" value="no"><label for="polApptNo">No</label></div></div><div class="field-error-msg" id="polApptError">Please select an option</div></div>
+                        <div class="conditional-group" id="polApptFields">
+                            <p style="font-weight:600;margin-bottom:20px;color:var(--primary-color);">Provide details of all your appointed positions</p>
+                            <div class="repeater-container" id="polApptRepeater">
+                                <div class="repeater-item" data-index="0">
+                                    <div class="question-block"><label class="question-label mandatory">Position</label><p class="help-text">If you can't find your role try entering your industry and locate an 'nec' (not elsewhere classified) option.</p><div class="form-group" style="margin-bottom:0;"><input type="text" name="polappt_position_0" placeholder="Start typing and select a position from the list..."></div></div>
+                                    <div class="question-block"><label class="question-label mandatory">Provide details about the appointment</label><div class="form-group" style="margin-bottom:0;"><textarea name="polappt_details_0" maxlength="1000"></textarea></div></div>
+                                    <div class="question-block"><label class="question-label mandatory">Name of the person who appointed you</label><div class="form-group" style="margin-bottom:0;"><input type="text" name="polappt_appointee_0"></div></div>
+                                    <div class="question-block" style="margin-bottom:0;"><label class="question-label mandatory">Position of the person who appointed you</label><div class="form-group" style="margin-bottom:0;"><input type="text" name="polappt_appointee_pos_0"></div></div>
+                                </div>
+                            </div>
+                            <button type="button" class="add-btn" onclick="addPolApptEntry()">+ ADD ANOTHER POSITION</button>
+                        </div>
+                    </div>
+
+                    <!-- Political associations -->
+                    <div class="form-card">
+                        <h3>Political associations</h3>
+                        <div class="question-block" data-required="true"><label class="question-label mandatory">Have you ever supported, been a member of, or otherwise been associated with any political party, group or organisation in any country?</label><div class="radio-group" id="s9PolAssocRadio" style="margin-top:8px;"><div class="radio-item"><input type="radio" id="polAssocYes" name="political_association" value="yes"><label for="polAssocYes">Yes</label></div><div class="radio-item"><input type="radio" id="polAssocNo" name="political_association" value="no"><label for="polAssocNo">No</label></div></div><div class="field-error-msg" id="polAssocError">Please select an option</div></div>
+                        <div class="conditional-group" id="polAssocFields">
+                            <p style="font-weight:600;margin-bottom:20px;color:var(--primary-color);">Provide details of your political associations</p>
+                            <div class="repeater-container" id="polAssocRepeater">
+                                <div class="repeater-item" data-index="0">
+                                    <div class="question-block"><label class="question-label mandatory">Start date of association</label><p class="help-text">Enter month and year</p><div class="monthyear-wrapper"><input type="month" name="polassoc_start_0"></div></div>
+                                    <div class="question-block"><label class="question-label">End date of association</label><p class="help-text">Enter month and year</p><div class="monthyear-wrapper"><input type="month" name="polassoc_end_0"></div></div>
+                                    <div class="question-block"><label class="question-label mandatory">Name of party, group or organisation</label><div class="form-group" style="margin-bottom:0;"><input type="text" name="polassoc_name_0"></div></div>
+                                    <div class="question-block"><label class="question-label mandatory">Country or territory</label><div class="autocomplete-wrapper"><input type="text" id="polassoc_country_0" name="polassoc_country_0" placeholder="Start typing and select a country from the list..." autocomplete="off"><div class="autocomplete-list" id="polassocCountryList_0"></div></div></div>
+                                    <div class="question-block"><label class="question-label">Your rank or position</label><div class="form-group" style="margin-bottom:0;"><input type="text" name="polassoc_rank_0"></div></div>
+                                    <div class="question-block" style="margin-bottom:0;"><label class="question-label">Description of your duties</label><div class="form-group" style="margin-bottom:0;"><textarea name="polassoc_duties_0" maxlength="1000"></textarea></div></div>
+                                </div>
+                            </div>
+                            <button type="button" class="add-btn" onclick="addPolAssocEntry()">+ ADD ANOTHER POLITICAL ASSOCIATION</button>
+                        </div>
+                    </div>
+
+                    <!-- Other associations -->
+                    <div class="form-card">
+                        <h3>Other associations</h3>
+                        <div class="question-block" data-required="true"><label class="question-label mandatory">Have you been associated with any intelligence agency or group, or law enforcement agency?</label><div class="radio-group" style="margin-top:8px;"><div class="radio-item"><input type="radio" id="intelYes" name="intelligence_assoc" value="yes"><label for="intelYes">Yes</label></div><div class="radio-item"><input type="radio" id="intelNo" name="intelligence_assoc" value="no"><label for="intelNo">No</label></div></div><div class="field-error-msg" id="intelError">Please select an option</div></div>
+                        <div class="conditional-group" id="intelFields"><div class="question-block" style="margin-bottom:0;"><label class="question-label mandatory">Provide details of association</label><div class="form-group" style="margin-bottom:0;"><textarea name="intelligence_details" maxlength="1000"></textarea></div></div></div>
+
+                        <div class="question-block" data-required="true"><label class="question-label mandatory">Have you ever witnessed or participated in the ill-treatment of prisoners and civilians?</label><div class="radio-group" style="margin-top:8px;"><div class="radio-item"><input type="radio" id="illtreatYes" name="ill_treatment" value="yes"><label for="illtreatYes">Yes</label></div><div class="radio-item"><input type="radio" id="illtreatNo" name="ill_treatment" value="no"><label for="illtreatNo">No</label></div></div><div class="field-error-msg" id="illtreatError">Please select an option</div></div>
+                        <div class="conditional-group" id="illtreatFields"><div class="question-block" style="margin-bottom:0;"><label class="question-label mandatory">Provide details including location and dates</label><div class="form-group" style="margin-bottom:0;"><textarea name="ill_treatment_details" maxlength="1000"></textarea></div></div></div>
+
+                        <div class="question-block" data-required="true"><label class="question-label mandatory">Have you ever been involved in an armed conflict in any country?</label><div class="radio-group" style="margin-top:8px;"><div class="radio-item"><input type="radio" id="armedYes" name="armed_conflict" value="yes"><label for="armedYes">Yes</label></div><div class="radio-item"><input type="radio" id="armedNo" name="armed_conflict" value="no"><label for="armedNo">No</label></div></div><div class="field-error-msg" id="armedError">Please select an option</div></div>
+                        <div class="conditional-group" id="armedFields"><div class="question-block" style="margin-bottom:0;"><label class="question-label mandatory">Provide details of the armed conflict and how you were involved</label><div class="form-group" style="margin-bottom:0;"><textarea name="armed_conflict_details" maxlength="1000"></textarea></div></div></div>
+
+                        <div class="question-block" data-required="true"><label class="question-label mandatory">Have you been associated with any group or organisation that has used or promoted violence or human rights abuses to further their aims?</label><div class="radio-group" style="margin-top:8px;"><div class="radio-item"><input type="radio" id="violenceYes" name="violence_assoc" value="yes"><label for="violenceYes">Yes</label></div><div class="radio-item"><input type="radio" id="violenceNo" name="violence_assoc" value="no"><label for="violenceNo">No</label></div></div><div class="field-error-msg" id="violenceError">Please select an option</div></div>
+                        <div class="conditional-group" id="violenceFields"><div class="question-block" style="margin-bottom:0;"><label class="question-label mandatory">Provide details of the group and your association</label><div class="form-group" style="margin-bottom:0;"><textarea name="violence_assoc_details" maxlength="1000"></textarea></div></div></div>
+
+                        <div class="question-block" data-required="true"><label class="question-label mandatory">Have you ever committed or been involved in war crimes, crimes against humanity, or human rights abuses?</label><div class="radio-group" style="margin-top:8px;"><div class="radio-item"><input type="radio" id="warCrimesYes" name="war_crimes" value="yes"><label for="warCrimesYes">Yes</label></div><div class="radio-item"><input type="radio" id="warCrimesNo" name="war_crimes" value="no"><label for="warCrimesNo">No</label></div></div><div class="field-error-msg" id="warCrimesError">Please select an option</div></div>
+                        <div class="conditional-group" id="warCrimesFields"><div class="question-block" style="margin-bottom:0;"><label class="question-label mandatory">Provide details of your involvement and crimes</label><div class="form-group" style="margin-bottom:0;"><textarea name="war_crimes_details" maxlength="1000"></textarea></div></div></div>
+                    </div>
+
+                    <!-- Militia associations -->
+                    <div class="form-card">
+                        <h3>Militia associations</h3>
+                        <div class="question-block" data-required="true"><label class="question-label mandatory">Have you ever been a member or supporter of a liberation group or militia group?</label><div class="radio-group" id="s9MilitiaRadio" style="margin-top:8px;"><div class="radio-item"><input type="radio" id="militiaYes" name="militia_assoc" value="yes"><label for="militiaYes">Yes</label></div><div class="radio-item"><input type="radio" id="militiaNo" name="militia_assoc" value="no"><label for="militiaNo">No</label></div></div><div class="field-error-msg" id="militiaError">Please select an option</div></div>
+                        <div class="conditional-group" id="militiaFields">
+                            <p style="font-weight:600;margin-bottom:20px;color:var(--primary-color);">Provide details of your role in liberation or militia groups</p>
+                            <div class="repeater-container" id="militiaRepeater">
+                                <div class="repeater-item" data-index="0">
+                                    <div class="question-block"><label class="question-label mandatory">Start date</label><p class="help-text">Enter month and year</p><div class="monthyear-wrapper"><input type="month" name="militia_start_0"></div></div>
+                                    <div class="question-block"><label class="question-label">End date</label><p class="help-text">Enter month and year</p><div class="monthyear-wrapper"><input type="month" name="militia_end_0"></div></div>
+                                    <div class="question-block"><label class="question-label mandatory">Country or territory</label><div class="autocomplete-wrapper"><input type="text" id="militia_country_0" name="militia_country_0" placeholder="Start typing and select a country from the list..." autocomplete="off"><div class="autocomplete-list" id="militiaCountryList_0"></div></div></div>
+                                    <div class="question-block"><label class="question-label">Town or city or base</label><div class="form-group" style="margin-bottom:0;"><input type="text" name="militia_city_0"></div></div>
+                                    <div class="question-block"><label class="question-label mandatory">Name of group</label><div class="form-group" style="margin-bottom:0;"><input type="text" name="militia_name_0"></div></div>
+                                    <div class="question-block" style="margin-bottom:0;"><label class="question-label mandatory">Provide details of your role in the group</label><div class="form-group" style="margin-bottom:0;"><textarea name="militia_role_0" maxlength="1000"></textarea></div></div>
+                                </div>
+                            </div>
+                            <button type="button" class="add-btn" onclick="addMilitiaEntry()">+ ADD ANOTHER GROUP</button>
+                        </div>
+                    </div>
+
+                    <!-- Detention information -->
+                    <div class="form-card">
+                        <h3>Detention information</h3>
+                        <div class="question-block" data-required="true"><label class="question-label mandatory">Have you ever been detained, imprisoned or otherwise held against your will at any time in any country?</label><div class="radio-group" id="s9DetentionRadio" style="margin-top:8px;"><div class="radio-item"><input type="radio" id="detentionYes" name="detention" value="yes"><label for="detentionYes">Yes</label></div><div class="radio-item"><input type="radio" id="detentionNo" name="detention" value="no"><label for="detentionNo">No</label></div></div><div class="field-error-msg" id="detentionError">Please select an option</div></div>
+                        <div class="conditional-group" id="detentionFields">
+                            <p style="font-weight:600;margin-bottom:20px;color:var(--primary-color);">Provide details of all periods of detention</p>
+                            <div class="repeater-container" id="detentionRepeater">
+                                <div class="repeater-item" data-index="0">
+                                    <div class="question-block"><label class="question-label mandatory">Start date</label><p class="help-text">Enter month and year</p><div class="monthyear-wrapper"><input type="month" name="detention_start_0"></div></div>
+                                    <div class="question-block"><label class="question-label">End date</label><p class="help-text">Enter month and year</p><div class="monthyear-wrapper"><input type="month" name="detention_end_0"></div></div>
+                                    <div class="question-block"><label class="question-label mandatory">Country or territory</label><div class="autocomplete-wrapper"><input type="text" id="detention_country_0" name="detention_country_0" placeholder="Start typing and select a country from the list..." autocomplete="off"><div class="autocomplete-list" id="detentionCountryList_0"></div></div></div>
+                                    <div class="question-block"><label class="question-label">Town or city</label><div class="form-group" style="margin-bottom:0;"><input type="text" name="detention_city_0"></div></div>
+                                    <div class="question-block" style="margin-bottom:0;"><label class="question-label mandatory">Provide details of your detention</label><div class="form-group" style="margin-bottom:0;"><textarea name="detention_details_0" maxlength="1000"></textarea></div></div>
+                                </div>
+                            </div>
+                            <button type="button" class="add-btn" onclick="addDetentionEntry()">+ ADD ANOTHER PERIOD OF DETENTION</button>
+                        </div>
+                    </div>
+
+                    <div class="form-buttons-bottom">
+                        <button type="button" class="btn-back" onclick="handleBack()">Back</button>
+                        <button type="button" class="btn-save-exit" onclick="handleSaveAndExit()">Save and Exit</button>
+                        <button type="button" class="btn-save-continue" onclick="handleSaveAndContinue()">Save and Continue</button>
+                    </div>
+                </div>
+
+                <div class="form-section" data-stage="10"><h2 class="section-title">Financial</h2><div class="section-description">This section will be implemented next.</div></div>
+                <div class="form-section" data-stage="11"><h2 class="section-title">Supporting Documents</h2><div class="section-description">This section will be implemented next.</div></div>
+                <div class="form-section" data-stage="12"><h2 class="section-title">Declaration</h2><div class="section-description">This section will be implemented next.</div></div>
+                <div class="form-section" data-stage="13"><h2 class="section-title">Review & Submit</h2><div class="section-description">This section will be implemented next.</div></div>
 
                 <!-- Success Section -->
                 <div class="form-section" data-stage="success">
@@ -2423,7 +2735,7 @@
            ============================================ */
 
         const FORM_CODE = 'INZ_1012';
-        const TOTAL_STAGES = 11;
+        const TOTAL_STAGES = 13;
 
         // ⚠️ DEV MODE: Set to true to unlock all stage tabs for click-navigation during testing.
         // All validations (Save and Continue, sub-section nav) still fire normally.
@@ -2496,6 +2808,28 @@
             setupAutocomplete('currentWorkOrgCountry', 'currentWorkOrgCountryList');
             setupAutocomplete('prev_work_country_0', 'prevWorkCountryList_0');
             setupAutocomplete('prev_work_org_country_0', 'prevWorkOrgCountryList_0');
+            // Stage 8 - Relationships
+            setupAutocomplete('partnerBirthCountry', 'partnerBirthCountryList');
+            setupAutocomplete('partnerNationality', 'partnerNationalityList');
+            setupAutocomplete('partnerResidence', 'partnerResidenceList');
+            setupAutocomplete('partnerPassportCountry', 'partnerPassportCountryList');
+            setupAutocomplete('fpartner_birth_country_0', 'fpartnerBirthCountryList_0');
+            setupAutocomplete('fpartner_citizenship_0', 'fpartnerCitizenList_0');
+            setupAutocomplete('fpartner_residence_0', 'fpartnerResList_0');
+            setupAutocomplete('child_birth_country_0', 'childBirthCountryList_0');
+            setupAutocomplete('child_citizenship_0', 'childCitizenList_0');
+            setupAutocomplete('child_residence_0', 'childResList_0');
+            setupAutocomplete('parent_birth_country_0', 'parentBirthCountryList_0');
+            setupAutocomplete('parent_citizenship_0', 'parentCitizenList_0');
+            setupAutocomplete('parent_residence_0', 'parentResList_0');
+            setupAutocomplete('sibling_birth_country_0', 'siblingBirthCountryList_0');
+            setupAutocomplete('sibling_citizenship_0', 'siblingCitizenList_0');
+            setupAutocomplete('sibling_residence_0', 'siblingResList_0');
+            // Stage 9 - Background details
+            setupAutocomplete('cultural_country_0', 'culturalCountryList_0');
+            setupAutocomplete('polassoc_country_0', 'polassocCountryList_0');
+            setupAutocomplete('militia_country_0', 'militiaCountryList_0');
+            setupAutocomplete('detention_country_0', 'detentionCountryList_0');
 
             // Photo upload handler
             setupPhotoUpload();
@@ -2586,6 +2920,18 @@
                 'yes': ['multiYearFields'],
                 'no': []
             });
+
+            // ===== STAGE 9 CONDITIONALS =====
+            setupRadioConditional('cultural_position', { 'yes': ['culturalFields'], 'no': [] });
+            setupRadioConditional('political_appointment', { 'yes': ['polApptFields'], 'no': [] });
+            setupRadioConditional('political_association', { 'yes': ['polAssocFields'], 'no': [] });
+            setupRadioConditional('intelligence_assoc', { 'yes': ['intelFields'], 'no': [] });
+            setupRadioConditional('ill_treatment', { 'yes': ['illtreatFields'], 'no': [] });
+            setupRadioConditional('armed_conflict', { 'yes': ['armedFields'], 'no': [] });
+            setupRadioConditional('violence_assoc', { 'yes': ['violenceFields'], 'no': [] });
+            setupRadioConditional('war_crimes', { 'yes': ['warCrimesFields'], 'no': [] });
+            setupRadioConditional('militia_assoc', { 'yes': ['militiaFields'], 'no': [] });
+            setupRadioConditional('detention', { 'yes': ['detentionFields'], 'no': [] });
 
             // PhD level dropdown → show PhD details / Study Abroad / course note
             const phdSelect = document.getElementById('phdLevelSelect');
@@ -2714,6 +3060,35 @@
             setupRadioConditional('currently_working', { 'yes': ['currentWorkFields'], 'no': [] });
             setupRadioConditional('previous_employment', { 'yes': ['prevWorkFields'], 'no': [] });
             setupRadioConditional('unemployed_periods', { 'yes': ['unemployedFields'], 'no': [] });
+
+            // ===== STAGE 8 CONDITIONALS =====
+            setupRadioConditional('partner_passport', { 'yes': ['partnerPassportFields'], 'no': [] });
+            setupRadioConditional('former_partners', { 'yes': ['formerPartnerFields'], 'no': [] });
+            setupRadioConditional('has_children', { 'yes': ['childrenFields'], 'no': [] });
+            setupRadioConditional('has_siblings', { 'yes': ['siblingsFields'], 'no': [] });
+            setupRadioConditional('nz_contacts', { 'yes': ['nzContactFields'], 'no': [] });
+
+            // Partnership status → show current partner section for married/partner/engaged
+            const partnershipSelect = document.getElementById('partnershipStatus');
+            if (partnershipSelect) {
+                partnershipSelect.addEventListener('change', function() {
+                    const cp = document.getElementById('currentPartnerSection');
+                    const fpw = document.getElementById('formerPartnerWarning');
+                    const showPartner = ['married','partner','engaged'].includes(this.value);
+                    const showWarning = ['divorced','separated','widowed'].includes(this.value);
+                    cp.classList.toggle('visible', showPartner);
+                    // Show warning for divorced/separated/widowed when former_partners=no
+                    function updateFPWarning() {
+                        const fp = document.querySelector('input[name="former_partners"]:checked');
+                        fpw.classList.toggle('visible', showWarning && fp && fp.value === 'no');
+                    }
+                    updateFPWarning();
+                    document.querySelectorAll('input[name="former_partners"]').forEach(r => {
+                        r.removeEventListener('change', updateFPWarning);
+                        r.addEventListener('change', updateFPWarning);
+                    });
+                });
+            }
 
             // Medical examinations: eMedical ref shows when prev=yes OR this=yes
             // prevMedFollowUp (chest xray + deteriorated) shows when prev=yes
@@ -3495,6 +3870,92 @@
             return isValid;
         }
 
+        /* ============================================
+           STAGE 8 VALIDATION
+           ============================================ */
+        function validateStage8() {
+            const stage = document.querySelector('.form-section[data-stage="8"]');
+            if (!stage) return true;
+            let isValid = true;
+            let firstErrorEl = null;
+            stage.querySelectorAll('.radio-group.has-error').forEach(el => el.classList.remove('has-error'));
+            stage.querySelectorAll('.field-error-msg.show').forEach(el => el.classList.remove('show'));
+            stage.querySelectorAll('input.error, select.error').forEach(el => el.classList.remove('error'));
+            stage.querySelectorAll('.form-group.has-error').forEach(el => el.classList.remove('has-error'));
+
+            function valR(name, errId) {
+                const first = stage.querySelector(`input[name="${name}"]`);
+                if (!first) return;
+                const cond = first.closest('.conditional-group');
+                if (cond && !cond.classList.contains('visible')) return;
+                if (!stage.querySelector(`input[name="${name}"]:checked`)) {
+                    isValid = false;
+                    const g = first.closest('.radio-group');
+                    if (g) g.classList.add('has-error');
+                    const e = document.getElementById(errId);
+                    if (e) e.classList.add('show');
+                    if (!firstErrorEl) firstErrorEl = g;
+                }
+            }
+
+            function valF(id) {
+                const field = document.getElementById(id);
+                if (!field) return;
+                const cond = field.closest('.conditional-group');
+                if (cond && !cond.classList.contains('visible')) return;
+                if (!field.value.trim()) {
+                    isValid = false;
+                    field.classList.add('error');
+                    const fg = field.closest('.form-group');
+                    if (fg) fg.classList.add('has-error');
+                    if (!firstErrorEl) firstErrorEl = field;
+                }
+            }
+
+            valF('partnershipStatus');
+            valR('former_partners', 'formerPartnerError');
+            valR('has_children', 'childrenError');
+            valR('has_siblings', 'siblingsError');
+            valR('nz_contacts', 'nzContactError');
+
+            if (firstErrorEl) {
+                firstErrorEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+            return isValid;
+        }
+
+        function validateStage9() {
+            const stage = document.querySelector('.form-section[data-stage="9"]');
+            if (!stage) return true;
+            let isValid = true; let firstErrorEl = null;
+            stage.querySelectorAll('.radio-group.has-error').forEach(el => el.classList.remove('has-error'));
+            stage.querySelectorAll('.field-error-msg.show').forEach(el => el.classList.remove('show'));
+            function valR(name, errId) {
+                const first = stage.querySelector(`input[name="${name}"]`);
+                if (!first) return;
+                const cond = first.closest('.conditional-group');
+                if (cond && !cond.classList.contains('visible')) return;
+                if (!stage.querySelector(`input[name="${name}"]:checked`)) {
+                    isValid = false;
+                    const g = first.closest('.radio-group'); if (g) g.classList.add('has-error');
+                    const e = document.getElementById(errId); if (e) e.classList.add('show');
+                    if (!firstErrorEl) firstErrorEl = g;
+                }
+            }
+            valR('cultural_position', 'culturalError');
+            valR('political_appointment', 'polApptError');
+            valR('political_association', 'polAssocError');
+            valR('intelligence_assoc', 'intelError');
+            valR('ill_treatment', 'illtreatError');
+            valR('armed_conflict', 'armedError');
+            valR('violence_assoc', 'violenceError');
+            valR('war_crimes', 'warCrimesError');
+            valR('militia_assoc', 'militiaError');
+            valR('detention', 'detentionError');
+            if (firstErrorEl) firstErrorEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            return isValid;
+        }
+
         function navigateSubSection(targetName) {
             const targetIndex = subSectionOrder.indexOf(targetName);
             const currentIndex = subSectionOrder.indexOf(currentSubSection);
@@ -3620,6 +4081,18 @@
                 markStageCompleted(7);
                 unlockStage(8);
                 navigateToStage(8);
+            } else if (currentStage === 8) {
+                if (!validateStage8()) return;
+                FormUtils.saveDraft(FORM_CODE, form);
+                markStageCompleted(8);
+                unlockStage(9);
+                navigateToStage(9);
+            } else if (currentStage === 9) {
+                if (!validateStage9()) return;
+                FormUtils.saveDraft(FORM_CODE, form);
+                markStageCompleted(9);
+                unlockStage(10);
+                navigateToStage(10);
             } else if (currentStage < TOTAL_STAGES) {
                 FormUtils.saveDraft(FORM_CODE, form);
                 markStageCompleted(currentStage);
@@ -3704,6 +4177,16 @@
         let s6EducationCount = 1;
         let s7PrevWorkCount = 1;
         let s7UnemployedCount = 1;
+        let s8FormerPartnerCount = 1;
+        let s8ChildCount = 1;
+        let s8ParentCount = 1;
+        let s8SiblingCount = 1;
+        let s8NzContactCount = 1;
+        let s9CulturalCount = 1;
+        let s9PolApptCount = 1;
+        let s9PolAssocCount = 1;
+        let s9MilitiaCount = 1;
+        let s9DetentionCount = 1;
 
         function addRepeaterItem(containerId, prefix) {
             const container = document.getElementById(containerId);
@@ -3894,7 +4377,202 @@
             container.appendChild(item);
         }
 
-        // Lived cert: Yes → show 36mo; No → show upload
+        // ===== STAGE 8: Relationship repeater functions =====
+        function updateFormerPartnerLabels(idx) {
+            const deceased = document.querySelector(`input[name="fpartner_deceased_${idx}"]:checked`);
+            const isDeceased = deceased && deceased.value === 'yes';
+            const relLabel = document.getElementById(`fpartnerRelLabel_${idx}`);
+            const birthLabel = document.getElementById(`fpartnerBirthLabel_${idx}`);
+            const citizenLabel = document.getElementById(`fpartnerCitizenLabel_${idx}`);
+            const resLabel = document.getElementById(`fpartnerResLabel_${idx}`);
+            const occLabel = document.getElementById(`fpartnerOccLabel_${idx}`);
+            if (relLabel) relLabel.textContent = isDeceased ? "Former partner's current relationship status (if known)" : "Former partner's current relationship status (if known)";
+            if (resLabel) resLabel.textContent = isDeceased ? "Former partner's last country or territory of residence" : "Former partner's country or territory of residence";
+            if (occLabel) occLabel.textContent = isDeceased ? "Former partner's last occupation (if known)" : "Former partner's occupation (if known)";
+        }
+
+        function updateParentLabels(idx) {
+            const deceased = document.querySelector(`input[name="parent_deceased_${idx}"]:checked`);
+            const isDeceased = deceased && deceased.value === 'yes';
+            const relLabel = document.getElementById(`parentRelLabel_${idx}`);
+            const resLabel = document.getElementById(`parentResLabel_${idx}`);
+            const occLabel = document.getElementById(`parentOccLabel_${idx}`);
+            if (relLabel) relLabel.textContent = isDeceased ? "Parent's relationship status" : "Parent's relationship status";
+            if (resLabel) resLabel.textContent = isDeceased ? "Parent's country or territory of last residence" : "Parent's country or territory of residence";
+            if (occLabel) occLabel.textContent = isDeceased ? "Parent's last occupation" : "Parent's occupation";
+        }
+
+        function addFormerPartnerEntry() {
+            const c = document.getElementById('formerPartnerRepeater');
+            const i = s8FormerPartnerCount++;
+            const item = document.createElement('div');
+            item.className = 'repeater-item'; item.dataset.index = i;
+            item.innerHTML = `<button type="button" class="remove-btn" onclick="this.closest('.repeater-item').remove()">✕ Remove</button>
+                <div class="question-block"><label class="question-label mandatory">Former partner's given or first name</label><div class="form-group" style="margin-bottom:0;"><input type="text" name="fpartner_given_${i}" maxlength="30"></div></div>
+                <div class="question-block"><label class="question-label">Former partner's middle names</label><div class="form-group" style="margin-bottom:0;"><input type="text" name="fpartner_middle_${i}" maxlength="30"></div></div>
+                <div class="question-block"><label class="question-label mandatory">Former partner's surname or family name</label><div class="form-group" style="margin-bottom:0;"><input type="text" name="fpartner_surname_${i}" maxlength="50"></div></div>
+                <div class="question-block"><label class="question-label mandatory">Relationship when together. They were my:</label><div class="form-group" style="margin-bottom:0;"><select name="fpartner_relationship_${i}"><option value="">-- Select --</option><option value="partner">Partner</option><option value="husband">Husband</option><option value="wife">Wife</option><option value="de_facto">Partner / de facto</option><option value="fiance">Fiancé / Fiancée</option></select></div></div>
+                <div class="question-block"><label class="question-label mandatory">Are they deceased?</label><div class="radio-group" style="margin-top:8px;"><div class="radio-item"><input type="radio" name="fpartner_deceased_${i}" value="yes" onchange="updateFormerPartnerLabels(${i})"><label>Yes</label></div><div class="radio-item"><input type="radio" name="fpartner_deceased_${i}" value="no" onchange="updateFormerPartnerLabels(${i})"><label>No</label></div></div></div>
+                <div class="question-block"><label class="question-label mandatory">Former partner's gender</label><div class="form-group" style="margin-bottom:0;"><select name="fpartner_gender_${i}"><option value="">-- Select --</option><option value="M">Male</option><option value="F">Female</option><option value="X">Gender Diverse</option></select></div></div>
+                <div class="question-block"><label class="question-label">Former partner's date of birth</label><div class="date-picker-wrapper"><input type="date" name="fpartner_dob_${i}"></div><div style="margin-top:8px;"><label><input type="checkbox" name="fpartner_dob_unknown_${i}"> Date of birth unknown</label></div></div>
+                <div class="question-block"><label class="question-label" id="fpartnerRelLabel_${i}">Former partner's current relationship status (if known)</label><div class="form-group" style="margin-bottom:0;"><select name="fpartner_rel_status_${i}"><option value="">-- Select --</option><option value="single">Single</option><option value="married">Married / in civil union</option><option value="partner">Partner / de facto</option><option value="engaged">Engaged</option><option value="separated">Separated</option><option value="divorced">Divorced</option><option value="widowed">Widowed</option></select></div></div>
+                <div class="question-block"><label class="question-label" id="fpartnerBirthLabel_${i}">Former partner's country or territory of birth</label><div class="autocomplete-wrapper"><input type="text" id="fpartner_birth_country_${i}" name="fpartner_birth_country_${i}" placeholder="Start typing..." autocomplete="off"><div class="autocomplete-list" id="fpartnerBirthCountryList_${i}"></div></div></div>
+                <div class="question-block"><label class="question-label" id="fpartnerCitizenLabel_${i}">Former partner's citizenship</label><div class="autocomplete-wrapper"><input type="text" id="fpartner_citizenship_${i}" name="fpartner_citizenship_${i}" placeholder="Start typing..." autocomplete="off"><div class="autocomplete-list" id="fpartnerCitizenList_${i}"></div></div></div>
+                <div class="question-block"><label class="question-label" id="fpartnerResLabel_${i}">Former partner's last country or territory of residence</label><div class="autocomplete-wrapper"><input type="text" id="fpartner_residence_${i}" name="fpartner_residence_${i}" placeholder="Start typing..." autocomplete="off"><div class="autocomplete-list" id="fpartnerResList_${i}"></div></div></div>
+                <div class="question-block" style="margin-bottom:0;"><label class="question-label" id="fpartnerOccLabel_${i}">Former partner's last occupation (if known)</label><div class="form-group" style="margin-bottom:0;"><input type="text" name="fpartner_occupation_${i}"></div></div>`;
+            c.appendChild(item);
+            ['fpartner_birth_country_','fpartner_citizenship_','fpartner_residence_'].forEach(p => setupAutocomplete(p+i, p.replace('fpartner_','fpartner').replace(/_$/,'')+'List_'+i));
+            setupAutocomplete(`fpartner_birth_country_${i}`, `fpartnerBirthCountryList_${i}`);
+            setupAutocomplete(`fpartner_citizenship_${i}`, `fpartnerCitizenList_${i}`);
+            setupAutocomplete(`fpartner_residence_${i}`, `fpartnerResList_${i}`);
+        }
+
+        function addChildEntry() {
+            const c = document.getElementById('childRepeater');
+            const i = s8ChildCount++;
+            const item = document.createElement('div');
+            item.className = 'repeater-item'; item.dataset.index = i;
+            item.innerHTML = `<button type="button" class="remove-btn" onclick="this.closest('.repeater-item').remove()">✕ Remove</button>
+                <div class="question-block"><label class="question-label mandatory">Child's given or first name</label><div class="form-group" style="margin-bottom:0;"><input type="text" name="child_given_${i}" maxlength="30"></div></div>
+                <div class="question-block"><label class="question-label">Child's middle names</label><div class="form-group" style="margin-bottom:0;"><input type="text" name="child_middle_${i}" maxlength="30"></div></div>
+                <div class="question-block"><label class="question-label mandatory">Child's surname or family name</label><div class="form-group" style="margin-bottom:0;"><input type="text" name="child_surname_${i}" maxlength="50"></div></div>
+                <div class="question-block"><label class="question-label mandatory">Child's relationship to you. They are my:</label><div class="form-group" style="margin-bottom:0;"><select name="child_relationship_${i}"><option value="">-- Select --</option><option value="son">Son</option><option value="daughter">Daughter</option><option value="step_son">Step son</option><option value="step_daughter">Step daughter</option><option value="adopted_son">Adopted son</option><option value="adopted_daughter">Adopted daughter</option><option value="legal_guardianship">Child under legal guardianship</option></select></div></div>
+                <div class="question-block"><label class="question-label mandatory">Child's gender</label><div class="form-group" style="margin-bottom:0;"><select name="child_gender_${i}"><option value="">-- Select --</option><option value="M">Male</option><option value="F">Female</option><option value="X">Gender Diverse</option></select></div></div>
+                <div class="question-block"><label class="question-label">Child's date of birth</label><div class="date-picker-wrapper"><input type="date" name="child_dob_${i}"></div><div style="margin-top:8px;"><label><input type="checkbox" name="child_dob_unknown_${i}"> Date of birth unknown</label></div></div>
+                <div class="question-block"><label class="question-label">Child's partnership status</label><div class="form-group" style="margin-bottom:0;"><select name="child_partnership_${i}"><option value="">-- Select --</option><option value="single">Single</option><option value="married">Married / in civil union</option><option value="partner">Partner / de facto</option><option value="engaged">Engaged</option><option value="separated">Separated</option><option value="divorced">Divorced</option><option value="widowed">Widowed</option></select></div></div>
+                <div class="question-block"><label class="question-label">Child's country or territory of birth</label><div class="autocomplete-wrapper"><input type="text" id="child_birth_country_${i}" name="child_birth_country_${i}" placeholder="Start typing..." autocomplete="off"><div class="autocomplete-list" id="childBirthCountryList_${i}"></div></div></div>
+                <div class="question-block"><label class="question-label">Child's citizenship</label><div class="autocomplete-wrapper"><input type="text" id="child_citizenship_${i}" name="child_citizenship_${i}" placeholder="Start typing..." autocomplete="off"><div class="autocomplete-list" id="childCitizenList_${i}"></div></div></div>
+                <div class="question-block"><label class="question-label">Child's country or territory of residence</label><div class="autocomplete-wrapper"><input type="text" id="child_residence_${i}" name="child_residence_${i}" placeholder="Start typing..." autocomplete="off"><div class="autocomplete-list" id="childResList_${i}"></div></div></div>
+                <div class="question-block" style="margin-bottom:0;"><label class="question-label">Child's occupation</label><div class="form-group" style="margin-bottom:0;"><input type="text" name="child_occupation_${i}"></div></div>`;
+            c.appendChild(item);
+            setupAutocomplete(`child_birth_country_${i}`, `childBirthCountryList_${i}`);
+            setupAutocomplete(`child_citizenship_${i}`, `childCitizenList_${i}`);
+            setupAutocomplete(`child_residence_${i}`, `childResList_${i}`);
+        }
+
+        function addParentEntry() {
+            const c = document.getElementById('parentRepeater');
+            const i = s8ParentCount++;
+            const item = document.createElement('div');
+            item.className = 'repeater-item'; item.dataset.index = i;
+            item.innerHTML = `<button type="button" class="remove-btn" onclick="this.closest('.repeater-item').remove()">✕ Remove</button>
+                <div class="question-block"><label class="question-label mandatory">Parent's given or first name</label><div class="form-group" style="margin-bottom:0;"><input type="text" name="parent_given_${i}" maxlength="30"></div></div>
+                <div class="question-block"><label class="question-label">Parent's middle names</label><div class="form-group" style="margin-bottom:0;"><input type="text" name="parent_middle_${i}" maxlength="30"></div></div>
+                <div class="question-block"><label class="question-label mandatory">Parent's surname or family name</label><div class="form-group" style="margin-bottom:0;"><input type="text" name="parent_surname_${i}" maxlength="50"></div></div>
+                <div class="question-block"><label class="question-label mandatory">Parent's relationship to you. They are my:</label><div class="form-group" style="margin-bottom:0;"><select name="parent_relationship_${i}"><option value="">-- Select --</option><option value="mother">Mother</option><option value="father">Father</option><option value="step_mother">Step mother</option><option value="step_father">Step father</option><option value="adoptive_mother">Adoptive mother</option><option value="adoptive_father">Adoptive father</option><option value="legal_guardian">Legal guardian</option></select></div></div>
+                <div class="question-block"><label class="question-label mandatory">Are they deceased?</label><div class="radio-group" style="margin-top:8px;"><div class="radio-item"><input type="radio" name="parent_deceased_${i}" value="yes" onchange="updateParentLabels(${i})"><label>Yes</label></div><div class="radio-item"><input type="radio" name="parent_deceased_${i}" value="no" onchange="updateParentLabels(${i})"><label>No</label></div></div></div>
+                <div class="question-block"><label class="question-label mandatory">Parent's gender</label><div class="form-group" style="margin-bottom:0;"><select name="parent_gender_${i}"><option value="">-- Select --</option><option value="M">Male</option><option value="F">Female</option><option value="X">Gender Diverse</option></select></div></div>
+                <div class="question-block"><label class="question-label">Parent's date of birth</label><div class="date-picker-wrapper"><input type="date" name="parent_dob_${i}"></div><div style="margin-top:8px;"><label><input type="checkbox" name="parent_dob_unknown_${i}"> Date of birth unknown</label></div></div>
+                <div class="question-block"><label class="question-label" id="parentRelLabel_${i}">Parent's relationship status</label><div class="form-group" style="margin-bottom:0;"><select name="parent_rel_status_${i}"><option value="">-- Select --</option><option value="single">Single</option><option value="married">Married / in civil union</option><option value="partner">Partner / de facto</option><option value="engaged">Engaged</option><option value="separated">Separated</option><option value="divorced">Divorced</option><option value="widowed">Widowed</option></select></div></div>
+                <div class="question-block"><label class="question-label" id="parentBirthLabel_${i}">Parent's country or territory of birth</label><div class="autocomplete-wrapper"><input type="text" id="parent_birth_country_${i}" name="parent_birth_country_${i}" placeholder="Start typing..." autocomplete="off"><div class="autocomplete-list" id="parentBirthCountryList_${i}"></div></div></div>
+                <div class="question-block"><label class="question-label" id="parentCitizenLabel_${i}">Parent's citizenship</label><div class="autocomplete-wrapper"><input type="text" id="parent_citizenship_${i}" name="parent_citizenship_${i}" placeholder="Start typing..." autocomplete="off"><div class="autocomplete-list" id="parentCitizenList_${i}"></div></div></div>
+                <div class="question-block"><label class="question-label" id="parentResLabel_${i}">Parent's country or territory of residence</label><div class="autocomplete-wrapper"><input type="text" id="parent_residence_${i}" name="parent_residence_${i}" placeholder="Start typing..." autocomplete="off"><div class="autocomplete-list" id="parentResList_${i}"></div></div></div>
+                <div class="question-block" style="margin-bottom:0;"><label class="question-label" id="parentOccLabel_${i}">Parent's occupation</label><div class="form-group" style="margin-bottom:0;"><input type="text" name="parent_occupation_${i}"></div></div>`;
+            c.appendChild(item);
+            setupAutocomplete(`parent_birth_country_${i}`, `parentBirthCountryList_${i}`);
+            setupAutocomplete(`parent_citizenship_${i}`, `parentCitizenList_${i}`);
+            setupAutocomplete(`parent_residence_${i}`, `parentResList_${i}`);
+        }
+
+        function addSiblingEntry() {
+            const c = document.getElementById('siblingRepeater');
+            const i = s8SiblingCount++;
+            const item = document.createElement('div');
+            item.className = 'repeater-item'; item.dataset.index = i;
+            item.innerHTML = `<button type="button" class="remove-btn" onclick="this.closest('.repeater-item').remove()">✕ Remove</button>
+                <div class="question-block"><label class="question-label mandatory">Sibling's given or first name</label><div class="form-group" style="margin-bottom:0;"><input type="text" name="sibling_given_${i}" maxlength="30"></div></div>
+                <div class="question-block"><label class="question-label">Sibling's middle names</label><div class="form-group" style="margin-bottom:0;"><input type="text" name="sibling_middle_${i}" maxlength="30"></div></div>
+                <div class="question-block"><label class="question-label mandatory">Sibling's surname or family name</label><div class="form-group" style="margin-bottom:0;"><input type="text" name="sibling_surname_${i}" maxlength="50"></div></div>
+                <div class="question-block"><label class="question-label mandatory">Sibling's relationship to you. They are my:</label><div class="form-group" style="margin-bottom:0;"><select name="sibling_relationship_${i}"><option value="">-- Select --</option><option value="brother">Brother</option><option value="sister">Sister</option><option value="half_brother">Half brother</option><option value="half_sister">Half sister</option><option value="step_brother">Step brother</option><option value="step_sister">Step sister</option><option value="adoptive_brother">Adoptive brother</option><option value="adoptive_sister">Adoptive sister</option></select></div></div>
+                <div class="question-block"><label class="question-label mandatory">Sibling's gender</label><div class="form-group" style="margin-bottom:0;"><select name="sibling_gender_${i}"><option value="">-- Select --</option><option value="M">Male</option><option value="F">Female</option><option value="X">Gender Diverse</option></select></div></div>
+                <div class="question-block"><label class="question-label">Sibling's date of birth</label><div class="date-picker-wrapper"><input type="date" name="sibling_dob_${i}"></div><div style="margin-top:8px;"><label><input type="checkbox" name="sibling_dob_unknown_${i}"> Date of birth unknown</label></div></div>
+                <div class="question-block"><label class="question-label">Sibling's relationship status</label><div class="form-group" style="margin-bottom:0;"><select name="sibling_rel_status_${i}"><option value="">-- Select --</option><option value="single">Single</option><option value="married">Married / in civil union</option><option value="partner">Partner / de facto</option><option value="engaged">Engaged</option><option value="separated">Separated</option><option value="divorced">Divorced</option><option value="widowed">Widowed</option></select></div></div>
+                <div class="question-block"><label class="question-label">Sibling's country or territory of birth</label><div class="autocomplete-wrapper"><input type="text" id="sibling_birth_country_${i}" name="sibling_birth_country_${i}" placeholder="Start typing..." autocomplete="off"><div class="autocomplete-list" id="siblingBirthCountryList_${i}"></div></div></div>
+                <div class="question-block"><label class="question-label">Sibling's citizenship</label><div class="autocomplete-wrapper"><input type="text" id="sibling_citizenship_${i}" name="sibling_citizenship_${i}" placeholder="Start typing..." autocomplete="off"><div class="autocomplete-list" id="siblingCitizenList_${i}"></div></div></div>
+                <div class="question-block"><label class="question-label">Sibling's country or territory of residence</label><div class="autocomplete-wrapper"><input type="text" id="sibling_residence_${i}" name="sibling_residence_${i}" placeholder="Start typing..." autocomplete="off"><div class="autocomplete-list" id="siblingResList_${i}"></div></div></div>
+                <div class="question-block" style="margin-bottom:0;"><label class="question-label">Sibling's occupation</label><div class="form-group" style="margin-bottom:0;"><input type="text" name="sibling_occupation_${i}"></div></div>`;
+            c.appendChild(item);
+            setupAutocomplete(`sibling_birth_country_${i}`, `siblingBirthCountryList_${i}`);
+            setupAutocomplete(`sibling_citizenship_${i}`, `siblingCitizenList_${i}`);
+            setupAutocomplete(`sibling_residence_${i}`, `siblingResList_${i}`);
+        }
+
+        function addNzContactEntry() {
+            const c = document.getElementById('nzContactRepeater');
+            const i = s8NzContactCount++;
+            const item = document.createElement('div');
+            item.className = 'repeater-item'; item.dataset.index = i;
+            item.innerHTML = `<button type="button" class="remove-btn" onclick="this.closest('.repeater-item').remove()">✕ Remove</button>
+                <div class="question-block"><label class="question-label mandatory">Contact's given or first name</label><div class="form-group" style="margin-bottom:0;"><input type="text" name="contact_given_${i}" maxlength="30"></div></div>
+                <div class="question-block"><label class="question-label">Contact's middle names</label><div class="form-group" style="margin-bottom:0;"><input type="text" name="contact_middle_${i}" maxlength="30"></div></div>
+                <div class="question-block"><label class="question-label mandatory">Contact's surname or family name</label><div class="form-group" style="margin-bottom:0;"><input type="text" name="contact_surname_${i}" maxlength="50"></div></div>
+                <div class="question-block"><label class="question-label mandatory">Contact's relationship to you</label><div class="form-group" style="margin-bottom:0;"><select name="contact_relationship_${i}"><option value="">-- Select --</option><option value="family">Family</option><option value="friend">Friend</option><option value="other">Other</option></select></div></div>
+                <div class="question-block"><label class="question-label">Contact's date of birth</label><div class="date-picker-wrapper"><input type="date" name="contact_dob_${i}"></div></div>
+                <div class="question-block"><label class="question-label">Enter their address</label><div class="form-group" style="margin-bottom:0;"><input type="text" name="contact_address_${i}" placeholder="Enter manually..."></div></div>
+                <div class="question-block"><label class="question-label">Enter their contact number</label><div class="form-group" style="margin-bottom:0;"><input type="tel" name="contact_phone_${i}" maxlength="16"></div></div>
+                <div class="question-block" style="margin-bottom:0;"><label class="question-label">Enter their email address</label><div class="form-group" style="margin-bottom:0;"><input type="email" name="contact_email_${i}"></div></div>`;
+            c.appendChild(item);
+        }
+
+        // ===== STAGE 9 REPEATER FUNCTIONS =====
+        function addPolApptEntry() {
+            const c = document.getElementById('polApptRepeater'); const i = s9PolApptCount++;
+            const item = document.createElement('div'); item.className = 'repeater-item'; item.dataset.index = i;
+            item.innerHTML = `<button type="button" class="remove-btn" onclick="this.closest('.repeater-item').remove()">✕ Remove</button>
+                <div class="question-block"><label class="question-label mandatory">Position</label><div class="form-group" style="margin-bottom:0;"><input type="text" name="polappt_position_${i}"></div></div>
+                <div class="question-block"><label class="question-label mandatory">Provide details about the appointment</label><div class="form-group" style="margin-bottom:0;"><textarea name="polappt_details_${i}" maxlength="1000"></textarea></div></div>
+                <div class="question-block"><label class="question-label mandatory">Name of the person who appointed you</label><div class="form-group" style="margin-bottom:0;"><input type="text" name="polappt_appointee_${i}"></div></div>
+                <div class="question-block" style="margin-bottom:0;"><label class="question-label mandatory">Position of the person who appointed you</label><div class="form-group" style="margin-bottom:0;"><input type="text" name="polappt_appointee_pos_${i}"></div></div>`;
+            c.appendChild(item);
+        }
+        function addPolAssocEntry() {
+            const c = document.getElementById('polAssocRepeater'); const i = s9PolAssocCount++;
+            const item = document.createElement('div'); item.className = 'repeater-item'; item.dataset.index = i;
+            item.innerHTML = `<button type="button" class="remove-btn" onclick="this.closest('.repeater-item').remove()">✕ Remove</button>
+                <div class="question-block"><label class="question-label mandatory">Start date of association</label><p class="help-text">Enter month and year</p><div class="monthyear-wrapper"><input type="month" name="polassoc_start_${i}"></div></div>
+                <div class="question-block"><label class="question-label">End date of association</label><p class="help-text">Enter month and year</p><div class="monthyear-wrapper"><input type="month" name="polassoc_end_${i}"></div></div>
+                <div class="question-block"><label class="question-label mandatory">Name of party, group or organisation</label><div class="form-group" style="margin-bottom:0;"><input type="text" name="polassoc_name_${i}"></div></div>
+                <div class="question-block"><label class="question-label mandatory">Country or territory</label><div class="autocomplete-wrapper"><input type="text" id="polassoc_country_${i}" name="polassoc_country_${i}" placeholder="Start typing..." autocomplete="off"><div class="autocomplete-list" id="polassocCountryList_${i}"></div></div></div>
+                <div class="question-block"><label class="question-label">Your rank or position</label><div class="form-group" style="margin-bottom:0;"><input type="text" name="polassoc_rank_${i}"></div></div>
+                <div class="question-block" style="margin-bottom:0;"><label class="question-label">Description of your duties</label><div class="form-group" style="margin-bottom:0;"><textarea name="polassoc_duties_${i}" maxlength="1000"></textarea></div></div>`;
+            c.appendChild(item); setupAutocomplete(`polassoc_country_${i}`, `polassocCountryList_${i}`);
+        }
+        function addMilitiaEntry() {
+            const c = document.getElementById('militiaRepeater'); const i = s9MilitiaCount++;
+            const item = document.createElement('div'); item.className = 'repeater-item'; item.dataset.index = i;
+            item.innerHTML = `<button type="button" class="remove-btn" onclick="this.closest('.repeater-item').remove()">✕ Remove</button>
+                <div class="question-block"><label class="question-label mandatory">Start date</label><p class="help-text">Enter month and year</p><div class="monthyear-wrapper"><input type="month" name="militia_start_${i}"></div></div>
+                <div class="question-block"><label class="question-label">End date</label><p class="help-text">Enter month and year</p><div class="monthyear-wrapper"><input type="month" name="militia_end_${i}"></div></div>
+                <div class="question-block"><label class="question-label mandatory">Country or territory</label><div class="autocomplete-wrapper"><input type="text" id="militia_country_${i}" name="militia_country_${i}" placeholder="Start typing..." autocomplete="off"><div class="autocomplete-list" id="militiaCountryList_${i}"></div></div></div>
+                <div class="question-block"><label class="question-label">Town or city or base</label><div class="form-group" style="margin-bottom:0;"><input type="text" name="militia_city_${i}"></div></div>
+                <div class="question-block"><label class="question-label mandatory">Name of group</label><div class="form-group" style="margin-bottom:0;"><input type="text" name="militia_name_${i}"></div></div>
+                <div class="question-block" style="margin-bottom:0;"><label class="question-label mandatory">Provide details of your role in the group</label><div class="form-group" style="margin-bottom:0;"><textarea name="militia_role_${i}" maxlength="1000"></textarea></div></div>`;
+            c.appendChild(item); setupAutocomplete(`militia_country_${i}`, `militiaCountryList_${i}`);
+        }
+        function addDetentionEntry() {
+            const c = document.getElementById('detentionRepeater'); const i = s9DetentionCount++;
+            const item = document.createElement('div'); item.className = 'repeater-item'; item.dataset.index = i;
+            item.innerHTML = `<button type="button" class="remove-btn" onclick="this.closest('.repeater-item').remove()">✕ Remove</button>
+                <div class="question-block"><label class="question-label mandatory">Start date</label><p class="help-text">Enter month and year</p><div class="monthyear-wrapper"><input type="month" name="detention_start_${i}"></div></div>
+                <div class="question-block"><label class="question-label">End date</label><p class="help-text">Enter month and year</p><div class="monthyear-wrapper"><input type="month" name="detention_end_${i}"></div></div>
+                <div class="question-block"><label class="question-label mandatory">Country or territory</label><div class="autocomplete-wrapper"><input type="text" id="detention_country_${i}" name="detention_country_${i}" placeholder="Start typing..." autocomplete="off"><div class="autocomplete-list" id="detentionCountryList_${i}"></div></div></div>
+                <div class="question-block"><label class="question-label">Town or city</label><div class="form-group" style="margin-bottom:0;"><input type="text" name="detention_city_${i}"></div></div>
+                <div class="question-block" style="margin-bottom:0;"><label class="question-label mandatory">Provide details of your detention</label><div class="form-group" style="margin-bottom:0;"><textarea name="detention_details_${i}" maxlength="1000"></textarea></div></div>`;
+            c.appendChild(item); setupAutocomplete(`detention_country_${i}`, `detentionCountryList_${i}`);
+        }
+        // Also need addBgRepeater for cultural positions (generic)
+        function addBgRepeater(containerId, prefix, textFields, countryFields, optFields) {
+            const c = document.getElementById(containerId);
+            const i = s9CulturalCount++;
+            const item = document.createElement('div'); item.className = 'repeater-item'; item.dataset.index = i;
+            let html = `<button type="button" class="remove-btn" onclick="this.closest('.repeater-item').remove()">✕ Remove</button>`;
+            textFields.forEach(label => { const n = `${prefix}_${label.toLowerCase().replace(/\s+/g,'_')}_${i}`; html += `<div class="question-block"><label class="question-label mandatory">${label}</label><div class="form-group" style="margin-bottom:0;"><input type="text" name="${n}"></div></div>`; });
+            countryFields.forEach(label => { html += `<div class="question-block"><label class="question-label mandatory">${label}</label><div class="autocomplete-wrapper"><input type="text" id="${prefix}_country_${i}" name="${prefix}_country_${i}" placeholder="Start typing..." autocomplete="off"><div class="autocomplete-list" id="${prefix}CountryList_${i}"></div></div></div>`; });
+            optFields.forEach(label => { const n = `${prefix}_${label.toLowerCase().replace(/\s+/g,'_')}_${i}`; html += `<div class="question-block" style="margin-bottom:0;"><label class="question-label">${label}</label><div class="form-group" style="margin-bottom:0;"><input type="text" name="${n}"></div></div>`; });
+            item.innerHTML = html;
+            c.appendChild(item); setupAutocomplete(`${prefix}_country_${i}`, `${prefix}CountryList_${i}`);
+        }
+
         function updateLivedCertVisibility(idx) {
             const cert = document.querySelector(`input[name="lived_police_cert_${idx}"]:checked`);
             const cert36El = document.getElementById(`livedCert36_${idx}`);
