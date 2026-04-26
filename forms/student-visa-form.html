@@ -614,7 +614,8 @@
         <!-- Stage Navigation (horizontal tabs) -->
         <div class="stage-nav" id="stageNav">
             <div class="stage-tabs">
-                <div class="stage-tab active unlocked" data-stage="1" onclick="navigateToStage(1)">Identity Details</div>
+                <div class="stage-tab active unlocked" data-stage="0" onclick="navigateToStage(0)">Advisor Assessment</div>
+                <div class="stage-tab" data-stage="1">Identity Details</div>
                 <div class="stage-tab" data-stage="2">Address and contact information</div>
                 <div class="stage-tab" data-stage="3">Eligibility</div>
                 <div class="stage-tab" data-stage="4">Character</div>
@@ -623,7 +624,6 @@
                 <div class="stage-tab" data-stage="7">Employment</div>
                 <div class="stage-tab" data-stage="8">Relationships</div>
                 <div class="stage-tab" data-stage="9">Background details</div>
-                <div class="stage-tab" data-stage="10">Financial</div>
                 <div class="stage-tab" data-stage="11">Supporting documents</div>
                 <div class="stage-tab" data-stage="12">Declaration</div>
                 <div class="stage-tab" data-stage="13">Review & Submit</div>
@@ -637,9 +637,193 @@
                 <input type="hidden" id="formToken" name="formToken" value="">
 
                 <!-- ============================================
+                     STAGE 0: ADVISOR ASSESSMENT (Admin Only)
+                     ============================================ -->
+                <div class="form-section" data-stage="0" id="advisorAssessmentStage">
+
+                    <h2 class="section-title">Advisor Assessment</h2>
+                    <div class="section-description">
+                        <strong>This section is completed by the immigration advisor only.</strong>
+                        Your answers here will determine which supporting documents the applicant needs to provide.
+                    </div>
+
+                    <!-- Q1: Visa Type -->
+                    <div class="question-block">
+                        <label class="question-label">1. What type of student visa is being applied for?</label>
+                        <div class="radio-group">
+                            <label class="radio-item"><input type="radio" name="adv_visa_type" value="fee_paying" required> Fee-paying student</label>
+                            <label class="radio-item"><input type="radio" name="adv_visa_type" value="exchange"> Exchange student</label>
+                            <label class="radio-item"><input type="radio" name="adv_visa_type" value="scholarship_nz_govt"> New Zealand Government Scholarship</label>
+                            <label class="radio-item"><input type="radio" name="adv_visa_type" value="scholarship_other"> Other Scholarship</label>
+                            <label class="radio-item"><input type="radio" name="adv_visa_type" value="dependent_child"> Dependent child of a student</label>
+                        </div>
+                    </div>
+
+                    <!-- Q2: Course Level -->
+                    <div class="question-block">
+                        <label class="question-label">2. What is the level of study?</label>
+                        <div class="radio-group">
+                            <label class="radio-item"><input type="radio" name="adv_course_level" value="primary_secondary" required> Primary or Secondary school</label>
+                            <label class="radio-item"><input type="radio" name="adv_course_level" value="english_language"> English Language</label>
+                            <label class="radio-item"><input type="radio" name="adv_course_level" value="certificate_diploma"> Certificate or Diploma (Level 1-6)</label>
+                            <label class="radio-item"><input type="radio" name="adv_course_level" value="bachelor"> Bachelor's Degree (Level 7)</label>
+                            <label class="radio-item"><input type="radio" name="adv_course_level" value="postgrad"> Postgraduate (Level 8-9)</label>
+                            <label class="radio-item"><input type="radio" name="adv_course_level" value="phd"> Doctoral / PhD (Level 10)</label>
+                        </div>
+                    </div>
+
+                    <!-- Q3: Course Duration -->
+                    <div class="question-block">
+                        <label class="question-label">3. What is the expected course duration?</label>
+                        <div class="radio-group">
+                            <label class="radio-item"><input type="radio" name="adv_course_duration" value="less_than_12_weeks" required> Less than 12 weeks</label>
+                            <label class="radio-item"><input type="radio" name="adv_course_duration" value="12_weeks_to_6_months"> 12 weeks to 6 months</label>
+                            <label class="radio-item"><input type="radio" name="adv_course_duration" value="6_to_12_months"> 6 to 12 months</label>
+                            <label class="radio-item"><input type="radio" name="adv_course_duration" value="1_to_2_years"> 1 to 2 years</label>
+                            <label class="radio-item"><input type="radio" name="adv_course_duration" value="more_than_2_years"> More than 2 years</label>
+                        </div>
+                    </div>
+
+                    <!-- Q4: Applicant Age -->
+                    <div class="question-block">
+                        <label class="question-label">4. Is the applicant under 18 years of age?</label>
+                        <div class="radio-group">
+                            <label class="radio-item"><input type="radio" name="adv_under_18" value="yes" required> Yes</label>
+                            <label class="radio-item"><input type="radio" name="adv_under_18" value="no"> No</label>
+                        </div>
+                    </div>
+
+                    <!-- Q5: First Visa or Renewal -->
+                    <div class="question-block">
+                        <label class="question-label">5. Is this a first-time student visa or a visa renewal?</label>
+                        <div class="radio-group">
+                            <label class="radio-item"><input type="radio" name="adv_visa_renewal" value="first_time" required> First-time application</label>
+                            <label class="radio-item"><input type="radio" name="adv_visa_renewal" value="renewal"> Renewal / Variation of conditions</label>
+                        </div>
+                    </div>
+
+                    <!-- Q6: Financial Evidence Required -->
+                    <div class="question-block">
+                        <label class="question-label">6. Which financial evidence documents should the applicant provide?</label>
+                        <p class="field-hint">Select all that apply.</p>
+                        <div class="checkbox-group">
+                            <label class="checkbox-item"><input type="checkbox" name="adv_fin_bank_statements" value="yes"> Bank statements (last 3 months)</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_fin_scholarship_letter" value="yes"> Scholarship confirmation letter</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_fin_sponsor_letter" value="yes"> Financial sponsor letter and evidence</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_fin_loan_approval" value="yes"> Student loan approval</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_fin_tuition_receipt" value="yes"> Tuition fee payment receipt</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_fin_accommodation_proof" value="yes"> Proof of accommodation arrangement</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_fin_funds_transfer" value="yes"> Evidence of funds transfer</label>
+                        </div>
+                    </div>
+
+                    <!-- Q7: Health Requirements -->
+                    <div class="question-block">
+                        <label class="question-label">7. Which health-related documents are required?</label>
+                        <p class="field-hint">Select all that apply.</p>
+                        <div class="checkbox-group">
+                            <label class="checkbox-item"><input type="checkbox" name="adv_health_general_cert" value="yes"> General medical certificate</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_health_xray" value="yes"> Chest X-ray certificate</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_health_insurance" value="yes"> Medical and travel insurance</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_health_specialist" value="yes"> Specialist medical report</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_health_vaccination" value="yes"> Vaccination records</label>
+                        </div>
+                    </div>
+
+                    <!-- Q8: Character Requirements -->
+                    <div class="question-block">
+                        <label class="question-label">8. Which character-related documents are required?</label>
+                        <p class="field-hint">Select all that apply.</p>
+                        <div class="checkbox-group">
+                            <label class="checkbox-item"><input type="checkbox" name="adv_char_police_cert" value="yes"> Police clearance certificate</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_char_police_cert_translation" value="yes"> Certified translation of police certificate</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_char_military_service" value="yes"> Military service records</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_char_court_records" value="yes"> Court records or declarations</label>
+                        </div>
+                    </div>
+
+                    <!-- Q9: Accommodation Arrangement -->
+                    <div class="question-block">
+                        <label class="question-label">9. What accommodation arrangement will apply?</label>
+                        <div class="radio-group">
+                            <label class="radio-item"><input type="radio" name="adv_accommodation" value="homestay" required> Homestay</label>
+                            <label class="radio-item"><input type="radio" name="adv_accommodation" value="student_hostel"> Student hostel / halls of residence</label>
+                            <label class="radio-item"><input type="radio" name="adv_accommodation" value="private_rental"> Private rental</label>
+                            <label class="radio-item"><input type="radio" name="adv_accommodation" value="with_relative"> Living with relative in NZ</label>
+                            <label class="radio-item"><input type="radio" name="adv_accommodation" value="provider_arranged"> Arranged by education provider</label>
+                            <label class="radio-item"><input type="radio" name="adv_accommodation" value="not_yet_arranged"> Not yet arranged</label>
+                        </div>
+                    </div>
+
+                    <!-- Q10: Dependants Included -->
+                    <div class="question-block">
+                        <label class="question-label">10. Will the applicant be including dependants in the application?</label>
+                        <div class="radio-group">
+                            <label class="radio-item"><input type="radio" name="adv_dependants" value="yes" required> Yes</label>
+                            <label class="radio-item"><input type="radio" name="adv_dependants" value="no"> No</label>
+                        </div>
+                    </div>
+
+                    <!-- Q11: Pathway Visa -->
+                    <div class="question-block">
+                        <label class="question-label">11. Is the applicant applying for a Pathway Student Visa?</label>
+                        <div class="radio-group">
+                            <label class="radio-item"><input type="radio" name="adv_pathway_visa" value="yes" required> Yes</label>
+                            <label class="radio-item"><input type="radio" name="adv_pathway_visa" value="no"> No</label>
+                        </div>
+                    </div>
+
+                    <!-- Q12: Additional Documents Required -->
+                    <div class="question-block">
+                        <label class="question-label">12. Are there any additional supporting documents required for this application?</label>
+                        <p class="field-hint">Select all that apply, or select 'None' if no additional documents are needed.</p>
+                        <div class="checkbox-group">
+                            <label class="checkbox-item"><input type="checkbox" name="adv_addl_none" value="yes" id="advAddlNone"> None — standard documents only</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_addl_offer_letter" value="yes"> Offer of Place / Enrolment letter</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_addl_fee_receipt" value="yes"> Fee receipt from education provider</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_addl_academic_transcripts" value="yes"> Academic transcripts</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_addl_english_proficiency" value="yes"> English language proficiency test results</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_addl_parent_consent" value="yes"> Parental consent form (for under 18)</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_addl_guardianship" value="yes"> Guardianship / caregiver arrangement</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_addl_employment_letter" value="yes"> Employer support letter</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_addl_relationship_evidence" value="yes"> Relationship evidence (for partner/dependants)</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_addl_previous_visa" value="yes"> Previous visa grant letters</label>
+                        </div>
+                    </div>
+
+                    <!-- Q13: Risk Assessment -->
+                    <div class="question-block">
+                        <label class="question-label">13. Advisor risk assessment level for this application:</label>
+                        <div class="form-group">
+                            <select name="adv_risk_level" id="advRiskLevel" required>
+                                <option value="">-- Select --</option>
+                                <option value="low">Low risk — straightforward application</option>
+                                <option value="medium">Medium risk — some factors to address</option>
+                                <option value="high">High risk — significant issues to address</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Q14: Advisor Notes -->
+                    <div class="question-block">
+                        <label class="question-label">14. Advisor notes or special instructions for this application:</label>
+                        <div class="form-group">
+                            <textarea name="adv_notes" id="advNotes" rows="4" maxlength="2000" placeholder="Enter any special instructions, concerns, or notes for this application. Limited to 2000 characters."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Save & Close Button (Admin only) -->
+                    <div class="button-group" id="adminButtonGroup">
+                        <button type="button" class="btn btn-primary" onclick="handleAdminSaveAndClose()">
+                            Save & Close
+                        </button>
+                    </div>
+
+                </div>
+                <!-- ============================================
                      STAGE 1: IDENTITY DETAILS
                      ============================================ -->
-                <div class="form-section active" data-stage="1">
+                <div class="form-section" data-stage="1">
 
                     <h2 class="section-title">Identity Details</h2>
 
@@ -2706,7 +2890,6 @@
                     </div>
                 </div>
 
-                <div class="form-section" data-stage="10"><h2 class="section-title">Financial</h2><div class="section-description">This section will be implemented next.</div></div>
                 <div class="form-section" data-stage="11"><h2 class="section-title">Supporting Documents</h2><div class="section-description">This section will be implemented next.</div></div>
                 <div class="form-section" data-stage="12"><h2 class="section-title">Declaration</h2><div class="section-description">This section will be implemented next.</div></div>
                 <div class="form-section" data-stage="13"><h2 class="section-title">Review & Submit</h2><div class="section-description">This section will be implemented next.</div></div>
@@ -2736,6 +2919,7 @@
 
         const FORM_CODE = 'INZ_1012';
         const TOTAL_STAGES = 13;
+        const STAGE_ORDER = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13];
 
         // ⚠️ DEV MODE: Set to true to unlock all stage tabs for click-navigation during testing.
         // All validations (Save and Continue, sub-section nav) still fire normally.
@@ -2743,10 +2927,10 @@
         const DEV_MODE = true;
 
         // Track state
-        let currentStage = 1;
+        let currentStage = 0;
         let currentSubSection = 'identity';
         const subSectionOrder = ['identity', 'immigration', 'passport'];
-        const unlockedStages = new Set([1]);
+        const unlockedStages = new Set([0]);
         const completedStages = new Set();
         let otherNameCount = 1;
 
@@ -2779,10 +2963,13 @@
         /* ============================================
            INITIALIZATION
            ============================================ */
-            document.addEventListener('DOMContentLoaded', async function() {
-                if (!await FormUtils.initForm(FORM_CODE, TOTAL_STAGES)) {
+        document.addEventListener('DOMContentLoaded', async function() {
+                
+            if (!await FormUtils.initForm(FORM_CODE, TOTAL_STAGES)) {
                     return;
-                }
+            }
+            // Apply role-based rendering (admin sees only stage 0, user sees 0 read-only + rest editable)
+            FormUtils.applyRoleBasedRendering(STAGE_ORDER, navigateToStage, unlockStage);
 
             setupConditionalLogic();
             setupValueConditionals();
@@ -3280,6 +3467,10 @@
             }
         }
 
+        function handleAdminSaveAndClose() {
+            var form = document.getElementById('studentVisaForm');
+            FormUtils.handleAdminSaveAndCloseAction(form);
+        }
         /* ============================================
            VALIDATION
            ============================================ */
@@ -4096,14 +4287,19 @@
             } else if (currentStage < TOTAL_STAGES) {
                 FormUtils.saveDraft(FORM_CODE, form);
                 markStageCompleted(currentStage);
-                unlockStage(currentStage + 1);
-                navigateToStage(currentStage + 1);
+                // Find the next stage in STAGE_ORDER
+                var idx = STAGE_ORDER.indexOf(currentStage);
+                if (idx >= 0 && idx < STAGE_ORDER.length - 1) {
+                    unlockStage(STAGE_ORDER[idx + 1]);
+                    navigateToStage(STAGE_ORDER[idx + 1]);
+                }
             }
         }
 
         function handleBack() {
-            if (currentStage > 1) {
-                navigateToStage(currentStage - 1);
+            var idx = STAGE_ORDER.indexOf(currentStage);
+            if (idx > 0) {
+                navigateToStage(STAGE_ORDER[idx - 1]);
             }
         }
 
