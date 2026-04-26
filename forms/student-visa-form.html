@@ -2779,10 +2779,10 @@
         /* ============================================
            INITIALIZATION
            ============================================ */
-        document.addEventListener('DOMContentLoaded', function() {
-            if (!FormUtils.initForm(FORM_CODE, TOTAL_STAGES)) {
-                return;
-            }
+            document.addEventListener('DOMContentLoaded', async function() {
+                if (!await FormUtils.initForm(FORM_CODE, TOTAL_STAGES)) {
+                    return;
+                }
 
             setupConditionalLogic();
             setupValueConditionals();
