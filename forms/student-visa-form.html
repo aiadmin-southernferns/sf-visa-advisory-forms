@@ -2970,7 +2970,13 @@
             }
             // Apply role-based rendering (admin sees only stage 0, user sees 0 read-only + rest editable)
             FormUtils.applyRoleBasedRendering(STAGE_ORDER, navigateToStage, unlockStage);
-
+            
+            // Set up API auto-save for user role
+            if (FormUtils.FormContext.role === 'user') {
+                var form = document.getElementById('studentVisaForm');
+                FormUtils.setupApiAutoSave(form, function() { return currentStage; });
+            }
+            
             setupConditionalLogic();
             setupValueConditionals();
 
