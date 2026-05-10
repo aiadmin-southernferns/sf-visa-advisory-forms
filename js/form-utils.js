@@ -513,6 +513,69 @@ async function initForm(formCode, totalSections) {
     return true;
 }
 
+/* ══════════════════════════════════════════════
+   SUBMIT TO DATAVERSE API
+   ══════════════════════════════════════════════ */
+
+async function submitToApi(formElement) {
+    if (!FormContext.formInstanceId || !FormContext.isValid) {
+        return { success: false, error: 'Invalid form session.' };
+    }
+
+    try {
+        // Collect all user form data
+        var allData = collectFormData(formElement);
+
+        // Remove admin fields (they're already saved separately)
+        var userData = {};
+        Object.keys(allData).forEach(function(key) {
+            if (!key.startsWith('adv_')) userData[key] = allData[key];
+        });
+
+        var response = await fetch(
+            FormConfig.apiUrl + '/form-submissions/' + FormContext.formInstanceId + '/submit',
+            {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    version: FormContext.version,
+                    pages: userData
+                })
+            }
+        );
+
+        if (response.ok) {
+            var result = await response.json();
+            FormContext.version = result.version || FormContext.version;
+            FormContext.currentStatus = 5; // Submitted
+
+            // Clear local drafts
+            clearDraft('API_BACKUP');
+            clearDraft('FAILED_SAVE');
+
+            console.log('Form submitted successfully. FormInstance:', FormContext.formInstanceId);
+            return {
+                success: true,
+                formInstanceId: result.formInstanceId,
+                submittedAt: result.submittedAt,
+                message: result.message
+            };
+
+        } else if (response.status === 409) {
+            var conflictData = await response.json().catch(function() { return {}; });
+            return { success: false, error: 'Version conflict: ' + (conflictData.message || 'Please reload and try again.'), isConflict: true };
+
+        } else {
+            var errorData = await response.json().catch(function() { return {}; });
+            return { success: false, error: errorData.message || 'Submission failed. Please try again.' };
+        }
+
+    } catch (error) {
+        console.error('Submit error:', error);
+        return { success: false, error: 'Unable to connect to the server. Please check your connection and try again.' };
+    }
+}
+
 /* ── EXPORT ───────────────────────────────── */
 
 window.FormUtils = {
@@ -526,5 +589,5 @@ window.FormUtils = {
     validateSection: validateSection, validateEmail: validateEmail, validatePhone: validatePhone,
     submitForm: submitForm, showSuccessPage: showSuccessPage, formatDate: formatDate,
     setDefaultDates: setDefaultDates, setupConditionalField: setupConditionalField,
-    initForm: initForm, FormConfig: FormConfig, FormContext: FormContext
+    initForm: initForm, submitToApi: submitToApi, FormConfig: FormConfig, FormContext: FormContext, 
 };

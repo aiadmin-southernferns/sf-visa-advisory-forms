@@ -2892,7 +2892,51 @@
 
                 <div class="form-section" data-stage="11"><h2 class="section-title">Supporting Documents</h2><div class="section-description">This section will be implemented next.</div></div>
                 <div class="form-section" data-stage="12"><h2 class="section-title">Declaration</h2><div class="section-description">This section will be implemented next.</div></div>
-                <div class="form-section" data-stage="13"><h2 class="section-title">Review & Submit</h2><div class="section-description">This section will be implemented next.</div></div>
+                
+                <div class="form-section" data-stage="13">
+                    <h2 class="section-title">Review & Submit</h2>
+                    <div class="section-description">
+                        Please review your application before submitting. Once submitted, you will not be able to make changes.
+                    </div>
+
+                    <div class="question-block" style="background:#f8f9fa;border-radius:8px;padding:20px;margin-bottom:20px;">
+                        <h3 style="margin-bottom:15px;color:var(--primary-color);">Submission Checklist</h3>
+                        <div class="checkbox-group">
+                            <label class="checkbox-item">
+                                <input type="checkbox" id="chk_review_identity" required>
+                                I have reviewed my identity and personal details
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" id="chk_review_documents" required>
+                                I have uploaded all required supporting documents
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" id="chk_review_accurate" required>
+                                I confirm that all information provided is true and accurate
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" id="chk_review_declaration" required>
+                                I have read and agree to the declaration
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="alert-box alert-info" style="margin-bottom:20px;">
+                        <div>
+                            <div class="alert-title">Important</div>
+                            <p style="margin:0;font-size:0.92rem;">After submission, your responses will be saved to your case file and your immigration advisor will be notified. You will not be able to edit your answers after submitting.</p>
+                        </div>
+                    </div>
+
+                    <div id="submitErrorMessage" style="display:none;background:#f8d7da;border:1px solid #f5c6cb;color:#721c24;padding:12px 16px;border-radius:6px;margin-bottom:15px;"></div>
+
+                    <div class="button-group">
+                        <button type="button" class="btn-back" onclick="handleBack()">Back</button>
+                        <button type="button" class="btn btn-primary" id="btnFinalSubmit" onclick="handleFinalSubmit()" style="background:var(--success-color);padding:12px 40px;font-size:1rem;">
+                            Submit Application
+                        </button>
+                    </div>
+                </div>
 
                 <!-- Success Section -->
                 <div class="form-section" data-stage="success">
@@ -4282,8 +4326,8 @@
                 if (!validateStage9()) return;
                 FormUtils.saveDraft(FORM_CODE, form);
                 markStageCompleted(9);
-                unlockStage(10);
-                navigateToStage(10);
+                unlockStage(11);
+                navigateToStage(11);
             } else if (currentStage < TOTAL_STAGES) {
                 FormUtils.saveDraft(FORM_CODE, form);
                 markStageCompleted(currentStage);
@@ -4304,18 +4348,109 @@
         }
 
         function handleSaveAndExit() {
-            const form = document.getElementById('studentVisaForm');
+            var form = document.getElementById('studentVisaForm');
             FormUtils.saveDraft(FORM_CODE, form);
 
-            const overlay = document.getElementById('loadingOverlay');
+            // Trigger immediate API save
+            FormUtils.triggerApiSaveNow();
+
+            var overlay = document.getElementById('loadingOverlay');
             if (overlay) {
                 overlay.querySelector('.loading-text').textContent = 'Your progress has been saved.';
                 overlay.classList.add('active');
-                setTimeout(() => {
+                setTimeout(function() {
                     overlay.classList.remove('active');
                     overlay.querySelector('.loading-text').textContent = 'Submitting your form...';
                 }, 2000);
             }
+        }
+
+        async function handleFinalSubmit() {
+            var form = document.getElementById('studentVisaForm');
+
+            // Validate the checklist
+            var checkboxes = document.querySelectorAll('#chk_review_identity, #chk_review_documents, #chk_review_accurate, #chk_review_declaration');
+            var allChecked = true;
+            checkboxes.forEach(function(cb) {
+                if (!cb.checked) {
+                    allChecked = false;
+                    cb.closest('.checkbox-item').style.outline = '2px solid var(--error-color)';
+                } else {
+                    cb.closest('.checkbox-item').style.outline = '';
+                }
+            });
+
+            if (!allChecked) {
+                var errorDiv = document.getElementById('submitErrorMessage');
+                if (errorDiv) {
+                    errorDiv.textContent = 'Please complete all items in the submission checklist before submitting.';
+                    errorDiv.style.display = 'block';
+                    errorDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+                return;
+            }
+
+            // Confirm
+            var confirmed = await Xrm_Confirm(
+                'Submit Application',
+                'Are you sure you want to submit your application? You will not be able to edit your answers after submitting.'
+            );
+            if (!confirmed) return;
+
+            // Show loading
+            var overlay = document.getElementById('loadingOverlay');
+            if (overlay) {
+                overlay.querySelector('.loading-text').textContent = 'Submitting your application...';
+                overlay.classList.add('active');
+            }
+
+            // Disable the submit button
+            var submitBtn = document.getElementById('btnFinalSubmit');
+            if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Submitting...'; }
+
+            // Call the API
+            var result = await FormUtils.submitToApi(form);
+
+            if (overlay) overlay.classList.remove('active');
+
+            if (result.success) {
+                // Show success page
+                document.querySelectorAll('.form-section').forEach(function(s) { s.classList.remove('active'); });
+                var successSection = document.querySelector('.form-section[data-stage="success"]');
+                if (successSection) successSection.classList.add('active');
+
+                // Hide stage tabs
+                var stageNav = document.getElementById('stageNav');
+                if (stageNav) stageNav.style.display = 'none';
+                var sectionNav = document.querySelector('.section-nav-container');
+                if (sectionNav) sectionNav.style.display = 'none';
+
+                // Set reference number
+                var refEl = document.getElementById('submissionRef');
+                if (refEl) refEl.textContent = FormUtils.FormContext.formInstanceId;
+
+                // Hide save indicator
+                var saveIndicator = document.getElementById('apiSaveIndicator');
+                if (saveIndicator) saveIndicator.style.display = 'none';
+
+            } else {
+                // Show error
+                if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Submit Application'; }
+
+                var errorDiv = document.getElementById('submitErrorMessage');
+                if (errorDiv) {
+                    errorDiv.textContent = result.error || 'Submission failed. Please try again.';
+                    errorDiv.style.display = 'block';
+                    errorDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }
+        }
+
+        // Simple confirmation dialog (not Xrm, since this is a web app)
+        function Xrm_Confirm(title, text) {
+            return new Promise(function(resolve) {
+                resolve(confirm(text));
+            });
         }
 
         /* ============================================
