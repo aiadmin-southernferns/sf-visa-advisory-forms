@@ -7,7 +7,10 @@ const FormConfig = {
     submitEndpoint: 'YOUR_POWER_AUTOMATE_HTTP_TRIGGER_URL',
     autoSaveInterval: 30000,
     tokenParam: 'key',
-    adminStage: 0
+    adminStage: 0,
+    autoSaveDebounceMs: 3000,
+    autoSaveRetryMax: 3,
+    autoSaveRetryBaseMs: 1000
 };
 
 const FormContext = {
@@ -16,6 +19,11 @@ const FormContext = {
     templateName: '', totalPages: 0, adminPages: 1, version: 1,
     accessKey: '', adminResponse: null, userResponse: null, lastSavedAt: null
 };
+
+var _autoSaveTimer = null;
+var _saveInProgress = false;
+var _lastSavedData = null;
+var _currentStageRef = null;
 
 /* ── TOKEN / KEY HANDLING ─────────────────── */
 
@@ -227,12 +235,168 @@ function applyRoleBasedRendering(stageOrder, navigateToStageFn, unlockStageFn) {
                     }
                 }
 
-                navigateToStageFn(firstUserStage);
+                // Navigate to last saved stage if resuming, otherwise first user stage
+                var targetStage = firstUserStage;
+                if (FormContext.currentPage > 0 && stageOrder.indexOf(FormContext.currentPage) >= 0) {
+                    targetStage = FormContext.currentPage;
+                }
+                navigateToStageFn(targetStage);
+
+                // Show resume notification if there's saved data
+                if (FormContext.lastSavedAt && FormContext.userResponse) {
+                    var savedDate = new Date(FormContext.lastSavedAt);
+                    var formattedDate = savedDate.toLocaleDateString('en-NZ', {
+                        day: '2-digit', month: 'short', year: 'numeric',
+                        hour: '2-digit', minute: '2-digit'
+                    });
+                    var resumeBanner = document.createElement('div');
+                    resumeBanner.id = 'resumeBanner';
+                    resumeBanner.style.cssText = 'background:#e8f4fd;border:1px solid #b8daff;border-radius:6px;padding:12px 20px;margin:10px 0 20px 0;display:flex;align-items:center;justify-content:space-between;gap:10px;';
+                    resumeBanner.innerHTML = '<span style="color:#0056b3;font-size:0.9rem;">&#128190; Continuing from your saved draft (' + formattedDate + ')</span><button type="button" onclick="this.parentElement.remove()" style="background:none;border:none;color:#0056b3;cursor:pointer;font-size:1.1rem;">&times;</button>';
+                    var fc = document.querySelector('.form-content');
+                    if (fc) { fc.insertBefore(resumeBanner, fc.firstChild); setTimeout(function() { var rb = document.getElementById('resumeBanner'); if (rb) rb.remove(); }, 10000); }
+                }
             }
 
             console.log('User view: Advisor Assessment locked, user stages editable.');
         }
     }
+}
+
+/* ══════════════════════════════════════════════
+   AUTO-SAVE TO DATAVERSE API (Debounced)
+   ══════════════════════════════════════════════ */
+
+function createSaveIndicator() {
+    if (document.getElementById('apiSaveIndicator')) return;
+    var indicator = document.createElement('div');
+    indicator.id = 'apiSaveIndicator';
+    indicator.style.cssText = 'position:fixed;bottom:20px;right:20px;padding:10px 18px;border-radius:8px;font-size:0.85rem;font-weight:500;z-index:9999;transition:all 0.3s ease;opacity:0;pointer-events:none;display:flex;align-items:center;gap:8px;box-shadow:0 2px 8px rgba(0,0,0,0.15);';
+    document.body.appendChild(indicator);
+    if (!document.getElementById('saveIndicatorStyles')) {
+        var style = document.createElement('style');
+        style.id = 'saveIndicatorStyles';
+        style.textContent = '@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}';
+        document.head.appendChild(style);
+    }
+}
+
+function updateSaveIndicator(state) {
+    var el = document.getElementById('apiSaveIndicator');
+    if (!el) return;
+    el.style.pointerEvents = 'none';
+    el.onclick = null;
+    if (state === 'saving') {
+        el.style.cssText += 'background:#fff3cd;color:#856404;border:1px solid #ffc107;opacity:1;';
+        el.innerHTML = '<svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:#856404;animation:spin 1s linear infinite"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></svg> Saving...';
+    } else if (state === 'saved') {
+        el.style.cssText += 'background:#d4edda;color:#155724;border:1px solid #c3e6cb;opacity:1;';
+        el.innerHTML = '<svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:#155724"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Saved';
+        setTimeout(function() { el.style.opacity = '0'; }, 3000);
+    } else if (state === 'failed') {
+        el.style.cssText += 'background:#f8d7da;color:#721c24;border:1px solid #f5c6cb;opacity:1;pointer-events:auto;cursor:pointer;';
+        el.innerHTML = '<svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:#721c24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg> Save failed — click to retry';
+        el.onclick = function() { el.style.pointerEvents = 'none'; triggerApiSaveNow(); };
+    } else if (state === 'conflict') {
+        el.style.cssText += 'background:#fff3cd;color:#856404;border:1px solid #ffc107;opacity:1;pointer-events:auto;cursor:pointer;';
+        el.innerHTML = '<svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:#856404"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg> Data updated elsewhere — click to reload';
+        el.onclick = function() { window.location.reload(); };
+    } else {
+        el.style.opacity = '0';
+    }
+}
+
+async function saveToApi(formElement, retryCount) {
+    if (!FormContext.formInstanceId || !FormContext.isValid) return;
+    if (FormContext.role === 'admin') return;
+    if (_saveInProgress) return;
+    retryCount = retryCount || 0;
+
+    var currentData = collectFormData(formElement);
+    var currentJson = JSON.stringify(currentData);
+    if (currentJson === _lastSavedData) { return; }
+
+    _saveInProgress = true;
+    updateSaveIndicator('saving');
+
+    try {
+        var currentStage = _currentStageRef ? _currentStageRef() : FormContext.currentPage;
+        var response = await fetch(FormConfig.apiUrl + '/form-data/' + FormContext.formInstanceId, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                version: FormContext.version,
+                currentPage: currentStage,
+                pages: currentData,
+                isAdminSave: false
+            })
+        });
+
+        if (response.ok) {
+            var result = await response.json();
+            FormContext.version = result.version;
+            FormContext.lastSavedAt = result.savedAt;
+            _lastSavedData = currentJson;
+            updateSaveIndicator('saved');
+            console.log('Auto-saved. Version:', result.version);
+            try { localStorage.setItem(getStorageKey('API_BACKUP'), currentJson); } catch (e) {}
+        } else if (response.status === 409) {
+            var conflictData = await response.json().catch(function() { return {}; });
+            FormContext.version = conflictData.serverVersion || FormContext.version;
+            updateSaveIndicator('conflict');
+        } else {
+            throw new Error('Save failed: ' + response.status);
+        }
+    } catch (error) {
+        console.error('Auto-save error (attempt ' + (retryCount + 1) + '):', error);
+        if (retryCount < FormConfig.autoSaveRetryMax) {
+            var delay = FormConfig.autoSaveRetryBaseMs * Math.pow(2, retryCount);
+            setTimeout(function() { _saveInProgress = false; saveToApi(formElement, retryCount + 1); }, delay);
+            return;
+        }
+        updateSaveIndicator('failed');
+        try { localStorage.setItem(getStorageKey('FAILED_SAVE'), currentJson); } catch (e) {}
+    }
+    _saveInProgress = false;
+}
+
+function debouncedApiSave(formElement) {
+    if (_autoSaveTimer) clearTimeout(_autoSaveTimer);
+    _autoSaveTimer = setTimeout(function() { saveToApi(formElement, 0); }, FormConfig.autoSaveDebounceMs);
+}
+
+function triggerApiSaveNow() {
+    if (_autoSaveTimer) clearTimeout(_autoSaveTimer);
+    var form = document.querySelector('form');
+    if (form) saveToApi(form, 0);
+}
+
+function setupApiAutoSave(formElement, getCurrentStageFn) {
+    _currentStageRef = getCurrentStageFn;
+    createSaveIndicator();
+
+    formElement.querySelectorAll('input, select, textarea').forEach(function(el) {
+        if (el.disabled) return;
+        var eventType = (el.type === 'text' || el.type === 'email' || el.type === 'tel' ||
+                         el.type === 'number' || el.tagName === 'TEXTAREA') ? 'input' : 'change';
+        el.addEventListener(eventType, function() { debouncedApiSave(formElement); });
+    });
+
+    window.addEventListener('beforeunload', function() {
+        if (_autoSaveTimer) {
+            clearTimeout(_autoSaveTimer);
+            try {
+                var data = collectFormData(formElement);
+                var stage = _currentStageRef ? _currentStageRef() : FormContext.currentPage;
+                navigator.sendBeacon(
+                    FormConfig.apiUrl + '/form-data/' + FormContext.formInstanceId,
+                    new Blob([JSON.stringify({ version: FormContext.version, currentPage: stage, pages: data, isAdminSave: false })], { type: 'application/json' })
+                );
+            } catch (e) {}
+        }
+    });
+
+    console.log('API auto-save initialized. Debounce:', FormConfig.autoSaveDebounceMs + 'ms');
 }
 
 /* ── ADMIN SAVE & CLOSE ───────────────────── */
@@ -320,20 +484,38 @@ function loadDraft(formCode, formElement) {
 }
 
 function restoreFormData(data, formElement) {
+    var fieldsToTrigger = [];
+
     Object.keys(data).forEach(function(key) {
         var field = formElement.elements[key];
         if (!field) return;
-        if (field.type === 'checkbox') {
+
+        if (field instanceof RadioNodeList) {
+            var radio = formElement.querySelector('input[name="' + key + '"][value="' + data[key] + '"]');
+            if (radio) { radio.checked = true; fieldsToTrigger.push(radio); }
+        } else if (field.type === 'checkbox') {
             field.checked = data[key] === true || data[key] === 'on' || data[key] === 'Yes';
+            fieldsToTrigger.push(field);
         } else if (field.type === 'radio') {
             var radio = formElement.querySelector('input[name="' + key + '"][value="' + data[key] + '"]');
-            if (radio) radio.checked = true;
-        } else if (field.tagName === 'SELECT' || field.type === 'text' || field.type === 'email' || field.type === 'tel' || field.type === 'date' || field.type === 'number') {
+            if (radio) { radio.checked = true; fieldsToTrigger.push(radio); }
+        } else if (field.tagName === 'SELECT' || field.type === 'text' || field.type === 'email' ||
+                   field.type === 'tel' || field.type === 'date' || field.type === 'number') {
             field.value = data[key];
+            fieldsToTrigger.push(field);
         } else if (field.tagName === 'TEXTAREA') {
             field.value = data[key];
+            fieldsToTrigger.push(field);
         }
     });
+
+    // Fire change events AFTER all values are set,
+    // so conditional logic sees the complete state
+    setTimeout(function() {
+        fieldsToTrigger.forEach(function(field) {
+            field.dispatchEvent(new Event('change', { bubbles: true }));
+        });
+    }, 50);
 }
 
 function collectFormData(formElement) {
@@ -526,5 +708,7 @@ window.FormUtils = {
     validateSection: validateSection, validateEmail: validateEmail, validatePhone: validatePhone,
     submitForm: submitForm, showSuccessPage: showSuccessPage, formatDate: formatDate,
     setDefaultDates: setDefaultDates, setupConditionalField: setupConditionalField,
-    initForm: initForm, FormConfig: FormConfig, FormContext: FormContext
+    initForm: initForm, FormConfig: FormConfig, FormContext: FormContext, saveToApi: saveToApi, 
+    debouncedApiSave: debouncedApiSave, triggerApiSaveNow: triggerApiSaveNow,
+    setupApiAutoSave: setupApiAutoSave, createSaveIndicator: createSaveIndicator,
 };
