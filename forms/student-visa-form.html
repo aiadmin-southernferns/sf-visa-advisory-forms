@@ -1498,41 +1498,6 @@
                                     </div>
                                 </div>
                             </div>
-
-                            <!-- CONDITIONAL: DOB populated → Upload photo (at bottom of section) -->
-                            <div class="conditional-group" id="photoUploadSection">
-                                <div class="form-card" style="margin-bottom: 0;">
-                                    <h3>Upload photo</h3>
-
-                                    <p style="margin-bottom: 15px; font-size: 0.92rem;">
-                                        Your visa photo must be less than 6 months old and must meet our photo requirements. Do not use the photo page of your passport.
-                                    </p>
-
-                                    <p style="margin-bottom: 10px; font-size: 0.92rem;">When you upload your photo, it must be:</p>
-                                    <ul style="margin: 0 0 20px 20px; font-size: 0.92rem; line-height: 1.8;">
-                                        <li>a .jpeg or .jpg file</li>
-                                        <li>between 500 KB and 3 MB</li>
-                                        <li>between 900 x 1200 pixels and 2250 x 3000 pixels.</li>
-                                    </ul>
-
-                                    <div class="photo-upload-area" id="photoUploadArea">
-                                        <input type="file" id="visaPhoto" name="visa_photo" accept=".jpg,.jpeg">
-                                        <div>
-                                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="1.5" style="margin-bottom: 8px;">
-                                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                                                <polyline points="17 8 12 3 7 8"/>
-                                                <line x1="12" y1="3" x2="12" y2="15"/>
-                                            </svg>
-                                            <p style="color: var(--text-muted); font-size: 0.9rem;">Drag and drop or click to upload</p>
-                                        </div>
-                                        <div class="upload-btn-styled">UPLOAD PHOTO</div>
-                                        <img class="photo-preview" id="photoPreview" alt="Photo preview">
-                                        <div class="photo-filename" id="photoFilename"></div>
-                                        <button type="button" class="photo-remove-btn" id="photoRemoveBtn" onclick="removePhoto(event)">Remove photo</button>
-                                    </div>
-                                </div>
-                            </div>
-
                         </div>
                     </div>
                     <div class="form-buttons-bottom">
@@ -2350,55 +2315,6 @@
                                 <p class="help-text">Maximum of 500 characters. If you need more space, you will have the opportunity to provide supporting documents.</p>
                                 <div class="form-group" style="margin-bottom:0;"><textarea name="further_info" maxlength="500" placeholder="Maximum of 500 characters."></textarea></div>
                             </div>
-                        </div>
-                    </div>
-
-                    <!-- ====== SECTION: Police Certificates ====== -->
-                    <div class="form-card">
-                        <h3>Police certificates</h3>
-                        <p style="font-weight:600; margin-bottom:15px;">Police certificate from your country of citizenship</p>
-
-                        <div class="question-block" data-required="true">
-                            <label class="question-label mandatory">Have you provided us with a police certificate from your passport country in a previous New Zealand visa application?</label>
-                            <div class="radio-group" id="s4PoliceCertRadio" style="margin-top:8px;">
-                                <div class="radio-item"><input type="radio" id="policeCertYes" name="police_cert_passport" value="yes"><label for="policeCertYes">Yes</label></div>
-                                <div class="radio-item"><input type="radio" id="policeCertNo" name="police_cert_passport" value="no"><label for="policeCertNo">No</label></div>
-                            </div>
-                            <div class="field-error-msg" id="policeCertError">Please select an option</div>
-                        </div>
-
-                        <div class="conditional-group" id="policeCert36Wrapper">
-                            <div class="question-block" data-required="true" data-conditional-required="policeCert36Wrapper">
-                                <label class="question-label mandatory">Was this police certificate issued within the last 36 months?</label>
-                                <div class="radio-group" id="s4PoliceCert36Radio" style="margin-top:8px;">
-                                    <div class="radio-item"><input type="radio" id="policeCert36Yes" name="police_cert_36" value="yes"><label for="policeCert36Yes">Yes</label></div>
-                                    <div class="radio-item"><input type="radio" id="policeCert36No" name="police_cert_36" value="no"><label for="policeCert36No">No</label></div>
-                                </div>
-                                <div class="field-error-msg" id="policeCert36Error">Please select an option</div>
-                            </div>
-                        </div>
-
-                        <!-- Upload police cert (shows when police_cert_passport=no OR police_cert_36=no) -->
-                        <div class="conditional-group" id="policeCertUploadSection">
-                            <p class="help-text" style="margin-bottom:15px;">Upload your completed police certificate from your passport country below. You must upload this certificate before you submit your application.</p>
-                            <div class="alert-box alert-info" style="margin-bottom:15px;"><div><div class="alert-title">NOTE</div><p style="margin:0;font-size:0.92rem;">Check our website for instructions on how to get a police certificate. Police certificates must be less than 6 months old when you <strong>submit</strong> your application.<br><a href="#" style="color:var(--secondary-color);">Police certificates</a></p><p style="margin:10px 0 0;font-size:0.92rem;">If your certificate is from Fiji, Hong Kong or Israel</p><p style="margin:5px 0 0;font-size:0.92rem;">Fiji, Hong Kong and Israel send their police certificates direct to us. If your police certificate is from one of those territories, upload evidence you have applied for it, such as a receipt. Enter the date of the receipt in the issue date field.</p></div></div>
-                            <div class="alert-box alert-info" style="margin-bottom:15px;"><div><div class="alert-title">NOTE</div><p style="margin:0;font-size:0.92rem;">If you are <strong>not</strong> a citizen of your passport country, upload an explanation of this instead.</p><p style="margin:8px 0 0;font-size:0.92rem;">For example:</p><ul style="margin:5px 0 0 20px;font-size:0.92rem;"><li>a citizen of American Samoa who holds a United States of America passport but is a national of the United States of America, not a citizen of the United States of America, or</li><li>a person with British National (Overseas) status, who holds a British passport, but is not a British citizen.</li></ul></div></div>
-                            <div class="question-block"><label class="question-label mandatory">Upload police certificate</label><div class="form-group" style="margin-bottom:0;"><input type="file" name="police_cert_file" accept=".pdf"></div></div>
-                            <div class="question-block"><label class="question-label mandatory">Issue date</label><div class="date-picker-wrapper"><input type="date" name="police_cert_issue_date"></div></div>
-                            <div class="question-block"><label class="question-label mandatory">Country of issue</label><div class="autocomplete-wrapper"><input type="text" id="police_cert_country" name="police_cert_country" placeholder="Start typing and select a country from the list..." autocomplete="off"><div class="autocomplete-list" id="policeCertCountryList"></div></div></div>
-                            <div class="question-block" data-required="true">
-                                <label class="question-label mandatory">Is this document in English?</label>
-                                <div class="radio-group" id="s4DocEnglishRadio" style="margin-top:8px;">
-                                    <div class="radio-item"><input type="radio" id="docEnglishYes" name="police_cert_english" value="yes"><label for="docEnglishYes">Yes</label></div>
-                                    <div class="radio-item"><input type="radio" id="docEnglishNo" name="police_cert_english" value="no"><label for="docEnglishNo">No</label></div>
-                                </div>
-                            </div>
-                            <div class="conditional-group" id="policeCertTranslation">
-                                <p class="help-text" style="margin-bottom:10px;">You will need to upload an English translation of this document</p>
-                                <div class="question-block"><label class="question-label mandatory">Upload English translation</label><div class="form-group" style="margin-bottom:0;"><input type="file" name="police_cert_translation" accept=".pdf"></div></div>
-                                <div class="question-block" style="margin-bottom:0;"><label class="question-label mandatory">Country of issue</label><div class="autocomplete-wrapper"><input type="text" id="police_cert_translation_country" name="police_cert_translation_country" placeholder="Start typing and select a country from the list..." autocomplete="off"><div class="autocomplete-list" id="policeCertTransCountryList"></div></div></div>
-                            </div>
-                            <div class="alert-box" style="background:#fff3cd;border-left:4px solid #ffc107;margin-top:15px;"><div><div class="alert-title" style="color:#856404;">ALERT</div><p style="margin:0;font-size:0.92rem;">Make sure you upload the completed police certificate <strong>before you submit</strong> your application.<br>If you do not, <strong>this could have a negative effect on the outcome of your application.</strong></p></div></div>
                         </div>
                     </div>
 
@@ -3319,6 +3235,46 @@
             // Apply role-based rendering (admin sees only stage 0, user sees 0 read-only + rest editable)
             FormUtils.applyRoleBasedRendering(STAGE_ORDER, navigateToStage, unlockStage);
 
+            // Restore completed stage indicators and navigate to first incomplete stage
+            if (FormUtils.FormContext.role === 'user' && FormUtils.FormContext.currentPage > 0) {
+                var savedPage = FormUtils.FormContext.currentPage;
+                var savedPageIdx = STAGE_ORDER.indexOf(savedPage);
+
+                // Mark all stages up to and including the saved page as completed
+                if (savedPageIdx > 0) {
+                    for (var i = 0; i <= savedPageIdx; i++) {
+                        var stageNum = STAGE_ORDER[i];
+                        if (stageNum !== 0) {
+                            completedStages.add(stageNum);
+                            unlockStage(stageNum);
+                            var tab = document.querySelector('.stage-tab[data-stage="' + stageNum + '"]');
+                            if (tab) tab.classList.add('completed');
+                        }
+                    }
+                }
+
+                // Find the first incomplete stage (ascending order, skip admin stage 0)
+                var firstIncomplete = null;
+                for (var j = 0; j < STAGE_ORDER.length; j++) {
+                    var s = STAGE_ORDER[j];
+                    if (s === 0) continue; // Skip admin stage
+                    if (!completedStages.has(s)) {
+                        firstIncomplete = s;
+                        break;
+                    }
+                }
+
+                // Navigate to first incomplete, or last stage if all completed
+                if (firstIncomplete !== null) {
+                    unlockStage(firstIncomplete);
+                    navigateToStage(firstIncomplete);
+                } else {
+                    // All stages completed — go to the last stage (Review & Submit)
+                    var lastStage = STAGE_ORDER[STAGE_ORDER.length - 1];
+                    navigateToStage(lastStage);
+                }
+            }
+
             setupConditionalLogic();
             setupValueConditionals();
 
@@ -3365,9 +3321,6 @@
             setupAutocomplete('polassoc_country_0', 'polassocCountryList_0');
             setupAutocomplete('militia_country_0', 'militiaCountryList_0');
             setupAutocomplete('detention_country_0', 'detentionCountryList_0');
-
-            // Photo upload handler
-            setupPhotoUpload();
 
             // Set up supporting documents (only for users)
             if (FormUtils.FormContext.role === 'user') {
@@ -3712,19 +3665,6 @@
            CONDITIONAL LOGIC - VALUE BASED (DOB, Birth Country)
            ============================================ */
         function setupValueConditionals() {
-            // DOB populated → show photo upload
-            const dobInput = document.getElementById('dobDate');
-            if (dobInput) {
-                dobInput.addEventListener('change', function() {
-                    const section = document.getElementById('photoUploadSection');
-                    if (this.value) {
-                        section.classList.add('visible');
-                    } else {
-                        section.classList.remove('visible');
-                    }
-                });
-            }
-
             // Birth country populated → show state + town
             const birthCountryInput = document.getElementById('birthCountry');
             if (birthCountryInput) {
@@ -4572,8 +4512,11 @@
         /* ============================================
            SAVE AND CONTINUE / EXIT / BACK
            ============================================ */
-        function handleSaveAndContinue() {
-            const form = document.getElementById('studentVisaForm');
+        async function handleSaveAndContinue() {
+            var form = document.getElementById('studentVisaForm');
+
+            // Save to Dataverse API
+            await FormUtils.saveToApi(form, currentStage, false);
 
             if (currentStage === 1) {
                 // Validate ALL sub-sections for stage 1
@@ -4662,16 +4605,20 @@
             }
         }
 
-        function handleBack() {
+        async function handleBack() {
+            var form = document.getElementById('studentVisaForm');
+            await FormUtils.saveToApi(form, currentStage, false);
+
             var idx = STAGE_ORDER.indexOf(currentStage);
             if (idx > 0) {
                 navigateToStage(STAGE_ORDER[idx - 1]);
             }
         }
 
-        function handleSaveAndExit() {
+        async function handleSaveAndExit() {
             var form = document.getElementById('studentVisaForm');
             FormUtils.saveDraft(FORM_CODE, form);
+            await FormUtils.saveToApi(form, currentStage, false);
 
             // Trigger immediate API save
             FormUtils.triggerApiSaveNow();
@@ -5249,56 +5196,6 @@
                 uploadEl.style.display = 'none';
                 uploadEl.innerHTML = '';
             }
-        }
-
-        /* ============================================
-           PHOTO UPLOAD
-           ============================================ */
-        function setupPhotoUpload() {
-            const fileInput = document.getElementById('visaPhoto');
-            if (!fileInput) return;
-
-            fileInput.addEventListener('change', function() {
-                const file = this.files[0];
-                if (!file) return;
-
-                // Validate file type
-                if (!file.type.match(/image\/jpe?g/)) {
-                    alert('Please upload a .jpg or .jpeg file only.');
-                    this.value = '';
-                    return;
-                }
-
-                // Validate file size (500KB - 3MB)
-                if (file.size < 500 * 1024 || file.size > 3 * 1024 * 1024) {
-                    alert('Photo must be between 500 KB and 3 MB.');
-                    this.value = '';
-                    return;
-                }
-
-                // Show preview
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const preview = document.getElementById('photoPreview');
-                    preview.src = e.target.result;
-                    preview.style.display = 'block';
-
-                    document.getElementById('photoFilename').textContent = '✓ ' + file.name;
-                    document.getElementById('photoFilename').style.display = 'block';
-                    document.getElementById('photoRemoveBtn').style.display = 'inline-block';
-                    document.getElementById('photoUploadArea').classList.add('has-file');
-                };
-                reader.readAsDataURL(file);
-            });
-        }
-
-        function removePhoto(e) {
-            e.stopPropagation();
-            document.getElementById('visaPhoto').value = '';
-            document.getElementById('photoPreview').style.display = 'none';
-            document.getElementById('photoFilename').style.display = 'none';
-            document.getElementById('photoRemoveBtn').style.display = 'none';
-            document.getElementById('photoUploadArea').classList.remove('has-file');
         }
 
         /* ============================================
