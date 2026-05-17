@@ -105,6 +105,7 @@ async function loadFormDataFromApi() {
         FormContext.userResponse = data.userResponse || null;
         FormContext.lastSavedAt = data.lastSavedAt || null;
         console.log('Form data loaded. Version:', FormContext.version);
+        FormContext._loadedFormData = data;
         return true;
     } catch (error) {
         console.error('Error loading form data:', error);
@@ -501,9 +502,18 @@ async function initForm(formCode, totalSections) {
 
     var formElement = document.getElementById(formCode.toLowerCase().replace('_', '') + 'Form') || document.querySelector('form');
     if (formElement) {
+        // Always reset admin checkboxes first to clear any browser autofill
+        resetAdminCheckboxes();
+
         if (FormContext.adminResponse) { restoreFormData(FormContext.adminResponse, formElement); console.log('Restored admin responses.'); }
         if (FormContext.userResponse) { restoreFormData(FormContext.userResponse, formElement); console.log('Restored user responses.'); }
         if (!FormContext.userResponse && !FormContext.adminResponse) { loadDraft(formCode, formElement); }
+
+        // Reset again after a delay to override any late browser autofill
+        if (!FormContext.adminResponse) {
+            setTimeout(function() { resetAdminCheckboxes(); }, 200);
+        }
+
         setInterval(function() { saveDraft(formCode, formElement); }, FormConfig.autoSaveInterval);
         formElement.querySelectorAll('input, select, textarea').forEach(function(el) { el.addEventListener('change', function() { saveDraft(formCode, formElement); }); });
     }
@@ -576,6 +586,707 @@ async function submitToApi(formElement) {
     }
 }
 
+/* ══════════════════════════════════════════════════════════════════════
+   SUPPORTING DOCUMENTS — CONFIGURATION & DYNAMIC GENERATION
+   
+   Add this entire block to form-utils.js BEFORE the EXPORT section.
+   Then update the EXPORT to include the new functions.
+   ══════════════════════════════════════════════════════════════════════ */
+
+/**
+ * Always-required documents — shown regardless of admin selections.
+ * These are NOT controlled by admin checkboxes.
+ */
+var ALWAYS_REQUIRED_DOCS = [
+    { fieldName: 'doc_passport_bio',    label: 'Passport Bio Pages + Visa Pages + Stamps', spFolder: 'Passport Bio Pages', multi: true, required: true, helpText: 'Upload clear copies of your passport bio-data page, all visa pages, and stamp pages.' },
+    { fieldName: 'doc_photo',           label: 'Your Photo (Passport Size)', spFolder: 'Photo', multi: false, required: true, helpText: 'Format: JPG only. Passport size, less than 6 months old, color, light background. 900x1200px, 500KB–3MB.', accept: '.jpg,.jpeg' },
+    { fieldName: 'doc_cv',              label: 'Fully Completed CV', spFolder: 'CV', multi: false, required: true },
+    { fieldName: 'doc_sop',             label: 'Statement of Purpose', spFolder: 'SOP', multi: false, required: true, helpText: 'Refer to the SOP guide provided by your advisor.' },
+    { fieldName: 'doc_police_cert',     label: 'Police Certificate', spFolder: 'Police Certificate', multi: false, required: true, helpText: 'Should be less than 6 months old.' },
+    { fieldName: 'doc_medical',         label: 'Medical Certificate', spFolder: 'Medical', multi: false, required: true, helpText: 'Should be less than 3 months old.' },
+    { fieldName: 'doc_offer_letter',    label: 'Offer Letter from Education Provider', spFolder: 'Offer Letter from Education Provider', multi: false, required: true },
+    { fieldName: 'doc_inz_forms',       label: 'INZ Forms (1012 / 1200 / 1226 / 1014 / 1025)', spFolder: 'INZ Forms (1012 -1200-1226-1014-1025)', multi: true, required: true, helpText: 'Upload all completed INZ forms as instructed by your advisor.' },
+];
+
+/**
+ * Conditional document configuration.
+ * Each entry maps an admin checkbox field name to its upload config.
+ * sectionId = which HTML container to place the upload in.
+ */
+var CONDITIONAL_DOC_CONFIG = {
+    // ── Relationship to Sponsor (Annexture 17) ──
+    adv_rel_sponsor_id:       { label: 'Passport copy / ID of Sponsor', sectionId: 'docSection_relationship', spFolder: 'Annexture 17 - Relationship to Sponsor', multi: false },
+    adv_rel_birth_cert_orig:  { label: 'Birth Certificate — Original', sectionId: 'docSection_relationship', spFolder: 'Annexture 17 - Relationship to Sponsor', multi: false },
+    adv_rel_birth_cert_trans: { label: 'Birth Certificate — Translation', sectionId: 'docSection_relationship', spFolder: 'Annexture 17 - Relationship to Sponsor', multi: false },
+    adv_rel_marriage_cert_orig: { label: 'Marriage Certificate — Original', sectionId: 'docSection_relationship', spFolder: 'Annexture 17 - Relationship to Sponsor', multi: false },
+    adv_rel_marriage_cert_trans: { label: 'Marriage Certificate — Translation', sectionId: 'docSection_relationship', spFolder: 'Annexture 17 - Relationship to Sponsor', multi: false },
+    adv_rel_parent_id_orig:   { label: 'Birth certificate of parents / Passport / ID — Original', sectionId: 'docSection_relationship', spFolder: 'Annexture 17 - Relationship to Sponsor', multi: true },
+    adv_rel_parent_id_trans:  { label: 'Birth certificate of parents / Passport / ID — Translation', sectionId: 'docSection_relationship', spFolder: 'Annexture 17 - Relationship to Sponsor', multi: true },
+
+    // ── Education (Annexture 13) ──
+    adv_edu_ol:     { label: 'GCE O/L Certificate', sectionId: 'docSection_education', spFolder: 'Annexture 13 - Educational Qualifications', multi: false },
+    adv_edu_al:     { label: 'GCE A/L Certificate', sectionId: 'docSection_education', spFolder: 'Annexture 13 - Educational Qualifications', multi: false },
+    adv_edu_degree: { label: 'Degree Certificates + Transcripts', sectionId: 'docSection_education', spFolder: 'Annexture 13 - Educational Qualifications', multi: true },
+    adv_edu_ielts:  { label: 'IELTS or PTE Certificate', sectionId: 'docSection_education', spFolder: 'Annexture 13 - Educational Qualifications', multi: false },
+
+    // ── Employment (Annexture 14 & 15) ──
+    adv_emp_service_letter: { label: 'Service Letter with salary confirmation', sectionId: 'docSection_employment', spFolder: 'Annexture 14 - Current Work Experience', multi: true },
+    adv_emp_contract:       { label: 'Employment Contract', sectionId: 'docSection_employment', spFolder: 'Annexture 14 - Current Work Experience', multi: true },
+    adv_emp_payslips:       { label: 'Pay slips (Last 3 months)', sectionId: 'docSection_employment', spFolder: 'Annexture 14 - Current Work Experience', multi: true },
+    adv_emp_epf_etf:        { label: 'EPF/ETF confirmation for each employment', sectionId: 'docSection_employment', spFolder: 'Annexture 14 - Current Work Experience', multi: true },
+    adv_emp_bank_stmt:      { label: 'Bank statement of salary account (Last 3 months)', sectionId: 'docSection_employment', spFolder: 'Annexture 14 - Current Work Experience', multi: true },
+    adv_emp_epf_history:    { label: 'EPF/ETF contribution history of all employments', sectionId: 'docSection_employment', spFolder: 'Annexture 15 - Previous Work Experience', multi: true },
+
+    // ── Tuition Fee (Annexture 19) ──
+    adv_tuition_invoice:   { label: 'Invoice from college (Acknowledgement Invoice)', sectionId: 'docSection_tuition', spFolder: 'Annexture 19 - Evidence of Tuition Fee Payment', multi: false },
+    adv_tuition_tt_proof:  { label: 'TT transfer proof (Debit Advice / Order)', sectionId: 'docSection_tuition', spFolder: 'Annexture 19 - Evidence of Tuition Fee Payment', multi: false },
+    adv_tuition_bank_stmt: { label: 'Bank statement — Post TT', sectionId: 'docSection_tuition', spFolder: 'Annexture 19 - Evidence of Tuition Fee Payment', multi: false },
+
+    // ── Home Ties ──
+    adv_home_deed_orig:       { label: 'Transfer deeds (original) — Home and Properties', sectionId: 'docSection_homeTies', spFolder: 'Annexture 16 - Travel History', multi: true },
+    adv_home_deed_trans:      { label: 'Transfer deeds (Translation) — Home and Properties', sectionId: 'docSection_homeTies', spFolder: 'Annexture 16 - Travel History', multi: true },
+    adv_home_successor:       { label: 'Nomination of Successor Form / Affidavit', sectionId: 'docSection_homeTies', spFolder: 'Annexture 16 - Travel History', multi: false },
+    adv_home_child_birth_orig:{ label: 'Birth Certificates of Children — Original', sectionId: 'docSection_homeTies', spFolder: 'Annexture 16 - Travel History', multi: true },
+    adv_home_child_birth_trans:{ label: 'Birth Certificates of Children — Translation', sectionId: 'docSection_homeTies', spFolder: 'Annexture 16 - Travel History', multi: true },
+    adv_home_marriage_orig:   { label: 'Marriage Certificate — Original', sectionId: 'docSection_homeTies', spFolder: 'Annexture 16 - Travel History', multi: false },
+    adv_home_marriage_trans:  { label: 'Marriage Certificate — Translation', sectionId: 'docSection_homeTies', spFolder: 'Annexture 16 - Travel History', multi: false },
+    adv_home_parent_id:       { label: 'Identity documents of parents with translation', sectionId: 'docSection_homeTies', spFolder: 'Annexture 16 - Travel History', multi: true },
+    adv_home_parent_medical:  { label: 'Medical certificates of parents', sectionId: 'docSection_homeTies', spFolder: 'Annexture 16 - Travel History', multi: true },
+    adv_home_vehicle_book:    { label: 'Vehicle Registration Book', sectionId: 'docSection_homeTies', spFolder: 'Annexture 16 - Travel History', multi: false },
+    adv_home_vehicle_valuation:{ label: 'Vehicle Valuation Report', sectionId: 'docSection_homeTies', spFolder: 'Annexture 16 - Travel History', multi: false },
+    adv_home_travel_evidence: { label: 'Evidence of Previous International travels', sectionId: 'docSection_homeTies', spFolder: 'Annexture 16 - Travel History', multi: false },
+    adv_home_business_reg:    { label: 'Business Registration certificate', sectionId: 'docSection_homeTies', spFolder: 'Annexture 16 - Travel History', multi: false },
+    adv_home_business_tax:    { label: 'Business tax return / Financial documents', sectionId: 'docSection_homeTies', spFolder: 'Annexture 16 - Travel History', multi: false },
+    adv_home_leave_letter:    { label: 'Employment leave letters / Future Job confirmation', sectionId: 'docSection_homeTies', spFolder: 'Annexture 16 - Travel History', multi: false },
+    adv_home_memberships:     { label: 'Active memberships in societies, charities, service clubs', sectionId: 'docSection_homeTies', spFolder: 'Annexture 16 - Travel History', multi: false },
+    adv_home_pets:            { label: 'Pets (pictures / other proofs)', sectionId: 'docSection_homeTies', spFolder: 'Annexture 16 - Travel History', multi: false },
+    adv_home_other_financial: { label: 'Other financial evidence', sectionId: 'docSection_homeTies', spFolder: 'Annexture 16 - Travel History', multi: false },
+    adv_home_religious_letter:{ label: 'Letter from a religious leader about social services', sectionId: 'docSection_homeTies', spFolder: 'Annexture 16 - Travel History', multi: false },
+    adv_home_friend_letters:  { label: 'Two letters from close friends with their IDs/Passports', sectionId: 'docSection_homeTies', spFolder: 'Annexture 16 - Travel History', multi: false },
+    adv_home_career_outcome:  { label: 'Post study career outcome proofs', sectionId: 'docSection_homeTies', spFolder: 'Annexture 16 - Travel History', multi: false },
+    adv_home_gold_valuation:  { label: 'Valuation reports of gold', sectionId: 'docSection_homeTies', spFolder: 'Annexture 16 - Travel History', multi: false },
+
+    // ── Visa Refusals (Annexture 18) ──
+    adv_visa_refusal_letter:      { label: 'Visa Refusal Letter issued by immigration', sectionId: 'docSection_visaRefusal', spFolder: 'Annexture 18 - Visa Decline Letters & Explanations', multi: true },
+    adv_visa_refusal_explanation: { label: 'Explanation letter written by the student', sectionId: 'docSection_visaRefusal', spFolder: 'Annexture 18 - Visa Decline Letters & Explanations', multi: true },
+
+    // ── Fixed Deposits Myself (Annexture 1A) ──
+    adv_fd_m_certificates:    { label: 'Fixed deposit Certificates (Myself)', sectionId: 'docSection_fundsMyself', spFolder: 'Annexture 1A - Evidence of Funds - Fixed Deposit (Myself)', multi: true, subHeading: 'Fixed Deposits' },
+    adv_fd_m_balance_confirm: { label: 'Bank balance confirmations — Fixed Deposits (Myself)', sectionId: 'docSection_fundsMyself', spFolder: 'Annexture 1A - Evidence of Funds - Fixed Deposit (Myself)', multi: true },
+    adv_fd_m_renewal:         { label: 'FD renewal confirmation letter (Myself)', sectionId: 'docSection_fundsMyself', spFolder: 'Annexture 1A - Evidence of Funds - Fixed Deposit (Myself)', multi: true },
+
+    // ── Fixed Deposits Sponsor (Annexture 1B) ──
+    adv_fd_s_certificates:    { label: 'Fixed deposit Certificates (Sponsor)', sectionId: 'docSection_fundsSponsor', spFolder: 'Annexture 1B - Evidence of Funds - Fixed Deposit (Sponsor)', multi: true, subHeading: 'Fixed Deposits' },
+    adv_fd_s_balance_confirm: { label: 'Bank balance confirmations — Fixed Deposits (Sponsor)', sectionId: 'docSection_fundsSponsor', spFolder: 'Annexture 1B - Evidence of Funds - Fixed Deposit (Sponsor)', multi: true },
+    adv_fd_s_renewal:         { label: 'FD renewal confirmation letter (Sponsor)', sectionId: 'docSection_fundsSponsor', spFolder: 'Annexture 1B - Evidence of Funds - Fixed Deposit (Sponsor)', multi: true },
+
+    // ── Savings Myself (Annexture 2A) ──
+    adv_sav_m_bank_history:   { label: 'Bank account history statement 3 months — Savings (Myself)', sectionId: 'docSection_fundsMyself', spFolder: 'Annexture 2A - Evidence of Funds - Savings (Myself)', multi: true, subHeading: 'Savings / Current Accounts' },
+    adv_sav_m_balance_confirm:{ label: 'Bank balance confirmations — Savings (Myself)', sectionId: 'docSection_fundsMyself', spFolder: 'Annexture 2A - Evidence of Funds - Savings (Myself)', multi: true },
+
+    // ── Savings Sponsor (Annexture 2B) ──
+    adv_sav_s_bank_history:   { label: 'Bank account history statement 3 months — Savings (Sponsor)', sectionId: 'docSection_fundsSponsor', spFolder: 'Annexture 2B - Evidence of Funds - Savings (Sponsor)', multi: true, subHeading: 'Savings / Current Accounts' },
+    adv_sav_s_balance_confirm:{ label: 'Bank balance confirmations — Savings (Sponsor)', sectionId: 'docSection_fundsSponsor', spFolder: 'Annexture 2B - Evidence of Funds - Savings (Sponsor)', multi: true },
+
+    // ── Large Deposit (Annexture 3) ──
+    adv_large_deposit_m_explain: { label: 'Explanation of large deposits with proofs (Myself)', sectionId: 'docSection_fundsMyself', spFolder: 'Annexture 3 - Evidence of Funds - Large Deposit Explanation', multi: true, subHeading: 'Large Deposit Explanation' },
+    adv_large_deposit_s_explain: { label: 'Explanation of large deposits with proofs (Sponsor)', sectionId: 'docSection_fundsSponsor', spFolder: 'Annexture 3 - Evidence of Funds - Large Deposit Explanation', multi: true, subHeading: 'Large Deposit Explanation' },
+
+    // ── Provident Fund Myself (Annexture 4A) ──
+    adv_pf_m_epf_stmt:       { label: 'EPF — Member Account Statement (Myself)', sectionId: 'docSection_fundsMyself', spFolder: 'Annexture 4A - Evidence of Funds - Employee\'s Provident Fund (Myself)', multi: false, subHeading: 'Provident Fund (EPF/ETF)' },
+    adv_pf_m_epf_history:    { label: 'EPF — Contribution History report (Myself)', sectionId: 'docSection_fundsMyself', spFolder: 'Annexture 4A - Evidence of Funds - Employee\'s Provident Fund (Myself)', multi: false },
+    adv_pf_m_etf_stmt:       { label: 'ETF — Member Account Statement (Myself)', sectionId: 'docSection_fundsMyself', spFolder: 'Annexture 4A - Evidence of Funds - Employee\'s Provident Fund (Myself)', multi: false },
+    adv_pf_m_etf_history:    { label: 'ETF — Contribution History report (Myself)', sectionId: 'docSection_fundsMyself', spFolder: 'Annexture 4A - Evidence of Funds - Employee\'s Provident Fund (Myself)', multi: false },
+    adv_pf_m_available_proof:{ label: 'Document to prove readily available — PF (Myself)', sectionId: 'docSection_fundsMyself', spFolder: 'Annexture 4A - Evidence of Funds - Employee\'s Provident Fund (Myself)', multi: false },
+
+    // ── Provident Fund Sponsor (Annexture 4B) ──
+    adv_pf_s_epf_stmt:       { label: 'EPF — Member Account Statement (Sponsor)', sectionId: 'docSection_fundsSponsor', spFolder: 'Annexture 4B - Evidence of Funds - Employee\'s Provident Fund (Sponsor)', multi: false, subHeading: 'Provident Fund (EPF/ETF)' },
+    adv_pf_s_epf_history:    { label: 'EPF — Contribution History report (Sponsor)', sectionId: 'docSection_fundsSponsor', spFolder: 'Annexture 4B - Evidence of Funds - Employee\'s Provident Fund (Sponsor)', multi: false },
+    adv_pf_s_etf_stmt:       { label: 'ETF — Member Account Statement (Sponsor)', sectionId: 'docSection_fundsSponsor', spFolder: 'Annexture 4B - Evidence of Funds - Employee\'s Provident Fund (Sponsor)', multi: false },
+    adv_pf_s_etf_history:    { label: 'ETF — Contribution History report (Sponsor)', sectionId: 'docSection_fundsSponsor', spFolder: 'Annexture 4B - Evidence of Funds - Employee\'s Provident Fund (Sponsor)', multi: false },
+    adv_pf_s_available_proof:{ label: 'Document to prove readily available — PF (Sponsor)', sectionId: 'docSection_fundsSponsor', spFolder: 'Annexture 4B - Evidence of Funds - Employee\'s Provident Fund (Sponsor)', multi: false },
+
+    // ── Education Loan (Annexture 5) ──
+    adv_loan_offer_letter:    { label: 'Education Loan Offer / Sanction Letter', sectionId: 'docSection_educationLoan', spFolder: 'Annexture 5 - Evidence of Education Loan', multi: false },
+
+    // ── Loan Repayment (Annexture 11) ──
+    adv_loan_repay_security:  { label: 'Security for loans (fixed assets)', sectionId: 'docSection_loanRepayment', spFolder: 'Annexture 11 - Education Loan Repayment Plan', multi: false },
+    adv_loan_repay_plan:      { label: 'Repayment Plan', sectionId: 'docSection_loanRepayment', spFolder: 'Annexture 11 - Education Loan Repayment Plan', multi: false },
+
+    // ── Source: Employment Myself (Annexture 6A) ──
+    adv_sof_emp_m_employer_letter: { label: 'Employer letter / contract with salary confirmation (Myself)', sectionId: 'docSection_sourceMyself', spFolder: 'Annexture 6A - Source of Funds - Savings from Employment (Myself)', multi: false, subHeading: 'Savings from Employment' },
+    adv_sof_emp_m_bank_stmt:       { label: 'Bank statement of salary account 3 months (Myself)', sectionId: 'docSection_sourceMyself', spFolder: 'Annexture 6A - Source of Funds - Savings from Employment (Myself)', multi: false },
+    adv_sof_emp_m_salary_slips:    { label: 'Salary Slips 3 months (Myself)', sectionId: 'docSection_sourceMyself', spFolder: 'Annexture 6A - Source of Funds - Savings from Employment (Myself)', multi: false },
+    adv_sof_emp_m_tax_cert:        { label: 'Income Tax (PAYE) certificate (Myself)', sectionId: 'docSection_sourceMyself', spFolder: 'Annexture 6A - Source of Funds - Savings from Employment (Myself)', multi: false },
+    adv_sof_emp_m_bonus:           { label: 'Bonus / commissions proofs (Myself)', sectionId: 'docSection_sourceMyself', spFolder: 'Annexture 6A - Source of Funds - Savings from Employment (Myself)', multi: false },
+    adv_sof_emp_m_financial_stmt:  { label: 'Financial Statement from chartered accountant 2 years (Myself)', sectionId: 'docSection_sourceMyself', spFolder: 'Annexture 6A - Source of Funds - Savings from Employment (Myself)', multi: false },
+    adv_sof_emp_m_saving_pattern:  { label: 'Explanation of saving pattern (Myself)', sectionId: 'docSection_sourceMyself', spFolder: 'Annexture 6A - Source of Funds - Savings from Employment (Myself)', multi: false },
+
+    // ── Source: Employment Sponsor (Annexture 6B) ──
+    adv_sof_emp_s_employer_letter: { label: 'Employer letter / contract with salary confirmation (Sponsor)', sectionId: 'docSection_sourceSponsor', spFolder: 'Annexture 6B - Source of Funds - Savings from Employment (Sponsor)', multi: false, subHeading: 'Savings from Employment' },
+    adv_sof_emp_s_bank_stmt:       { label: 'Bank statement of salary account 3 months (Sponsor)', sectionId: 'docSection_sourceSponsor', spFolder: 'Annexture 6B - Source of Funds - Savings from Employment (Sponsor)', multi: false },
+    adv_sof_emp_s_salary_slips:    { label: 'Salary Slips 3 months (Sponsor)', sectionId: 'docSection_sourceSponsor', spFolder: 'Annexture 6B - Source of Funds - Savings from Employment (Sponsor)', multi: false },
+    adv_sof_emp_s_tax_cert:        { label: 'Income Tax (PAYE) certificate (Sponsor)', sectionId: 'docSection_sourceSponsor', spFolder: 'Annexture 6B - Source of Funds - Savings from Employment (Sponsor)', multi: false },
+    adv_sof_emp_s_bonus:           { label: 'Bonus / commissions proofs (Sponsor)', sectionId: 'docSection_sourceSponsor', spFolder: 'Annexture 6B - Source of Funds - Savings from Employment (Sponsor)', multi: false },
+    adv_sof_emp_s_financial_stmt:  { label: 'Financial Statement from chartered accountant 2 years (Sponsor)', sectionId: 'docSection_sourceSponsor', spFolder: 'Annexture 6B - Source of Funds - Savings from Employment (Sponsor)', multi: false },
+    adv_sof_emp_s_saving_pattern:  { label: 'Explanation of saving pattern (Sponsor)', sectionId: 'docSection_sourceSponsor', spFolder: 'Annexture 6B - Source of Funds - Savings from Employment (Sponsor)', multi: false },
+
+    // ── Source: Business Myself (Annexture 7A) ──
+    adv_sof_biz_m_registration:  { label: 'Business registration (Myself)', sectionId: 'docSection_sourceMyself', spFolder: 'Annexture 7A - Source of Funds - Business (Myself)', multi: false, subHeading: 'Self-employment / Business' },
+    adv_sof_biz_m_pnl:           { label: 'Profit and loss statements by chartered accountant (Myself)', sectionId: 'docSection_sourceMyself', spFolder: 'Annexture 7A - Source of Funds - Business (Myself)', multi: false },
+    adv_sof_biz_m_tax:           { label: 'Business TAX evidence (Myself)', sectionId: 'docSection_sourceMyself', spFolder: 'Annexture 7A - Source of Funds - Business (Myself)', multi: false },
+    adv_sof_biz_m_lawyer_letter: { label: 'Letter from lawyer/accountant confirming position (Myself)', sectionId: 'docSection_sourceMyself', spFolder: 'Annexture 7A - Source of Funds - Business (Myself)', multi: false },
+    adv_sof_biz_m_bank_stmt:     { label: 'Bank accounts statements 6 months (Myself)', sectionId: 'docSection_sourceMyself', spFolder: 'Annexture 7A - Source of Funds - Business (Myself)', multi: false },
+
+    // ── Source: Business Sponsor (Annexture 7B) ──
+    adv_sof_biz_s_registration:  { label: 'Business registration (Sponsor)', sectionId: 'docSection_sourceSponsor', spFolder: 'Annexture 7B - Source of Funds - Business (Sponsor)', multi: false, subHeading: 'Self-employment / Business' },
+    adv_sof_biz_s_pnl:           { label: 'Profit and loss statements by chartered accountant (Sponsor)', sectionId: 'docSection_sourceSponsor', spFolder: 'Annexture 7B - Source of Funds - Business (Sponsor)', multi: false },
+    adv_sof_biz_s_tax:           { label: 'Business TAX evidence (Sponsor)', sectionId: 'docSection_sourceSponsor', spFolder: 'Annexture 7B - Source of Funds - Business (Sponsor)', multi: false },
+    adv_sof_biz_s_lawyer_letter: { label: 'Letter from lawyer/accountant confirming position (Sponsor)', sectionId: 'docSection_sourceSponsor', spFolder: 'Annexture 7B - Source of Funds - Business (Sponsor)', multi: false },
+    adv_sof_biz_s_bank_stmt:     { label: 'Bank accounts statements 6 months (Sponsor)', sectionId: 'docSection_sourceSponsor', spFolder: 'Annexture 7B - Source of Funds - Business (Sponsor)', multi: false },
+
+    // ── Source: Rental Myself (Annexture 8A) ──
+    adv_sof_rent_m_lease:            { label: 'Lease agreement (Myself)', sectionId: 'docSection_sourceMyself', spFolder: 'Annexture 8A - Source of Funds - Rental Property (Myself)', multi: false, subHeading: 'Rent / Lease Income' },
+    adv_sof_rent_m_deed:             { label: 'Deed of the property (Myself)', sectionId: 'docSection_sourceMyself', spFolder: 'Annexture 8A - Source of Funds - Rental Property (Myself)', multi: false },
+    adv_sof_rent_m_valuation:        { label: 'Valuation of the Property (Myself)', sectionId: 'docSection_sourceMyself', spFolder: 'Annexture 8A - Source of Funds - Rental Property (Myself)', multi: false },
+    adv_sof_rent_m_bank_stmt:        { label: 'Bank statement showing receipt of funds (Myself)', sectionId: 'docSection_sourceMyself', spFolder: 'Annexture 8A - Source of Funds - Rental Property (Myself)', multi: false },
+    adv_sof_rent_m_accountant_letter:{ label: 'Signed letter from chartered accountant — Rental (Myself)', sectionId: 'docSection_sourceMyself', spFolder: 'Annexture 8A - Source of Funds - Rental Property (Myself)', multi: false },
+    adv_sof_rent_m_invoices:         { label: 'Rental Invoices (Myself)', sectionId: 'docSection_sourceMyself', spFolder: 'Annexture 8A - Source of Funds - Rental Property (Myself)', multi: false },
+
+    // ── Source: Rental Sponsor (Annexture 8B) ──
+    adv_sof_rent_s_lease:            { label: 'Lease agreement (Sponsor)', sectionId: 'docSection_sourceSponsor', spFolder: 'Annexture 8B - Source of Funds - Rental Property (Sponsor)', multi: false, subHeading: 'Rent / Lease Income' },
+    adv_sof_rent_s_deed:             { label: 'Deed of the property (Sponsor)', sectionId: 'docSection_sourceSponsor', spFolder: 'Annexture 8B - Source of Funds - Rental Property (Sponsor)', multi: false },
+    adv_sof_rent_s_valuation:        { label: 'Valuation of the Property (Sponsor)', sectionId: 'docSection_sourceSponsor', spFolder: 'Annexture 8B - Source of Funds - Rental Property (Sponsor)', multi: false },
+    adv_sof_rent_s_bank_stmt:        { label: 'Bank statement showing receipt of funds (Sponsor)', sectionId: 'docSection_sourceSponsor', spFolder: 'Annexture 8B - Source of Funds - Rental Property (Sponsor)', multi: false },
+    adv_sof_rent_s_accountant_letter:{ label: 'Signed letter from chartered accountant — Rental (Sponsor)', sectionId: 'docSection_sourceSponsor', spFolder: 'Annexture 8B - Source of Funds - Rental Property (Sponsor)', multi: false },
+    adv_sof_rent_s_invoices:         { label: 'Rental Invoices (Sponsor)', sectionId: 'docSection_sourceSponsor', spFolder: 'Annexture 8B - Source of Funds - Rental Property (Sponsor)', multi: false },
+
+    // ── Source: EPF Myself (Annexture 9A) ──
+    adv_sof_epf_m_contract:         { label: 'Employment contract — EPF Link (Myself)', sectionId: 'docSection_sourceMyself', spFolder: 'Annexture 9A - Source of Funds - Employment link to EPF (Myself)', multi: false, subHeading: 'Employment Linked to Provident Fund' },
+    adv_sof_epf_m_salary_slips:     { label: 'Last 6 months salary slips — EPF Link (Myself)', sectionId: 'docSection_sourceMyself', spFolder: 'Annexture 9A - Source of Funds - Employment link to EPF (Myself)', multi: false },
+    adv_sof_epf_m_service_letter:   { label: 'Service letter — EPF Link (Myself)', sectionId: 'docSection_sourceMyself', spFolder: 'Annexture 9A - Source of Funds - Employment link to EPF (Myself)', multi: false },
+    adv_sof_epf_m_closing_stmt:     { label: 'Copy of closing statement of Fund (Myself)', sectionId: 'docSection_sourceMyself', spFolder: 'Annexture 9A - Source of Funds - Employment link to EPF (Myself)', multi: false },
+    adv_sof_epf_m_balance_letter:   { label: 'Letter confirming the Balance — EPF (Myself)', sectionId: 'docSection_sourceMyself', spFolder: 'Annexture 9A - Source of Funds - Employment link to EPF (Myself)', multi: false },
+    adv_sof_epf_m_bank_stmt:        { label: 'Bank statement if fund withdrawn — EPF (Myself)', sectionId: 'docSection_sourceMyself', spFolder: 'Annexture 9A - Source of Funds - Employment link to EPF (Myself)', multi: false },
+    adv_sof_epf_m_accountant_letter:{ label: 'Signed letter from chartered accountant — EPF (Myself)', sectionId: 'docSection_sourceMyself', spFolder: 'Annexture 9A - Source of Funds - Employment link to EPF (Myself)', multi: false },
+    adv_sof_epf_m_epf_balance:      { label: 'EPF/ETF — Balance confirmation (Myself)', sectionId: 'docSection_sourceMyself', spFolder: 'Annexture 9A - Source of Funds - Employment link to EPF (Myself)', multi: false },
+    adv_sof_epf_m_epf_contrib:      { label: 'EPF/ETF — Contribution History report (Myself)', sectionId: 'docSection_sourceMyself', spFolder: 'Annexture 9A - Source of Funds - Employment link to EPF (Myself)', multi: false },
+    adv_sof_epf_m_receival_proof:   { label: 'Docs to prove receival of EPF/ETF (Myself)', sectionId: 'docSection_sourceMyself', spFolder: 'Annexture 9A - Source of Funds - Employment link to EPF (Myself)', multi: false },
+
+    // ── Source: EPF Sponsor (Annexture 9B) ──
+    adv_sof_epf_s_contract:         { label: 'Employment contract — EPF Link (Sponsor)', sectionId: 'docSection_sourceSponsor', spFolder: 'Annexture 9B - Source of Funds - Employment link to EPF (Sponsor)', multi: false, subHeading: 'Employment Linked to Provident Fund' },
+    adv_sof_epf_s_salary_slips:     { label: 'Last 6 months salary slips — EPF Link (Sponsor)', sectionId: 'docSection_sourceSponsor', spFolder: 'Annexture 9B - Source of Funds - Employment link to EPF (Sponsor)', multi: false },
+    adv_sof_epf_s_service_letter:   { label: 'Service letter — EPF Link (Sponsor)', sectionId: 'docSection_sourceSponsor', spFolder: 'Annexture 9B - Source of Funds - Employment link to EPF (Sponsor)', multi: false },
+    adv_sof_epf_s_closing_stmt:     { label: 'Copy of closing statement of Fund (Sponsor)', sectionId: 'docSection_sourceSponsor', spFolder: 'Annexture 9B - Source of Funds - Employment link to EPF (Sponsor)', multi: false },
+    adv_sof_epf_s_balance_letter:   { label: 'Letter confirming the Balance — EPF (Sponsor)', sectionId: 'docSection_sourceSponsor', spFolder: 'Annexture 9B - Source of Funds - Employment link to EPF (Sponsor)', multi: false },
+    adv_sof_epf_s_bank_stmt:        { label: 'Bank statement if fund withdrawn — EPF (Sponsor)', sectionId: 'docSection_sourceSponsor', spFolder: 'Annexture 9B - Source of Funds - Employment link to EPF (Sponsor)', multi: false },
+    adv_sof_epf_s_accountant_letter:{ label: 'Signed letter from chartered accountant — EPF (Sponsor)', sectionId: 'docSection_sourceSponsor', spFolder: 'Annexture 9B - Source of Funds - Employment link to EPF (Sponsor)', multi: false },
+    adv_sof_epf_s_epf_balance:      { label: 'EPF/ETF — Balance confirmation (Sponsor)', sectionId: 'docSection_sourceSponsor', spFolder: 'Annexture 9B - Source of Funds - Employment link to EPF (Sponsor)', multi: false },
+    adv_sof_epf_s_epf_contrib:      { label: 'EPF/ETF — Contribution History report (Sponsor)', sectionId: 'docSection_sourceSponsor', spFolder: 'Annexture 9B - Source of Funds - Employment link to EPF (Sponsor)', multi: false },
+    adv_sof_epf_s_receival_proof:   { label: 'Docs to prove receival of EPF/ETF (Sponsor)', sectionId: 'docSection_sourceSponsor', spFolder: 'Annexture 9B - Source of Funds - Employment link to EPF (Sponsor)', multi: false },
+
+    // ── Source: Other Myself (Annexture 10A) — all sub-items ──
+    adv_sof_oth_m_prop_deed_orig:  { label: 'Sale of Property — Transfer deeds original (Myself)', sectionId: 'docSection_sourceMyself', spFolder: 'Annexture 10A - Source of Funds - Other (Myself)', multi: false, subHeading: 'Other Sources' },
+    adv_sof_oth_m_prop_deed_trans: { label: 'Sale of Property — Transfer deeds (Translation) (Myself)', sectionId: 'docSection_sourceMyself', spFolder: 'Annexture 10A - Source of Funds - Other (Myself)', multi: false },
+    adv_sof_oth_m_prop_sale_agree: { label: 'Sale of Property — Sales agreement (Myself)', sectionId: 'docSection_sourceMyself', spFolder: 'Annexture 10A - Source of Funds - Other (Myself)', multi: false },
+    adv_sof_oth_m_prop_valuation:  { label: 'Sale of Property — Land Valuation Report (Myself)', sectionId: 'docSection_sourceMyself', spFolder: 'Annexture 10A - Source of Funds - Other (Myself)', multi: false },
+    adv_sof_oth_m_prop_bank_stmt:  { label: 'Sale of Property — Bank statement showing receipt (Myself)', sectionId: 'docSection_sourceMyself', spFolder: 'Annexture 10A - Source of Funds - Other (Myself)', multi: false },
+    adv_sof_oth_m_veh_book:        { label: 'Sale of Vehicle — Vehicle book / Transfer agreement (Myself)', sectionId: 'docSection_sourceMyself', spFolder: 'Annexture 10A - Source of Funds - Other (Myself)', multi: false },
+    adv_sof_oth_m_veh_valuation:   { label: 'Sale of Vehicle — Valuation Report (Myself)', sectionId: 'docSection_sourceMyself', spFolder: 'Annexture 10A - Source of Funds - Other (Myself)', multi: false },
+    adv_sof_oth_m_veh_sale_agree:  { label: 'Sale of Vehicle — Sales agreement (Myself)', sectionId: 'docSection_sourceMyself', spFolder: 'Annexture 10A - Source of Funds - Other (Myself)', multi: false },
+    adv_sof_oth_m_veh_bank_stmt:   { label: 'Sale of Vehicle — Bank statement showing receipt (Myself)', sectionId: 'docSection_sourceMyself', spFolder: 'Annexture 10A - Source of Funds - Other (Myself)', multi: false },
+    adv_sof_oth_m_gold_purchase:   { label: 'Sale of Gold — Purchase Invoice (Myself)', sectionId: 'docSection_sourceMyself', spFolder: 'Annexture 10A - Source of Funds - Other (Myself)', multi: false },
+    adv_sof_oth_m_gold_sale:       { label: 'Sale of Gold — Sale Invoice (Myself)', sectionId: 'docSection_sourceMyself', spFolder: 'Annexture 10A - Source of Funds - Other (Myself)', multi: false },
+    adv_sof_oth_m_gold_valuation:  { label: 'Sale of Gold — Valuation Report (Myself)', sectionId: 'docSection_sourceMyself', spFolder: 'Annexture 10A - Source of Funds - Other (Myself)', multi: false },
+    adv_sof_oth_m_gold_bank_stmt:  { label: 'Sale of Gold — Bank statement showing receipt (Myself)', sectionId: 'docSection_sourceMyself', spFolder: 'Annexture 10A - Source of Funds - Other (Myself)', multi: false },
+    adv_sof_oth_m_inherit_probate: { label: 'Inheritance — Grant of Probate (will) (Myself)', sectionId: 'docSection_sourceMyself', spFolder: 'Annexture 10A - Source of Funds - Other (Myself)', multi: false },
+    adv_sof_oth_m_inherit_valuation:{ label: 'Inheritance — Valuation report (Myself)', sectionId: 'docSection_sourceMyself', spFolder: 'Annexture 10A - Source of Funds - Other (Myself)', multi: false },
+    adv_sof_oth_m_inherit_lawyer:  { label: 'Inheritance — Letter from lawyer/accountant (Myself)', sectionId: 'docSection_sourceMyself', spFolder: 'Annexture 10A - Source of Funds - Other (Myself)', multi: false },
+    adv_sof_oth_m_gift_donor_letter:{ label: 'Gift of Money — Letter from donor (Myself)', sectionId: 'docSection_sourceMyself', spFolder: 'Annexture 10A - Source of Funds - Other (Myself)', multi: false },
+    adv_sof_oth_m_gift_lawyer:     { label: 'Gift of Money — Letter from lawyer/accountant (Myself)', sectionId: 'docSection_sourceMyself', spFolder: 'Annexture 10A - Source of Funds - Other (Myself)', multi: false },
+    adv_sof_oth_m_gift_bank_stmt:  { label: 'Gift of Money — Bank statement showing receipt (Myself)', sectionId: 'docSection_sourceMyself', spFolder: 'Annexture 10A - Source of Funds - Other (Myself)', multi: false },
+    adv_sof_oth_m_giftprop_donor:  { label: 'Gift of Property/Gold — Letter from donor (Myself)', sectionId: 'docSection_sourceMyself', spFolder: 'Annexture 10A - Source of Funds - Other (Myself)', multi: false },
+    adv_sof_oth_m_giftprop_lawyer: { label: 'Gift of Property/Gold — Letter from lawyer (Myself)', sectionId: 'docSection_sourceMyself', spFolder: 'Annexture 10A - Source of Funds - Other (Myself)', multi: false },
+    adv_sof_oth_m_giftprop_deed:   { label: 'Gift of Property/Gold — Transfer deed (Myself)', sectionId: 'docSection_sourceMyself', spFolder: 'Annexture 10A - Source of Funds - Other (Myself)', multi: false },
+    adv_sof_oth_m_lottery_voucher: { label: 'Lottery/Betting — Commission voucher confirming win (Myself)', sectionId: 'docSection_sourceMyself', spFolder: 'Annexture 10A - Source of Funds - Other (Myself)', multi: false },
+    adv_sof_oth_m_lottery_bank_stmt:{ label: 'Lottery/Betting — Bank statement showing receipt (Myself)', sectionId: 'docSection_sourceMyself', spFolder: 'Annexture 10A - Source of Funds - Other (Myself)', multi: false },
+
+    // ── Source: Other Sponsor (Annexture 10B) ──
+    adv_sof_oth_s_prop_deed_orig:  { label: 'Sale of Property — Transfer deeds original (Sponsor)', sectionId: 'docSection_sourceSponsor', spFolder: 'Annexture 10B - Source of Funds - Other (Sponsor)', multi: false, subHeading: 'Other Sources' },
+    adv_sof_oth_s_prop_deed_trans: { label: 'Sale of Property — Transfer deeds (Translation) (Sponsor)', sectionId: 'docSection_sourceSponsor', spFolder: 'Annexture 10B - Source of Funds - Other (Sponsor)', multi: false },
+    adv_sof_oth_s_prop_sale_agree: { label: 'Sale of Property — Sales agreement (Sponsor)', sectionId: 'docSection_sourceSponsor', spFolder: 'Annexture 10B - Source of Funds - Other (Sponsor)', multi: false },
+    adv_sof_oth_s_prop_valuation:  { label: 'Sale of Property — Land Valuation Report (Sponsor)', sectionId: 'docSection_sourceSponsor', spFolder: 'Annexture 10B - Source of Funds - Other (Sponsor)', multi: false },
+    adv_sof_oth_s_prop_bank_stmt:  { label: 'Sale of Property — Bank statement showing receipt (Sponsor)', sectionId: 'docSection_sourceSponsor', spFolder: 'Annexture 10B - Source of Funds - Other (Sponsor)', multi: false },
+    adv_sof_oth_s_veh_book:        { label: 'Sale of Vehicle — Vehicle book / Transfer agreement (Sponsor)', sectionId: 'docSection_sourceSponsor', spFolder: 'Annexture 10B - Source of Funds - Other (Sponsor)', multi: false },
+    adv_sof_oth_s_veh_valuation:   { label: 'Sale of Vehicle — Valuation Report (Sponsor)', sectionId: 'docSection_sourceSponsor', spFolder: 'Annexture 10B - Source of Funds - Other (Sponsor)', multi: false },
+    adv_sof_oth_s_veh_sale_agree:  { label: 'Sale of Vehicle — Sales agreement (Sponsor)', sectionId: 'docSection_sourceSponsor', spFolder: 'Annexture 10B - Source of Funds - Other (Sponsor)', multi: false },
+    adv_sof_oth_s_veh_bank_stmt:   { label: 'Sale of Vehicle — Bank statement showing receipt (Sponsor)', sectionId: 'docSection_sourceSponsor', spFolder: 'Annexture 10B - Source of Funds - Other (Sponsor)', multi: false },
+    adv_sof_oth_s_gold_purchase:   { label: 'Sale of Gold — Purchase Invoice (Sponsor)', sectionId: 'docSection_sourceSponsor', spFolder: 'Annexture 10B - Source of Funds - Other (Sponsor)', multi: false },
+    adv_sof_oth_s_gold_sale:       { label: 'Sale of Gold — Sale Invoice (Sponsor)', sectionId: 'docSection_sourceSponsor', spFolder: 'Annexture 10B - Source of Funds - Other (Sponsor)', multi: false },
+    adv_sof_oth_s_gold_valuation:  { label: 'Sale of Gold — Valuation Report (Sponsor)', sectionId: 'docSection_sourceSponsor', spFolder: 'Annexture 10B - Source of Funds - Other (Sponsor)', multi: false },
+    adv_sof_oth_s_gold_bank_stmt:  { label: 'Sale of Gold — Bank statement showing receipt (Sponsor)', sectionId: 'docSection_sourceSponsor', spFolder: 'Annexture 10B - Source of Funds - Other (Sponsor)', multi: false },
+    adv_sof_oth_s_inherit_probate: { label: 'Inheritance — Grant of Probate (will) (Sponsor)', sectionId: 'docSection_sourceSponsor', spFolder: 'Annexture 10B - Source of Funds - Other (Sponsor)', multi: false },
+    adv_sof_oth_s_inherit_valuation:{ label: 'Inheritance — Valuation report (Sponsor)', sectionId: 'docSection_sourceSponsor', spFolder: 'Annexture 10B - Source of Funds - Other (Sponsor)', multi: false },
+    adv_sof_oth_s_inherit_lawyer:  { label: 'Inheritance — Letter from lawyer/accountant (Sponsor)', sectionId: 'docSection_sourceSponsor', spFolder: 'Annexture 10B - Source of Funds - Other (Sponsor)', multi: false },
+    adv_sof_oth_s_gift_donor_letter:{ label: 'Gift of Money — Letter from donor (Sponsor)', sectionId: 'docSection_sourceSponsor', spFolder: 'Annexture 10B - Source of Funds - Other (Sponsor)', multi: false },
+    adv_sof_oth_s_gift_lawyer:     { label: 'Gift of Money — Letter from lawyer/accountant (Sponsor)', sectionId: 'docSection_sourceSponsor', spFolder: 'Annexture 10B - Source of Funds - Other (Sponsor)', multi: false },
+    adv_sof_oth_s_gift_bank_stmt:  { label: 'Gift of Money — Bank statement showing receipt (Sponsor)', sectionId: 'docSection_sourceSponsor', spFolder: 'Annexture 10B - Source of Funds - Other (Sponsor)', multi: false },
+    adv_sof_oth_s_giftprop_donor:  { label: 'Gift of Property/Gold — Letter from donor (Sponsor)', sectionId: 'docSection_sourceSponsor', spFolder: 'Annexture 10B - Source of Funds - Other (Sponsor)', multi: false },
+    adv_sof_oth_s_giftprop_lawyer: { label: 'Gift of Property/Gold — Letter from lawyer (Sponsor)', sectionId: 'docSection_sourceSponsor', spFolder: 'Annexture 10B - Source of Funds - Other (Sponsor)', multi: false },
+    adv_sof_oth_s_giftprop_deed:   { label: 'Gift of Property/Gold — Transfer deed (Sponsor)', sectionId: 'docSection_sourceSponsor', spFolder: 'Annexture 10B - Source of Funds - Other (Sponsor)', multi: false },
+    adv_sof_oth_s_lottery_voucher: { label: 'Lottery/Betting — Commission voucher confirming win (Sponsor)', sectionId: 'docSection_sourceSponsor', spFolder: 'Annexture 10B - Source of Funds - Other (Sponsor)', multi: false },
+    adv_sof_oth_s_lottery_bank_stmt:{ label: 'Lottery/Betting — Bank statement showing receipt (Sponsor)', sectionId: 'docSection_sourceSponsor', spFolder: 'Annexture 10B - Source of Funds - Other (Sponsor)', multi: false },
+};
+
+// ── Track uploaded files: { fieldName: [{ documentId, fileName }] } ──
+var _uploadedDocs = {};
+var _uploadCounter = 0;
+var _uploadInProgress = 0;
+
+/**
+ * Creates the HTML for a single upload item.
+ */
+function createUploadItemHtml(fieldName, config, index) {
+    var accept = config.accept || '.pdf,.jpg,.jpeg,.png,.docx';
+    var uniqueId = fieldName + '_' + index;
+    var html = '<div class="doc-upload-item" id="upload_' + uniqueId + '" data-field="' + fieldName + '" data-sp-folder="' + (config.spFolder || '') + '">';
+    if (index === 0) {
+        html += '<label class="question-label' + (config.required !== false ? ' mandatory' : '') + '">' + escapeHtml(config.label) + '</label>';
+        if (config.helpText) html += '<p class="help-text">' + config.helpText + '</p>';
+    } else {
+        html += '<label class="question-label" style="font-size:0.9rem;color:#555;">' + escapeHtml(config.label) + ' — File ' + (index + 1) + '</label>';
+    }
+    html += '<div class="upload-area">';
+    html += '<input type="file" class="doc-file-input" data-field-name="' + fieldName + '" data-upload-index="' + index + '" accept="' + accept + '">';
+    html += '<div class="upload-status"></div>';
+    html += '</div>';
+    if (index > 0) {
+        html += '<button type="button" class="btn-remove-upload" onclick="removeUploadSlot(\'' + uniqueId + '\')" style="background:none;border:none;color:#dc3545;cursor:pointer;font-size:0.8rem;margin-top:4px;">✕ Remove this slot</button>';
+    }
+    html += '</div>';
+    return html;
+}
+
+/**
+ * Main function: generates all upload fields based on admin data.
+ * Call this after form data is loaded.
+ */
+function setupSupportingDocuments() {
+    var adminData = FormContext.adminResponse || {};
+    var lastSubHeading = {};
+
+    // 1. Generate always-required documents
+    var requiredSection = document.getElementById('docSection_required');
+    if (requiredSection) {
+        ALWAYS_REQUIRED_DOCS.forEach(function(doc) {
+            requiredSection.insertAdjacentHTML('beforeend', createUploadItemHtml(doc.fieldName, doc, 0));
+            if (doc.multi) {
+                requiredSection.insertAdjacentHTML('beforeend',
+                    '<button type="button" class="btn-add-another" data-field="' + doc.fieldName + '" onclick="addAnotherFile(\'' + doc.fieldName + '\')" style="background:none;border:1px dashed #2e86c1;color:#2e86c1;padding:6px 14px;border-radius:4px;cursor:pointer;font-size:0.85rem;margin:0 0 15px 0;">+ Add another file</button>');
+            }
+        });
+    }
+
+    // 2. Generate conditional documents
+    var sectionsShown = {};
+    Object.keys(CONDITIONAL_DOC_CONFIG).forEach(function(adminField) {
+        var val = adminData[adminField];
+        if (val !== true && val !== 'yes' && val !== 'on' && val !== 'Yes') return;
+
+        var config = CONDITIONAL_DOC_CONFIG[adminField];
+        var section = document.getElementById(config.sectionId);
+        if (!section) return;
+
+        // Show the section
+        section.style.display = '';
+        sectionsShown[config.sectionId] = true;
+
+        // Add sub-heading if this is the first item in a new sub-group
+        if (config.subHeading && lastSubHeading[config.sectionId] !== config.subHeading) {
+            lastSubHeading[config.sectionId] = config.subHeading;
+            section.insertAdjacentHTML('beforeend',
+                '<h4 class="doc-sub-heading" style="margin:20px 0 10px;color:var(--primary-color,#1a5276);font-size:0.95rem;border-bottom:1px solid #dee2e6;padding-bottom:6px;">' + config.subHeading + '</h4>');
+        }
+
+        // Create upload item
+        var docFieldName = 'doc_' + adminField.replace('adv_', '');
+        var uploadConfig = Object.assign({}, config, { required: true });
+        section.insertAdjacentHTML('beforeend', createUploadItemHtml(docFieldName, uploadConfig, 0));
+
+        // Add "add another" button for multi-upload items
+        if (config.multi) {
+            section.insertAdjacentHTML('beforeend',
+                '<button type="button" class="btn-add-another" data-field="' + docFieldName + '" onclick="addAnotherFile(\'' + docFieldName + '\')" style="background:none;border:1px dashed #2e86c1;color:#2e86c1;padding:6px 14px;border-radius:4px;cursor:pointer;font-size:0.85rem;margin:0 0 15px 0;">+ Add another file</button>');
+        }
+    });
+
+    // 3. Set up file change handlers on all generated inputs
+    document.querySelectorAll('.doc-file-input').forEach(function(input) {
+        input.addEventListener('change', handleFileSelect);
+    });
+
+    // 4. Show count summary
+    var conditionalCount = Object.keys(sectionsShown).length;
+    console.log('Supporting documents setup complete. Required:', ALWAYS_REQUIRED_DOCS.length, 'Conditional sections shown:', conditionalCount);
+
+     // Restore previously uploaded documents
+     if (FormContext._loadedFormData && FormContext._loadedFormData.documents) {
+         restoreUploadedDocuments(FormContext._loadedFormData.documents);
+     }
+}
+
+/**
+ * Adds another file upload slot for multi-upload items.
+ */
+function addAnotherFile(fieldName) {
+    _uploadCounter++;
+    var config = findDocConfig(fieldName);
+    if (!config) return;
+
+    var btn = document.querySelector('.btn-add-another[data-field="' + fieldName + '"]');
+    if (!btn) return;
+
+    var html = createUploadItemHtml(fieldName, config, _uploadCounter);
+    btn.insertAdjacentHTML('beforebegin', html);
+
+    // Attach event handler to the new input
+    var newItem = document.getElementById('upload_' + fieldName + '_' + _uploadCounter);
+    if (newItem) {
+        var input = newItem.querySelector('.doc-file-input');
+        if (input) input.addEventListener('change', handleFileSelect);
+    }
+}
+
+/**
+ * Removes an added upload slot.
+ */
+function removeUploadSlot(uniqueId) {
+    var item = document.getElementById('upload_' + uniqueId);
+    if (item) item.remove();
+}
+
+/**
+ * Handles file selection on an upload input.
+ */
+async function handleFileSelect(e) {
+    var file = e.target.files[0];
+    if (!file) return;
+ 
+    var input = e.target;
+    var fieldName = input.getAttribute('data-field-name');
+    var uploadArea = input.closest('.upload-area');
+    var statusDiv = uploadArea ? uploadArea.querySelector('.upload-status') : null;
+ 
+    // Get SP folder from the parent upload item
+    var uploadItem = input.closest('.doc-upload-item');
+    var spFolder = uploadItem ? (uploadItem.getAttribute('data-sp-folder') || '') : '';
+ 
+    // Validate size (25MB)
+    if (file.size > 25 * 1024 * 1024) {
+        if (statusDiv) { statusDiv.innerHTML = '<span style="color:#dc3545;">&#10060; File too large. Maximum 25MB.</span>'; statusDiv.style.display = 'block'; }
+        input.value = '';
+        return;
+    }
+ 
+    // Validate type
+    var ext = '.' + file.name.split('.').pop().toLowerCase();
+    var allowedExts = (input.getAttribute('accept') || '.pdf,.jpg,.jpeg,.png,.docx').split(',');
+    if (allowedExts.indexOf(ext) === -1) {
+        if (statusDiv) { statusDiv.innerHTML = '<span style="color:#dc3545;">&#10060; Invalid file type. Accepted: ' + allowedExts.join(', ') + '</span>'; statusDiv.style.display = 'block'; }
+        input.value = '';
+        return;
+    }
+ 
+    // Upload to API → SharePoint
+    if (statusDiv) {
+        statusDiv.innerHTML = '<span style="color:#856404;">&#8987; Uploading ' + escapeHtml(file.name) + ' to SharePoint...</span>';
+        statusDiv.style.display = 'block';
+    }
+    input.disabled = true;
+    _uploadInProgress++;
+ 
+    try {
+        var response = await fetch(
+            FormConfig.apiUrl + '/form-data/' + FormContext.formInstanceId + '/documents',
+            {
+                method: 'POST',
+                headers: {
+                    'X-Field-Name': fieldName,
+                    'X-File-Name': encodeURIComponent(file.name),
+                    'X-SP-Folder': encodeURIComponent(spFolder),
+                    'Content-Type': file.type || 'application/octet-stream'
+                },
+                body: file
+            }
+        );
+ 
+        if (response.ok) {
+            var result = await response.json();
+ 
+            // Track the upload
+            if (!_uploadedDocs[fieldName]) _uploadedDocs[fieldName] = [];
+            _uploadedDocs[fieldName].push({
+                documentId: result.documentId,
+                fileName: result.fileName,
+                fileSize: result.fileSize
+            });
+ 
+            // Show success with remove button
+            if (statusDiv) {
+                statusDiv.innerHTML =
+                    '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;">' +
+                    '<span style="color:#155724;">&#9989; ' + escapeHtml(file.name) + ' (' + formatFileSize(file.size) + ') — Uploaded to SharePoint</span>' +
+                    '<button type="button" onclick="removeUploadedDocument(\'' + fieldName + '\', \'' + result.documentId + '\', this)" style="background:none;border:1px solid #dc3545;color:#dc3545;padding:4px 10px;border-radius:4px;cursor:pointer;font-size:0.8rem;">Remove</button>' +
+                    '</div>';
+                statusDiv.style.display = 'block';
+            }
+ 
+            // Hide the file input
+            input.style.display = 'none';
+            console.log('Document uploaded to SharePoint:', fieldName, result.documentId, file.name);
+ 
+        } else {
+            var errorData = await response.json().catch(function() { return {}; });
+            throw new Error(errorData.message || 'Upload failed with status ' + response.status);
+        }
+ 
+    } catch (error) {
+        console.error('Upload error for ' + fieldName + ':', error);
+        if (statusDiv) {
+            statusDiv.innerHTML = '<span style="color:#dc3545;">&#10060; Upload failed: ' + escapeHtml(error.message) + '</span>';
+            statusDiv.style.display = 'block';
+        }
+        input.value = '';
+        input.disabled = false;
+    }
+ 
+    _uploadInProgress--;
+}
+
+async function removeUploadedDocument(fieldName, documentId, buttonElement) {
+    if (!FormContext.formInstanceId) return;
+ 
+    var statusDiv = buttonElement.closest('.upload-status');
+    var uploadArea = buttonElement.closest('.upload-area');
+ 
+    buttonElement.disabled = true;
+    buttonElement.textContent = 'Removing...';
+ 
+    try {
+        var response = await fetch(
+            FormConfig.apiUrl + '/form-data/' + FormContext.formInstanceId + '/documents/' + documentId,
+            { method: 'DELETE' }
+        );
+ 
+        if (response.ok || response.status === 204) {
+            if (_uploadedDocs[fieldName]) {
+                _uploadedDocs[fieldName] = _uploadedDocs[fieldName].filter(function(d) {
+                    return d.documentId !== documentId;
+                });
+                if (_uploadedDocs[fieldName].length === 0) delete _uploadedDocs[fieldName];
+            }
+ 
+            if (uploadArea) {
+                var input = uploadArea.querySelector('.doc-file-input');
+                if (input) { input.value = ''; input.style.display = ''; input.disabled = false; }
+            }
+            if (statusDiv) { statusDiv.innerHTML = ''; statusDiv.style.display = 'none'; }
+ 
+            console.log('Document removed:', fieldName, documentId);
+        } else {
+            throw new Error('Delete failed with status ' + response.status);
+        }
+    } catch (error) {
+        console.error('Remove document error:', error);
+        buttonElement.disabled = false;
+        buttonElement.textContent = 'Remove';
+        alert('Failed to remove document: ' + error.message);
+    }
+}
+ 
+function restoreUploadedDocuments(documents) {
+    if (!documents || !documents.length) return;
+ 
+    documents.forEach(function(doc) {
+        if (doc.uploadStatus === 3) return; // Skip failed/deleted
+ 
+        var fieldName = doc.fieldName;
+ 
+        if (!_uploadedDocs[fieldName]) _uploadedDocs[fieldName] = [];
+        _uploadedDocs[fieldName].push({
+            documentId: doc.documentId,
+            fileName: doc.fileName,
+            fileSize: doc.fileSize
+        });
+ 
+        var inputs = document.querySelectorAll('.doc-file-input[data-field-name="' + fieldName + '"]');
+        if (inputs.length === 0) return;
+ 
+        // Find the first input that doesn't already show an upload
+        var targetInput = null;
+        for (var i = 0; i < inputs.length; i++) {
+            var area = inputs[i].closest('.upload-area');
+            var status = area ? area.querySelector('.upload-status') : null;
+            if (status && status.style.display !== 'block') { targetInput = inputs[i]; break; }
+        }
+        if (!targetInput) targetInput = inputs[0];
+ 
+        var uploadArea = targetInput.closest('.upload-area');
+        var statusDiv = uploadArea ? uploadArea.querySelector('.upload-status') : null;
+ 
+        if (statusDiv) {
+            statusDiv.innerHTML =
+                '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;">' +
+                '<span style="color:#155724;">&#9989; ' + escapeHtml(doc.fileName) + ' — In SharePoint</span>' +
+                '<button type="button" onclick="removeUploadedDocument(\'' + fieldName + '\', \'' + doc.documentId + '\', this)" style="background:none;border:1px solid #dc3545;color:#dc3545;padding:4px 10px;border-radius:4px;cursor:pointer;font-size:0.8rem;">Remove</button>' +
+                '</div>';
+            statusDiv.style.display = 'block';
+        }
+        targetInput.style.display = 'none';
+    });
+ 
+    console.log('Restored', documents.length, 'uploaded document indicators.');
+}
+
+/**
+ * Finds the config for a document field name.
+ */
+function findDocConfig(fieldName) {
+    // Check always-required
+    for (var i = 0; i < ALWAYS_REQUIRED_DOCS.length; i++) {
+        if (ALWAYS_REQUIRED_DOCS[i].fieldName === fieldName) return ALWAYS_REQUIRED_DOCS[i];
+    }
+    // Check conditional (doc_ prefix maps to adv_ prefix)
+    var adminField = fieldName.replace('doc_', 'adv_');
+    if (CONDITIONAL_DOC_CONFIG[adminField]) return CONDITIONAL_DOC_CONFIG[adminField];
+    return null;
+}
+
+/**
+ * Validates that all required documents have at least one file selected.
+ * Returns true if valid, false otherwise.
+ */
+function validateDocumentUploads() {
+    var missing = [];
+    var adminData = FormContext.adminResponse || {};
+
+    // Check always-required
+    ALWAYS_REQUIRED_DOCS.forEach(function(doc) {
+        if (!doc.required) return;
+        var inputs = document.querySelectorAll('.doc-file-input[data-field-name="' + doc.fieldName + '"]');
+        var hasFile = Array.from(inputs).some(function(input) { return input.files && input.files.length > 0; });
+        // Also check if already uploaded (from _uploadedDocs)
+        if (!hasFile && (!_uploadedDocs[doc.fieldName] || _uploadedDocs[doc.fieldName].length === 0)) {
+            missing.push(doc.label);
+        }
+    });
+
+    // Check conditional required
+    Object.keys(CONDITIONAL_DOC_CONFIG).forEach(function(adminField) {
+        var val = adminData[adminField];
+        if (val !== true && val !== 'yes' && val !== 'on' && val !== 'Yes') return;
+
+        var config = CONDITIONAL_DOC_CONFIG[adminField];
+        var docFieldName = 'doc_' + adminField.replace('adv_', '');
+        var inputs = document.querySelectorAll('.doc-file-input[data-field-name="' + docFieldName + '"]');
+        var hasFile = Array.from(inputs).some(function(input) { return input.files && input.files.length > 0; });
+        if (!hasFile && (!_uploadedDocs[docFieldName] || _uploadedDocs[docFieldName].length === 0)) {
+            missing.push(config.label);
+        }
+    });
+
+    if (missing.length > 0) {
+        var errorDiv = document.getElementById('docValidationError');
+        if (errorDiv) {
+            errorDiv.innerHTML = '<strong>Please upload the following required documents before continuing:</strong><ul style="margin:8px 0 0 20px;">' +
+                missing.map(function(m) { return '<li>' + escapeHtml(m) + '</li>'; }).join('') + '</ul>';
+            errorDiv.style.display = 'block';
+            errorDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        return false;
+    }
+
+    var errorDiv = document.getElementById('docValidationError');
+    if (errorDiv) errorDiv.style.display = 'none';
+    return true;
+}
+
+function escapeHtml(str) {
+    var div = document.createElement('div');
+    div.textContent = str || '';
+    return div.innerHTML;
+}
+
+function formatFileSize(bytes) {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+}
+
+/**
+ * Resets all admin checkboxes to unchecked.
+ * Called when a new form is loaded with no saved admin response.
+ */
+function resetAdminCheckboxes() {
+    document.querySelectorAll('input[type="checkbox"][name^="adv_"]').forEach(function(cb) {
+        cb.checked = false;
+    });
+    document.querySelectorAll('input[type="radio"][name^="adv_"]').forEach(function(r) {
+        r.checked = false;
+    });
+    document.querySelectorAll('textarea[name^="adv_"]').forEach(function(t) {
+        t.value = '';
+    });
+    console.log('Admin checkboxes reset (no saved data).');
+}
+
+/**
+ * Makes sections collapsible by wrapping their content.
+ * Call after all dynamic content is generated.
+ * Targets: .checklist-section (admin stage) and .doc-section (supporting docs)
+ */
+function setupCollapsibleSections() {
+    var selectors = '.checklist-section, .doc-section';
+    document.querySelectorAll(selectors).forEach(function(section) {
+        // Skip if already set up or hidden
+        if (section.classList.contains('collapsible-ready')) return;
+        if (section.style.display === 'none') return;
+        section.classList.add('collapsible-ready');
+
+        // Find the title element
+        var title = section.querySelector('h3, .checklist-section-title, .doc-section-title');
+        if (!title) return;
+
+        // Wrap everything after the title into a collapsible body
+        var body = document.createElement('div');
+        body.className = 'collapsible-body';
+
+        // Move all siblings after the title into the body
+        var sibling = title.nextElementSibling;
+        while (sibling) {
+            var next = sibling.nextElementSibling;
+            body.appendChild(sibling);
+            sibling = next;
+        }
+        section.appendChild(body);
+
+        // Make the title a clickable header
+        title.classList.add('collapsible-header');
+        var icon = document.createElement('span');
+        icon.className = 'collapse-icon';
+        icon.innerHTML = '▾';
+        title.appendChild(icon);
+
+        // Toggle on click
+        title.addEventListener('click', function() {
+            var isCollapsed = body.classList.toggle('collapsed');
+            icon.classList.toggle('collapsed', isCollapsed);
+        });
+    });
+
+    console.log('Collapsible sections initialized.');
+}
+
 /* ── EXPORT ───────────────────────────────── */
 
 window.FormUtils = {
@@ -589,5 +1300,13 @@ window.FormUtils = {
     validateSection: validateSection, validateEmail: validateEmail, validatePhone: validatePhone,
     submitForm: submitForm, showSuccessPage: showSuccessPage, formatDate: formatDate,
     setDefaultDates: setDefaultDates, setupConditionalField: setupConditionalField,
-    initForm: initForm, submitToApi: submitToApi, FormConfig: FormConfig, FormContext: FormContext, 
+    initForm: initForm, submitToApi: submitToApi, ALWAYS_REQUIRED_DOCS: ALWAYS_REQUIRED_DOCS,
+    CONDITIONAL_DOC_CONFIG: CONDITIONAL_DOC_CONFIG, setupSupportingDocuments: setupSupportingDocuments,
+    addAnotherFile: addAnotherFile, removeUploadSlot: removeUploadSlot,
+    validateDocumentUploads: validateDocumentUploads, resetAdminCheckboxes: resetAdminCheckboxes, setupCollapsibleSections: setupCollapsibleSections,
+    restoreUploadedDocuments: restoreUploadedDocuments, FormConfig: FormConfig, FormContext: FormContext, 
 };
+
+window.addAnotherFile = addAnotherFile;
+window.removeUploadSlot = removeUploadSlot;
+window.removeUploadedDocument = removeUploadedDocument;
