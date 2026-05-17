@@ -3,7 +3,7 @@
    ============================================ */
 
 const FormConfig = {
-    apiUrl: 'http://localhost:7071/api',
+    apiUrl: 'https://visamanagerdev-bwcpf7aqcugtekhe.australiaeast-01.azurewebsites.net/api',
     submitEndpoint: 'YOUR_POWER_AUTOMATE_HTTP_TRIGGER_URL',
     autoSaveInterval: 30000,
     tokenParam: 'key',
@@ -321,20 +321,40 @@ function loadDraft(formCode, formElement) {
 }
 
 function restoreFormData(data, formElement) {
+    var fieldsToTrigger = [];
+
     Object.keys(data).forEach(function(key) {
         var field = formElement.elements[key];
         if (!field) return;
-        if (field.type === 'checkbox') {
-            field.checked = data[key] === true || data[key] === 'on' || data[key] === 'Yes';
-        } else if (field.type === 'radio') {
+
+        // Radio group — returns RadioNodeList when multiple radios share a name
+        if (field instanceof RadioNodeList) {
             var radio = formElement.querySelector('input[name="' + key + '"][value="' + data[key] + '"]');
-            if (radio) radio.checked = true;
-        } else if (field.tagName === 'SELECT' || field.type === 'text' || field.type === 'email' || field.type === 'tel' || field.type === 'date' || field.type === 'number') {
+            if (radio) { radio.checked = true; fieldsToTrigger.push(radio); }
+        } else if (field.type === 'checkbox') {
+            field.checked = data[key] === true || data[key] === 'on' || data[key] === 'Yes';
+            fieldsToTrigger.push(field);
+        } else if (field.type === 'radio') {
+            // Single radio edge case
+            var radio = formElement.querySelector('input[name="' + key + '"][value="' + data[key] + '"]');
+            if (radio) { radio.checked = true; fieldsToTrigger.push(radio); }
+        } else if (field.tagName === 'SELECT' || field.type === 'text' || field.type === 'email' ||
+                   field.type === 'tel' || field.type === 'date' || field.type === 'number') {
             field.value = data[key];
+            fieldsToTrigger.push(field);
         } else if (field.tagName === 'TEXTAREA') {
             field.value = data[key];
+            fieldsToTrigger.push(field);
         }
     });
+
+    // Fire change events AFTER all values are set,
+    // so conditional logic sees the complete state
+    setTimeout(function() {
+        fieldsToTrigger.forEach(function(field) {
+            field.dispatchEvent(new Event('change', { bubbles: true }));
+        });
+    }, 50);
 }
 
 function collectFormData(formElement) {
@@ -599,7 +619,7 @@ async function submitToApi(formElement) {
  */
 var ALWAYS_REQUIRED_DOCS = [
     { fieldName: 'doc_passport_bio',    label: 'Passport Bio Pages + Visa Pages + Stamps', spFolder: 'Passport Bio Pages', multi: true, required: true, helpText: 'Upload clear copies of your passport bio-data page, all visa pages, and stamp pages.' },
-    { fieldName: 'doc_photo',           label: 'Your Photo (Passport Size)', spFolder: 'Photo', multi: false, required: true, helpText: 'Format: JPG only. Passport size, less than 6 months old, color, light background. 900x1200px, 500KB–3MB.', accept: '.jpg,.jpeg' },
+    { fieldName: 'doc_photo', label: 'Your Photo (Passport Size)', spFolder: 'Photo', multi: false, required: true, helpText: 'Must be a .jpg or .jpeg file, between 500KB and 3MB, between 900×1200 pixels and 2250×3000 pixels. Passport style: less than 6 months old, colour, light background.', accept: '.jpg,.jpeg', validatePhoto: true },
     { fieldName: 'doc_cv',              label: 'Fully Completed CV', spFolder: 'CV', multi: false, required: true },
     { fieldName: 'doc_sop',             label: 'Statement of Purpose', spFolder: 'SOP', multi: false, required: true, helpText: 'Refer to the SOP guide provided by your advisor.' },
     { fieldName: 'doc_police_cert',     label: 'Police Certificate', spFolder: 'Police Certificate', multi: false, required: true, helpText: 'Should be less than 6 months old.' },
@@ -849,7 +869,8 @@ var _uploadInProgress = 0;
 function createUploadItemHtml(fieldName, config, index) {
     var accept = config.accept || '.pdf,.jpg,.jpeg,.png,.docx';
     var uniqueId = fieldName + '_' + index;
-    var html = '<div class="doc-upload-item" id="upload_' + uniqueId + '" data-field="' + fieldName + '" data-sp-folder="' + (config.spFolder || '') + '">';
+    var validatePhoto = config.validatePhoto ? ' data-validate-photo="true"' : '';
+    var html = '<div class="doc-upload-item" id="upload_' + uniqueId + '" data-field="' + fieldName + '" data-sp-folder="' + (config.spFolder || '') + '"' + validatePhoto + '>';
     if (index === 0) {
         html += '<label class="question-label' + (config.required !== false ? ' mandatory' : '') + '">' + escapeHtml(config.label) + '</label>';
         if (config.helpText) html += '<p class="help-text">' + config.helpText + '</p>';
@@ -965,6 +986,53 @@ function removeUploadSlot(uniqueId) {
     if (item) item.remove();
 }
 
+function checkPhotoDimensions(file, statusDiv, input) {
+    return new Promise(function(resolve) {
+        var img = new Image();
+        var objectUrl = URL.createObjectURL(file);
+
+        img.onload = function() {
+            URL.revokeObjectURL(objectUrl);
+            var w = img.width;
+            var h = img.height;
+
+            if (w < 900 || h < 1200) {
+                if (statusDiv) {
+                    statusDiv.innerHTML = '<span style="color:#dc3545;">&#10060; Photo dimensions too small. Minimum 900×1200 pixels. Your photo is ' + w + '×' + h + ' pixels.</span>';
+                    statusDiv.style.display = 'block';
+                }
+                input.value = '';
+                resolve(false);
+                return;
+            }
+
+            if (w > 2250 || h > 3000) {
+                if (statusDiv) {
+                    statusDiv.innerHTML = '<span style="color:#dc3545;">&#10060; Photo dimensions too large. Maximum 2250×3000 pixels. Your photo is ' + w + '×' + h + ' pixels.</span>';
+                    statusDiv.style.display = 'block';
+                }
+                input.value = '';
+                resolve(false);
+                return;
+            }
+
+            resolve(true);
+        };
+
+        img.onerror = function() {
+            URL.revokeObjectURL(objectUrl);
+            if (statusDiv) {
+                statusDiv.innerHTML = '<span style="color:#dc3545;">&#10060; Could not read image. Please ensure it is a valid JPG file.</span>';
+                statusDiv.style.display = 'block';
+            }
+            input.value = '';
+            resolve(false);
+        };
+
+        img.src = objectUrl;
+    });
+}
+
 /**
  * Handles file selection on an upload input.
  */
@@ -995,6 +1063,27 @@ async function handleFileSelect(e) {
         if (statusDiv) { statusDiv.innerHTML = '<span style="color:#dc3545;">&#10060; Invalid file type. Accepted: ' + allowedExts.join(', ') + '</span>'; statusDiv.style.display = 'block'; }
         input.value = '';
         return;
+    }
+
+    // Special validation for photo field
+    var uploadItem = input.closest('.doc-upload-item');
+    var docConfig = uploadItem ? uploadItem.getAttribute('data-validate-photo') : null;
+    if (docConfig === 'true') {
+        // Check file size: 500KB to 3MB
+        if (file.size < 500 * 1024) {
+            if (statusDiv) { statusDiv.innerHTML = '<span style="color:#dc3545;">&#10060; Photo file is too small. Minimum 500KB.</span>'; statusDiv.style.display = 'block'; }
+            input.value = '';
+            return;
+        }
+        if (file.size > 3 * 1024 * 1024) {
+            if (statusDiv) { statusDiv.innerHTML = '<span style="color:#dc3545;">&#10060; Photo file is too large. Maximum 3MB.</span>'; statusDiv.style.display = 'block'; }
+            input.value = '';
+            return;
+        }
+
+        // Check image dimensions
+        var dimensionValid = await checkPhotoDimensions(file, statusDiv, input);
+        if (!dimensionValid) return;
     }
  
     // Upload to API → SharePoint
@@ -1287,6 +1376,83 @@ function setupCollapsibleSections() {
     console.log('Collapsible sections initialized.');
 }
 
+/* ══════════════════════════════════════════════
+   SAVE TO DATAVERSE API
+   ══════════════════════════════════════════════ */
+
+var _saveToApiInProgress = false;
+
+/**
+ * Saves current form data to Dataverse via the API.
+ * Called on Save and Continue clicks and before page unload.
+ * @param {HTMLFormElement} formElement
+ * @param {number} currentStage - Current stage number
+ * @param {boolean} isAdminSave - Whether this is an admin save
+ * @returns {Promise<boolean>} true if saved successfully
+ */
+async function saveToApi(formElement, currentStage, isAdminSave) {
+    if (!FormContext.formInstanceId || !FormContext.isValid) return false;
+    if (_saveToApiInProgress) return false;
+
+    _saveToApiInProgress = true;
+
+    try {
+        var allData = collectFormData(formElement);
+        var saveData;
+
+        if (isAdminSave) {
+            // Only admin fields
+            saveData = {};
+            Object.keys(allData).forEach(function(key) {
+                if (key.startsWith('adv_')) saveData[key] = allData[key];
+            });
+        } else {
+            // Only user fields (exclude admin fields and internal fields)
+            saveData = {};
+            Object.keys(allData).forEach(function(key) {
+                if (!key.startsWith('adv_') && key !== 'formToken' && key !== 'viewport') {
+                    saveData[key] = allData[key];
+                }
+            });
+        }
+
+        var response = await fetch(FormConfig.apiUrl + '/form-data/' + FormContext.formInstanceId, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                version: FormContext.version,
+                currentPage: currentStage,
+                pages: saveData,
+                isAdminSave: isAdminSave
+            })
+        });
+
+        if (response.ok) {
+            var result = await response.json();
+            FormContext.version = result.version;
+            FormContext.lastSavedAt = result.savedAt;
+            console.log('Saved to API. Version:', result.version, 'Stage:', currentStage, 'Admin:', isAdminSave);
+            return true;
+        } else if (response.status === 409) {
+            var conflictData = await response.json().catch(function() { return {}; });
+            console.warn('Version conflict. Server version:', conflictData.serverVersion);
+            FormContext.version = conflictData.serverVersion || FormContext.version;
+            alert('Your form was updated elsewhere. The page will reload to show the latest data.');
+            window.location.reload();
+            return false;
+        } else {
+            var errorData = await response.json().catch(function() { return {}; });
+            console.error('Save to API failed:', errorData.message || response.status);
+            return false;
+        }
+    } catch (error) {
+        console.error('Save to API error:', error);
+        return false;
+    } finally {
+        _saveToApiInProgress = false;
+    }
+}
+
 /* ── EXPORT ───────────────────────────────── */
 
 window.FormUtils = {
@@ -1304,7 +1470,7 @@ window.FormUtils = {
     CONDITIONAL_DOC_CONFIG: CONDITIONAL_DOC_CONFIG, setupSupportingDocuments: setupSupportingDocuments,
     addAnotherFile: addAnotherFile, removeUploadSlot: removeUploadSlot,
     validateDocumentUploads: validateDocumentUploads, resetAdminCheckboxes: resetAdminCheckboxes, setupCollapsibleSections: setupCollapsibleSections,
-    restoreUploadedDocuments: restoreUploadedDocuments, FormConfig: FormConfig, FormContext: FormContext, 
+    restoreUploadedDocuments: restoreUploadedDocuments, saveToApi: saveToApi, FormConfig: FormConfig, FormContext: FormContext, 
 };
 
 window.addAnotherFile = addAnotherFile;
