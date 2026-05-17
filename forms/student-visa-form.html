@@ -632,187 +632,397 @@
 
         <!-- Form Content -->
         <div class="form-content">
-            <form id="studentVisaForm" novalidate>
+            <form id="studentVisaForm" autocomplete="off" novalidate>
                 <!-- Hidden token field -->
                 <input type="hidden" id="formToken" name="formToken" value="">
 
                 <!-- ============================================
                      STAGE 0: ADVISOR ASSESSMENT (Admin Only)
-                     ============================================ -->
+                     Naming convention: adv_{section}_{item}
+                ============================================ -->
+
                 <div class="form-section" data-stage="0" id="advisorAssessmentStage">
 
-                    <h2 class="section-title">Advisor Assessment</h2>
+                    <h2 class="section-title">Advisor Assessment — Document Checklist</h2>
                     <div class="section-description">
-                        <strong>This section is completed by the immigration advisor only.</strong>
-                        Your answers here will determine which supporting documents the applicant needs to provide.
+                        <strong>This section is completed by the immigration advisor only.</strong><br>
+                        Check each document the applicant is required to upload. Only the checked items will appear in the applicant's Supporting Documents section.
+                        <br><br>
+                        <em>Note: Passport Bio Pages, Photo, CV, SOP, Police Certificate, Medical, Offer Letter, and INZ Forms are always required and do not need to be checked here.</em>
                     </div>
 
-                    <!-- Q1: Visa Type -->
-                    <div class="question-block">
-                        <label class="question-label">1. What type of student visa is being applied for?</label>
-                        <div class="radio-group">
-                            <label class="radio-item"><input type="radio" name="adv_visa_type" value="fee_paying" required> Fee-paying student</label>
-                            <label class="radio-item"><input type="radio" name="adv_visa_type" value="exchange"> Exchange student</label>
-                            <label class="radio-item"><input type="radio" name="adv_visa_type" value="scholarship_nz_govt"> New Zealand Government Scholarship</label>
-                            <label class="radio-item"><input type="radio" name="adv_visa_type" value="scholarship_other"> Other Scholarship</label>
-                            <label class="radio-item"><input type="radio" name="adv_visa_type" value="dependent_child"> Dependent child of a student</label>
-                        </div>
-                    </div>
-
-                    <!-- Q2: Course Level -->
-                    <div class="question-block">
-                        <label class="question-label">2. What is the level of study?</label>
-                        <div class="radio-group">
-                            <label class="radio-item"><input type="radio" name="adv_course_level" value="primary_secondary" required> Primary or Secondary school</label>
-                            <label class="radio-item"><input type="radio" name="adv_course_level" value="english_language"> English Language</label>
-                            <label class="radio-item"><input type="radio" name="adv_course_level" value="certificate_diploma"> Certificate or Diploma (Level 1-6)</label>
-                            <label class="radio-item"><input type="radio" name="adv_course_level" value="bachelor"> Bachelor's Degree (Level 7)</label>
-                            <label class="radio-item"><input type="radio" name="adv_course_level" value="postgrad"> Postgraduate (Level 8-9)</label>
-                            <label class="radio-item"><input type="radio" name="adv_course_level" value="phd"> Doctoral / PhD (Level 10)</label>
-                        </div>
-                    </div>
-
-                    <!-- Q3: Course Duration -->
-                    <div class="question-block">
-                        <label class="question-label">3. What is the expected course duration?</label>
-                        <div class="radio-group">
-                            <label class="radio-item"><input type="radio" name="adv_course_duration" value="less_than_12_weeks" required> Less than 12 weeks</label>
-                            <label class="radio-item"><input type="radio" name="adv_course_duration" value="12_weeks_to_6_months"> 12 weeks to 6 months</label>
-                            <label class="radio-item"><input type="radio" name="adv_course_duration" value="6_to_12_months"> 6 to 12 months</label>
-                            <label class="radio-item"><input type="radio" name="adv_course_duration" value="1_to_2_years"> 1 to 2 years</label>
-                            <label class="radio-item"><input type="radio" name="adv_course_duration" value="more_than_2_years"> More than 2 years</label>
-                        </div>
-                    </div>
-
-                    <!-- Q4: Applicant Age -->
-                    <div class="question-block">
-                        <label class="question-label">4. Is the applicant under 18 years of age?</label>
-                        <div class="radio-group">
-                            <label class="radio-item"><input type="radio" name="adv_under_18" value="yes" required> Yes</label>
-                            <label class="radio-item"><input type="radio" name="adv_under_18" value="no"> No</label>
-                        </div>
-                    </div>
-
-                    <!-- Q5: First Visa or Renewal -->
-                    <div class="question-block">
-                        <label class="question-label">5. Is this a first-time student visa or a visa renewal?</label>
-                        <div class="radio-group">
-                            <label class="radio-item"><input type="radio" name="adv_visa_renewal" value="first_time" required> First-time application</label>
-                            <label class="radio-item"><input type="radio" name="adv_visa_renewal" value="renewal"> Renewal / Variation of conditions</label>
-                        </div>
-                    </div>
-
-                    <!-- Q6: Financial Evidence Required -->
-                    <div class="question-block">
-                        <label class="question-label">6. Which financial evidence documents should the applicant provide?</label>
-                        <p class="field-hint">Select all that apply.</p>
+                    <!-- RELATIONSHIP TO SPONSOR - Annexture 17 -->
+                    <div class="checklist-section">
+                        <h3 class="checklist-section-title">Evidence of Relationship to Sponsor / Financial Undertaker</h3>
+                        <p class="checklist-folder-ref">SharePoint: Annexture 17 - Relationship to Sponsor</p>
                         <div class="checkbox-group">
-                            <label class="checkbox-item"><input type="checkbox" name="adv_fin_bank_statements" value="yes"> Bank statements (last 3 months)</label>
-                            <label class="checkbox-item"><input type="checkbox" name="adv_fin_scholarship_letter" value="yes"> Scholarship confirmation letter</label>
-                            <label class="checkbox-item"><input type="checkbox" name="adv_fin_sponsor_letter" value="yes"> Financial sponsor letter and evidence</label>
-                            <label class="checkbox-item"><input type="checkbox" name="adv_fin_loan_approval" value="yes"> Student loan approval</label>
-                            <label class="checkbox-item"><input type="checkbox" name="adv_fin_tuition_receipt" value="yes"> Tuition fee payment receipt</label>
-                            <label class="checkbox-item"><input type="checkbox" name="adv_fin_accommodation_proof" value="yes"> Proof of accommodation arrangement</label>
-                            <label class="checkbox-item"><input type="checkbox" name="adv_fin_funds_transfer" value="yes"> Evidence of funds transfer</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_rel_sponsor_id" value="yes"> Passport copy / or ID of sponsor</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_rel_birth_cert_orig" value="yes"> Birth Certificate — Original</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_rel_birth_cert_trans" value="yes"> Birth Certificate — Translation</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_rel_marriage_cert_orig" value="yes"> Marriage Certificate — Original</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_rel_marriage_cert_trans" value="yes"> Marriage Certificate — Translation</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_rel_parent_id_orig" value="yes"> Birth certificate of parents / Passport / ID — Original ⊕</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_rel_parent_id_trans" value="yes"> Birth certificate of parents / Passport / ID — Translation ⊕</label>
                         </div>
                     </div>
 
-                    <!-- Q7: Health Requirements -->
-                    <div class="question-block">
-                        <label class="question-label">7. Which health-related documents are required?</label>
-                        <p class="field-hint">Select all that apply.</p>
+                    <!-- EDUCATION & TRAINING - Annexture 13 -->
+                    <div class="checklist-section">
+                        <h3 class="checklist-section-title">Past Education and Training</h3>
+                        <p class="checklist-folder-ref">SharePoint: Annexture 13 - Educational Qualifications</p>
                         <div class="checkbox-group">
-                            <label class="checkbox-item"><input type="checkbox" name="adv_health_general_cert" value="yes"> General medical certificate</label>
-                            <label class="checkbox-item"><input type="checkbox" name="adv_health_xray" value="yes"> Chest X-ray certificate</label>
-                            <label class="checkbox-item"><input type="checkbox" name="adv_health_insurance" value="yes"> Medical and travel insurance</label>
-                            <label class="checkbox-item"><input type="checkbox" name="adv_health_specialist" value="yes"> Specialist medical report</label>
-                            <label class="checkbox-item"><input type="checkbox" name="adv_health_vaccination" value="yes"> Vaccination records</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_edu_ol" value="yes"> GCE O/L</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_edu_al" value="yes"> GCE A/L</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_edu_degree" value="yes"> Degree Certificates + Transcripts ⊕</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_edu_ielts" value="yes"> IELTS or PTE certificate</label>
                         </div>
                     </div>
 
-                    <!-- Q8: Character Requirements -->
-                    <div class="question-block">
-                        <label class="question-label">8. Which character-related documents are required?</label>
-                        <p class="field-hint">Select all that apply.</p>
+                    <!-- EMPLOYMENT EVIDENCE - Annexture 14 & 15 -->
+                    <div class="checklist-section">
+                        <h3 class="checklist-section-title">Evidence of All Current and Past Employments</h3>
+                        <p class="checklist-hint">Both primary applicant and financial undertaker. ⊕ = multiple documents allowed.</p>
+                        <p class="checklist-folder-ref">SharePoint: Annexture 14 - Current Work Experience / Annexture 15 - Previous Work Experience</p>
                         <div class="checkbox-group">
-                            <label class="checkbox-item"><input type="checkbox" name="adv_char_police_cert" value="yes"> Police clearance certificate</label>
-                            <label class="checkbox-item"><input type="checkbox" name="adv_char_police_cert_translation" value="yes"> Certified translation of police certificate</label>
-                            <label class="checkbox-item"><input type="checkbox" name="adv_char_military_service" value="yes"> Military service records</label>
-                            <label class="checkbox-item"><input type="checkbox" name="adv_char_court_records" value="yes"> Court records or declarations</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_emp_service_letter" value="yes"> Service Letter with salary confirmation ⊕</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_emp_contract" value="yes"> Employment Contract ⊕</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_emp_payslips" value="yes"> Pay slips (Last 3 months) ⊕</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_emp_epf_etf" value="yes"> EPF/ETF confirmation for each employment ⊕</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_emp_bank_stmt" value="yes"> Bank statement of salary account (Last 3 months) ⊕</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_emp_epf_history" value="yes"> EPF/ETF contribution history of all employments ⊕</label>
                         </div>
                     </div>
 
-                    <!-- Q9: Accommodation Arrangement -->
-                    <div class="question-block">
-                        <label class="question-label">9. What accommodation arrangement will apply?</label>
-                        <div class="radio-group">
-                            <label class="radio-item"><input type="radio" name="adv_accommodation" value="homestay" required> Homestay</label>
-                            <label class="radio-item"><input type="radio" name="adv_accommodation" value="student_hostel"> Student hostel / halls of residence</label>
-                            <label class="radio-item"><input type="radio" name="adv_accommodation" value="private_rental"> Private rental</label>
-                            <label class="radio-item"><input type="radio" name="adv_accommodation" value="with_relative"> Living with relative in NZ</label>
-                            <label class="radio-item"><input type="radio" name="adv_accommodation" value="provider_arranged"> Arranged by education provider</label>
-                            <label class="radio-item"><input type="radio" name="adv_accommodation" value="not_yet_arranged"> Not yet arranged</label>
-                        </div>
-                    </div>
-
-                    <!-- Q10: Dependants Included -->
-                    <div class="question-block">
-                        <label class="question-label">10. Will the applicant be including dependants in the application?</label>
-                        <div class="radio-group">
-                            <label class="radio-item"><input type="radio" name="adv_dependants" value="yes" required> Yes</label>
-                            <label class="radio-item"><input type="radio" name="adv_dependants" value="no"> No</label>
-                        </div>
-                    </div>
-
-                    <!-- Q11: Pathway Visa -->
-                    <div class="question-block">
-                        <label class="question-label">11. Is the applicant applying for a Pathway Student Visa?</label>
-                        <div class="radio-group">
-                            <label class="radio-item"><input type="radio" name="adv_pathway_visa" value="yes" required> Yes</label>
-                            <label class="radio-item"><input type="radio" name="adv_pathway_visa" value="no"> No</label>
-                        </div>
-                    </div>
-
-                    <!-- Q12: Additional Documents Required -->
-                    <div class="question-block">
-                        <label class="question-label">12. Are there any additional supporting documents required for this application?</label>
-                        <p class="field-hint">Select all that apply, or select 'None' if no additional documents are needed.</p>
+                    <!-- TUITION FEE PAYMENT - Annexture 19 -->
+                    <div class="checklist-section">
+                        <h3 class="checklist-section-title">Evidence of Tuition Fee Payment</h3>
+                        <p class="checklist-folder-ref">SharePoint: Annexture 19 - Evidence of Tuition Fee Payment</p>
                         <div class="checkbox-group">
-                            <label class="checkbox-item"><input type="checkbox" name="adv_addl_none" value="yes" id="advAddlNone"> None — standard documents only</label>
-                            <label class="checkbox-item"><input type="checkbox" name="adv_addl_offer_letter" value="yes"> Offer of Place / Enrolment letter</label>
-                            <label class="checkbox-item"><input type="checkbox" name="adv_addl_fee_receipt" value="yes"> Fee receipt from education provider</label>
-                            <label class="checkbox-item"><input type="checkbox" name="adv_addl_academic_transcripts" value="yes"> Academic transcripts</label>
-                            <label class="checkbox-item"><input type="checkbox" name="adv_addl_english_proficiency" value="yes"> English language proficiency test results</label>
-                            <label class="checkbox-item"><input type="checkbox" name="adv_addl_parent_consent" value="yes"> Parental consent form (for under 18)</label>
-                            <label class="checkbox-item"><input type="checkbox" name="adv_addl_guardianship" value="yes"> Guardianship / caregiver arrangement</label>
-                            <label class="checkbox-item"><input type="checkbox" name="adv_addl_employment_letter" value="yes"> Employer support letter</label>
-                            <label class="checkbox-item"><input type="checkbox" name="adv_addl_relationship_evidence" value="yes"> Relationship evidence (for partner/dependants)</label>
-                            <label class="checkbox-item"><input type="checkbox" name="adv_addl_previous_visa" value="yes"> Previous visa grant letters</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_tuition_invoice" value="yes"> Invoice from college (Acknowledgement Invoice)</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_tuition_tt_proof" value="yes"> TT transfer proof (Debit Advice / Order)</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_tuition_bank_stmt" value="yes"> Bank statement — Post TT</label>
                         </div>
                     </div>
 
-                    <!-- Q13: Risk Assessment -->
-                    <div class="question-block">
-                        <label class="question-label">13. Advisor risk assessment level for this application:</label>
+                    <!-- HOME TIES - Annexture 12/16 -->
+                    <div class="checklist-section">
+                        <h3 class="checklist-section-title">Home Ties (Evidence to Return Home)</h3>
+                        <p class="checklist-hint">Family Ties, Financial Ties, and Employment Ties</p>
+                        <div class="checkbox-group">
+                            <label class="checkbox-item"><input type="checkbox" name="adv_home_deed_orig" value="yes"> Transfer deeds (original) for Home and Properties ⊕</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_home_deed_trans" value="yes"> Transfer deeds (Translation) for Home and Properties ⊕</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_home_successor" value="yes"> Nomination of Successor Form / Affidavit</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_home_child_birth_orig" value="yes"> Birth Certificates of Children — Original ⊕</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_home_child_birth_trans" value="yes"> Birth Certificates of Children — Translation ⊕</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_home_marriage_orig" value="yes"> Marriage Certificate — Original</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_home_marriage_trans" value="yes"> Marriage Certificate — Translation</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_home_parent_id" value="yes"> Identity documents of parents with translation ⊕</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_home_parent_medical" value="yes"> Medical certificates of parents ⊕</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_home_vehicle_book" value="yes"> Vehicle Registration Book</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_home_vehicle_valuation" value="yes"> Vehicle Valuation Report</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_home_travel_evidence" value="yes"> Evidence of Previous International travels</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_home_business_reg" value="yes"> Business Registration certificate</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_home_business_tax" value="yes"> Business tax return / Financial documents</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_home_leave_letter" value="yes"> Employment leave letters / Future Job confirmation</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_home_memberships" value="yes"> Active memberships in societies, charities, service clubs</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_home_pets" value="yes"> Pets (pictures / other proofs)</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_home_other_financial" value="yes"> Other financial evidence</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_home_religious_letter" value="yes"> Letter from a religious leader about social services</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_home_friend_letters" value="yes"> Two letters from close friends with their IDs/Passports</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_home_career_outcome" value="yes"> Post study career outcome proofs</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_home_gold_valuation" value="yes"> Valuation reports of gold</label>
+                        </div>
+                    </div>
+
+                    <!-- VISA REFUSALS - Annexture 18 -->
+                    <div class="checklist-section">
+                        <h3 class="checklist-section-title">Visa Refusal Letters</h3>
+                        <p class="checklist-folder-ref">SharePoint: Annexture 18 - Visa Decline Letters & Explanations</p>
+                        <div class="checkbox-group">
+                            <label class="checkbox-item"><input type="checkbox" name="adv_visa_refusal_letter" value="yes"> Letter issued by immigration ⊕</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_visa_refusal_explanation" value="yes"> Explanation letter written by the student ⊕</label>
+                        </div>
+                    </div>
+
+                    <!-- ═══ FINANCIAL EVIDENCE HEADER ═══ -->
+                    <div class="checklist-divider">
+                        <h2 class="checklist-major-title">Evidence of Funds Available for Studies and Living Cost</h2>
+                        <p class="checklist-major-hint">All documents must be no older than two weeks. <strong>(M)</strong> = Myself/Student, <strong>(S)</strong> = Sponsor. ⊕ = Multiple documents.</p>
+                    </div>
+
+                    <!-- FIXED DEPOSITS - Annexture 1A / 1B -->
+                    <div class="checklist-section">
+                        <h3 class="checklist-section-title">Fixed Deposits</h3>
+                        <p class="checklist-folder-ref">SP: Annexture 1A (Myself) / Annexture 1B (Sponsor)</p>
+                        <div class="checklist-two-col"><div class="checklist-col"><h4 class="checklist-col-title">Myself (Student)</h4><div class="checkbox-group">
+                            <label class="checkbox-item"><input type="checkbox" name="adv_fd_m_certificates" value="yes"> Fixed deposit Certificates ⊕</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_fd_m_balance_confirm" value="yes"> Bank balance confirmations ⊕</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_fd_m_renewal" value="yes"> FD renewal confirmation letter ⊕</label>
+                        </div></div><div class="checklist-col"><h4 class="checklist-col-title">Sponsor</h4><div class="checkbox-group">
+                            <label class="checkbox-item"><input type="checkbox" name="adv_fd_s_certificates" value="yes"> Fixed deposit Certificates ⊕</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_fd_s_balance_confirm" value="yes"> Bank balance confirmations ⊕</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_fd_s_renewal" value="yes"> FD renewal confirmation letter ⊕</label>
+                        </div></div></div>
+                    </div>
+
+                    <!-- SAVINGS / CURRENT - Annexture 2A / 2B -->
+                    <div class="checklist-section">
+                        <h3 class="checklist-section-title">Savings / Current Accounts Balance</h3>
+                        <p class="checklist-folder-ref">SP: Annexture 2A (Myself) / Annexture 2B (Sponsor)</p>
+                        <div class="checklist-two-col"><div class="checklist-col"><h4 class="checklist-col-title">Myself (Student)</h4><div class="checkbox-group">
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sav_m_bank_history" value="yes"> Bank account history statement (3 months) ⊕</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sav_m_balance_confirm" value="yes"> Bank balance confirmations ⊕</label>
+                        </div></div><div class="checklist-col"><h4 class="checklist-col-title">Sponsor</h4><div class="checkbox-group">
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sav_s_bank_history" value="yes"> Bank account history statement (3 months) ⊕</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sav_s_balance_confirm" value="yes"> Bank balance confirmations ⊕</label>
+                        </div></div></div>
+                    </div>
+
+                    <!-- LARGE DEPOSIT - Annexture 3 -->
+                    <div class="checklist-section">
+                        <h3 class="checklist-section-title">Large Deposit Explanation</h3>
+                        <p class="checklist-hint">For all deposits more than LKR 3 Lakhs in any account.</p>
+                        <p class="checklist-folder-ref">SP: Annexture 3 - Large Deposit Explanation</p>
+                        <div class="checklist-two-col"><div class="checklist-col"><h4 class="checklist-col-title">Myself (Student)</h4><div class="checkbox-group">
+                            <label class="checkbox-item"><input type="checkbox" name="adv_large_deposit_m_explain" value="yes"> Explanation of large deposits with proofs ⊕</label>
+                        </div></div><div class="checklist-col"><h4 class="checklist-col-title">Sponsor</h4><div class="checkbox-group">
+                            <label class="checkbox-item"><input type="checkbox" name="adv_large_deposit_s_explain" value="yes"> Explanation of large deposits with proofs ⊕</label>
+                        </div></div></div>
+                    </div>
+
+                    <!-- PROVIDENT FUND - Annexture 4A / 4B -->
+                    <div class="checklist-section">
+                        <h3 class="checklist-section-title">Provident Fund (EPF / ETF)</h3>
+                        <p class="checklist-folder-ref">SP: Annexture 4A (Myself) / Annexture 4B (Sponsor)</p>
+                        <div class="checklist-two-col"><div class="checklist-col"><h4 class="checklist-col-title">Myself (Student)</h4><div class="checkbox-group">
+                            <label class="checkbox-item"><input type="checkbox" name="adv_pf_m_epf_stmt" value="yes"> EPF — Member Account Statement</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_pf_m_epf_history" value="yes"> EPF — Contribution History report</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_pf_m_etf_stmt" value="yes"> ETF — Member Account Statement</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_pf_m_etf_history" value="yes"> ETF — Contribution History report</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_pf_m_available_proof" value="yes"> Document to prove readily available</label>
+                        </div></div><div class="checklist-col"><h4 class="checklist-col-title">Sponsor</h4><div class="checkbox-group">
+                            <label class="checkbox-item"><input type="checkbox" name="adv_pf_s_epf_stmt" value="yes"> EPF — Member Account Statement</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_pf_s_epf_history" value="yes"> EPF — Contribution History report</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_pf_s_etf_stmt" value="yes"> ETF — Member Account Statement</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_pf_s_etf_history" value="yes"> ETF — Contribution History report</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_pf_s_available_proof" value="yes"> Document to prove readily available</label>
+                        </div></div></div>
+                    </div>
+
+                    <!-- EDUCATION LOAN - Annexture 5 -->
+                    <div class="checklist-section">
+                        <h3 class="checklist-section-title">Educational Loan</h3>
+                        <p class="checklist-folder-ref">SP: Annexture 5 - Evidence of Education Loan</p>
+                        <div class="checkbox-group">
+                            <label class="checkbox-item"><input type="checkbox" name="adv_loan_offer_letter" value="yes"> Education Loan Offer / Sanction Letter</label>
+                        </div>
+                    </div>
+
+                    <!-- ═══ SOURCE OF FUNDS HEADER ═══ -->
+                    <div class="checklist-divider"><h2 class="checklist-major-title">Evidence of Source of Funds</h2></div>
+
+                    <!-- SOURCE: EMPLOYMENT - Annexture 6A / 6B -->
+                    <div class="checklist-section">
+                        <h3 class="checklist-section-title">Source — Savings from Employment</h3>
+                        <p class="checklist-folder-ref">SP: Annexture 6A (Myself) / Annexture 6B (Sponsor)</p>
+                        <div class="checklist-two-col"><div class="checklist-col"><h4 class="checklist-col-title">Myself</h4><div class="checkbox-group">
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_emp_m_employer_letter" value="yes"> Employer letter / contract with salary confirmation</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_emp_m_bank_stmt" value="yes"> Bank statement of salary account (3 months)</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_emp_m_salary_slips" value="yes"> Salary Slips (3 months)</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_emp_m_tax_cert" value="yes"> Income Tax (PAYE) certificate</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_emp_m_bonus" value="yes"> Bonus / commissions proofs</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_emp_m_financial_stmt" value="yes"> Financial Statement from chartered accountant (2 years)</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_emp_m_saving_pattern" value="yes"> Explanation of saving pattern</label>
+                        </div></div><div class="checklist-col"><h4 class="checklist-col-title">Sponsor</h4><div class="checkbox-group">
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_emp_s_employer_letter" value="yes"> Employer letter / contract with salary confirmation</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_emp_s_bank_stmt" value="yes"> Bank statement of salary account (3 months)</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_emp_s_salary_slips" value="yes"> Salary Slips (3 months)</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_emp_s_tax_cert" value="yes"> Income Tax (PAYE) certificate</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_emp_s_bonus" value="yes"> Bonus / commissions proofs</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_emp_s_financial_stmt" value="yes"> Financial Statement from chartered accountant (2 years)</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_emp_s_saving_pattern" value="yes"> Explanation of saving pattern</label>
+                        </div></div></div>
+                    </div>
+
+                    <!-- SOURCE: BUSINESS - Annexture 7A / 7B -->
+                    <div class="checklist-section">
+                        <h3 class="checklist-section-title">Source — Self-employment / Business Proceeds</h3>
+                        <p class="checklist-folder-ref">SP: Annexture 7A (Myself) / Annexture 7B (Sponsor)</p>
+                        <div class="checklist-two-col"><div class="checklist-col"><h4 class="checklist-col-title">Myself</h4><div class="checkbox-group">
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_biz_m_registration" value="yes"> Business registration</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_biz_m_pnl" value="yes"> Profit and loss statements by chartered accountant</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_biz_m_tax" value="yes"> Business TAX evidence</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_biz_m_lawyer_letter" value="yes"> Letter from lawyer/accountant confirming position</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_biz_m_bank_stmt" value="yes"> Bank accounts statements (6 months)</label>
+                        </div></div><div class="checklist-col"><h4 class="checklist-col-title">Sponsor</h4><div class="checkbox-group">
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_biz_s_registration" value="yes"> Business registration</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_biz_s_pnl" value="yes"> Profit and loss statements by chartered accountant</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_biz_s_tax" value="yes"> Business TAX evidence</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_biz_s_lawyer_letter" value="yes"> Letter from lawyer/accountant confirming position</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_biz_s_bank_stmt" value="yes"> Bank accounts statements (6 months)</label>
+                        </div></div></div>
+                    </div>
+
+                    <!-- SOURCE: RENTAL - Annexture 8A / 8B -->
+                    <div class="checklist-section">
+                        <h3 class="checklist-section-title">Source — Rent / Lease Income</h3>
+                        <p class="checklist-folder-ref">SP: Annexture 8A (Myself) / Annexture 8B (Sponsor)</p>
+                        <div class="checklist-two-col"><div class="checklist-col"><h4 class="checklist-col-title">Myself</h4><div class="checkbox-group">
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_rent_m_lease" value="yes"> Lease agreement</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_rent_m_deed" value="yes"> Deed of the property</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_rent_m_valuation" value="yes"> Valuation of the Property</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_rent_m_bank_stmt" value="yes"> Bank statement showing receipt of funds</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_rent_m_accountant_letter" value="yes"> Signed letter from chartered accountant</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_rent_m_invoices" value="yes"> Invoices</label>
+                        </div></div><div class="checklist-col"><h4 class="checklist-col-title">Sponsor</h4><div class="checkbox-group">
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_rent_s_lease" value="yes"> Lease agreement</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_rent_s_deed" value="yes"> Deed of the property</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_rent_s_valuation" value="yes"> Valuation of the Property</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_rent_s_bank_stmt" value="yes"> Bank statement showing receipt of funds</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_rent_s_accountant_letter" value="yes"> Signed letter from chartered accountant</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_rent_s_invoices" value="yes"> Invoices</label>
+                        </div></div></div>
+                    </div>
+
+                    <!-- SOURCE: EPF LINK - Annexture 9A / 9B -->
+                    <div class="checklist-section">
+                        <h3 class="checklist-section-title">Source — Employment Linked to Provident Fund</h3>
+                        <p class="checklist-folder-ref">SP: Annexture 9A (Myself) / Annexture 9B (Sponsor)</p>
+                        <div class="checklist-two-col"><div class="checklist-col"><h4 class="checklist-col-title">Myself</h4><div class="checkbox-group">
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_epf_m_contract" value="yes"> Employment contract</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_epf_m_salary_slips" value="yes"> Last 6 months salary slips</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_epf_m_service_letter" value="yes"> Service letter</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_epf_m_closing_stmt" value="yes"> Copy of closing statement of Fund</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_epf_m_balance_letter" value="yes"> Letter confirming the Balance</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_epf_m_bank_stmt" value="yes"> Bank statement (if fund withdrawn)</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_epf_m_accountant_letter" value="yes"> Signed letter from chartered accountant</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_epf_m_epf_balance" value="yes"> EPF/ETF — Balance confirmation</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_epf_m_epf_contrib" value="yes"> EPF/ETF — Contribution History report</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_epf_m_receival_proof" value="yes"> Docs to prove receival of EPF/ETF</label>
+                        </div></div><div class="checklist-col"><h4 class="checklist-col-title">Sponsor</h4><div class="checkbox-group">
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_epf_s_contract" value="yes"> Employment contract</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_epf_s_salary_slips" value="yes"> Last 6 months salary slips</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_epf_s_service_letter" value="yes"> Service letter</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_epf_s_closing_stmt" value="yes"> Copy of closing statement of Fund</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_epf_s_balance_letter" value="yes"> Letter confirming the Balance</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_epf_s_bank_stmt" value="yes"> Bank statement (if fund withdrawn)</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_epf_s_accountant_letter" value="yes"> Signed letter from chartered accountant</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_epf_s_epf_balance" value="yes"> EPF/ETF — Balance confirmation</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_epf_s_epf_contrib" value="yes"> EPF/ETF — Contribution History report</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_epf_s_receival_proof" value="yes"> Docs to prove receival of EPF/ETF</label>
+                        </div></div></div>
+                    </div>
+
+                    <!-- SOURCE: OTHER - Annexture 10A / 10B -->
+                    <div class="checklist-section">
+                        <h3 class="checklist-section-title">Other Sources of Funds</h3>
+                        <p class="checklist-folder-ref">SP: Annexture 10A (Myself) / Annexture 10B (Sponsor)</p>
+
+                        <h4 style="margin:15px 0 8px;color:#555;">Sale of Property</h4>
+                        <div class="checklist-two-col"><div class="checklist-col"><h4 class="checklist-col-title">Myself</h4><div class="checkbox-group">
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_oth_m_prop_deed_orig" value="yes"> Transfer deeds (original)</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_oth_m_prop_deed_trans" value="yes"> Transfer deeds (Translation)</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_oth_m_prop_sale_agree" value="yes"> Sales agreement of land sales</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_oth_m_prop_valuation" value="yes"> Land Valuation Report</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_oth_m_prop_bank_stmt" value="yes"> Bank statement showing receipt</label>
+                        </div></div><div class="checklist-col"><h4 class="checklist-col-title">Sponsor</h4><div class="checkbox-group">
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_oth_s_prop_deed_orig" value="yes"> Transfer deeds (original)</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_oth_s_prop_deed_trans" value="yes"> Transfer deeds (Translation)</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_oth_s_prop_sale_agree" value="yes"> Sales agreement of land sales</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_oth_s_prop_valuation" value="yes"> Land Valuation Report</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_oth_s_prop_bank_stmt" value="yes"> Bank statement showing receipt</label>
+                        </div></div></div>
+
+                        <h4 style="margin:15px 0 8px;color:#555;">Sale of a Vehicle</h4>
+                        <div class="checklist-two-col"><div class="checklist-col"><h4 class="checklist-col-title">Myself</h4><div class="checkbox-group">
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_oth_m_veh_book" value="yes"> Vehicle book / Transfer agreement</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_oth_m_veh_valuation" value="yes"> Vehicle Valuation Report</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_oth_m_veh_sale_agree" value="yes"> Sales agreement</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_oth_m_veh_bank_stmt" value="yes"> Bank statement showing receipt</label>
+                        </div></div><div class="checklist-col"><h4 class="checklist-col-title">Sponsor</h4><div class="checkbox-group">
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_oth_s_veh_book" value="yes"> Vehicle book / Transfer agreement</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_oth_s_veh_valuation" value="yes"> Vehicle Valuation Report</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_oth_s_veh_sale_agree" value="yes"> Sales agreement</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_oth_s_veh_bank_stmt" value="yes"> Bank statement showing receipt</label>
+                        </div></div></div>
+
+                        <h4 style="margin:15px 0 8px;color:#555;">Sale of Gold</h4>
+                        <div class="checklist-two-col"><div class="checklist-col"><h4 class="checklist-col-title">Myself</h4><div class="checkbox-group">
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_oth_m_gold_purchase" value="yes"> Gold purchase Invoice</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_oth_m_gold_sale" value="yes"> Gold Sale Invoice</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_oth_m_gold_valuation" value="yes"> Gold Valuation Report</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_oth_m_gold_bank_stmt" value="yes"> Bank statement showing receipt</label>
+                        </div></div><div class="checklist-col"><h4 class="checklist-col-title">Sponsor</h4><div class="checkbox-group">
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_oth_s_gold_purchase" value="yes"> Gold purchase Invoice</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_oth_s_gold_sale" value="yes"> Gold Sale Invoice</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_oth_s_gold_valuation" value="yes"> Gold Valuation Report</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_oth_s_gold_bank_stmt" value="yes"> Bank statement showing receipt</label>
+                        </div></div></div>
+
+                        <h4 style="margin:15px 0 8px;color:#555;">Inheritance of Property or Money</h4>
+                        <div class="checklist-two-col"><div class="checklist-col"><h4 class="checklist-col-title">Myself</h4><div class="checkbox-group">
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_oth_m_inherit_probate" value="yes"> Grant of Probate (will) with value of estate</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_oth_m_inherit_valuation" value="yes"> Valuation report</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_oth_m_inherit_lawyer" value="yes"> Letter from lawyer/accountant (Affidavit)</label>
+                        </div></div><div class="checklist-col"><h4 class="checklist-col-title">Sponsor</h4><div class="checkbox-group">
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_oth_s_inherit_probate" value="yes"> Grant of Probate (will) with value of estate</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_oth_s_inherit_valuation" value="yes"> Valuation report</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_oth_s_inherit_lawyer" value="yes"> Letter from lawyer/accountant (Affidavit)</label>
+                        </div></div></div>
+
+                        <h4 style="margin:15px 0 8px;color:#555;">Gift of Money</h4>
+                        <div class="checklist-two-col"><div class="checklist-col"><h4 class="checklist-col-title">Myself</h4><div class="checkbox-group">
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_oth_m_gift_donor_letter" value="yes"> Letter from donor confirming gift details</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_oth_m_gift_lawyer" value="yes"> Letter from lawyer/accountant confirming origin</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_oth_m_gift_bank_stmt" value="yes"> Bank statement showing receipt</label>
+                        </div></div><div class="checklist-col"><h4 class="checklist-col-title">Sponsor</h4><div class="checkbox-group">
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_oth_s_gift_donor_letter" value="yes"> Letter from donor confirming gift details</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_oth_s_gift_lawyer" value="yes"> Letter from lawyer/accountant confirming origin</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_oth_s_gift_bank_stmt" value="yes"> Bank statement showing receipt</label>
+                        </div></div></div>
+
+                        <h4 style="margin:15px 0 8px;color:#555;">Gift of Property / Gold / Jewellery</h4>
+                        <div class="checklist-two-col"><div class="checklist-col"><h4 class="checklist-col-title">Myself</h4><div class="checkbox-group">
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_oth_m_giftprop_donor" value="yes"> Letter from donor confirming gift details</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_oth_m_giftprop_lawyer" value="yes"> Letter from lawyer/accountant confirming origin</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_oth_m_giftprop_deed" value="yes"> Transfer deed</label>
+                        </div></div><div class="checklist-col"><h4 class="checklist-col-title">Sponsor</h4><div class="checkbox-group">
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_oth_s_giftprop_donor" value="yes"> Letter from donor confirming gift details</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_oth_s_giftprop_lawyer" value="yes"> Letter from lawyer/accountant confirming origin</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_oth_s_giftprop_deed" value="yes"> Transfer deed</label>
+                        </div></div></div>
+
+                        <h4 style="margin:15px 0 8px;color:#555;">Lottery or Betting Win</h4>
+                        <div class="checklist-two-col"><div class="checklist-col"><h4 class="checklist-col-title">Myself</h4><div class="checkbox-group">
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_oth_m_lottery_voucher" value="yes"> Lotteries Commission voucher confirming win</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_oth_m_lottery_bank_stmt" value="yes"> Bank statement showing receipt</label>
+                        </div></div><div class="checklist-col"><h4 class="checklist-col-title">Sponsor</h4><div class="checkbox-group">
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_oth_s_lottery_voucher" value="yes"> Lotteries Commission voucher confirming win</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_sof_oth_s_lottery_bank_stmt" value="yes"> Bank statement showing receipt</label>
+                        </div></div></div>
+                    </div>
+
+                    <!-- LOAN REPAYMENT - Annexture 11 -->
+                    <div class="checklist-section">
+                        <h3 class="checklist-section-title">Education Loan Repayment Plan</h3>
+                        <p class="checklist-hint">Loan guarantor should be the student or financial undertaker.</p>
+                        <p class="checklist-folder-ref">SP: Annexture 11 - Education Loan Repayment Plan</p>
+                        <div class="checkbox-group">
+                            <label class="checkbox-item"><input type="checkbox" name="adv_loan_repay_security" value="yes"> Security for loans (fixed assets)</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_loan_repay_plan" value="yes"> Repayment Plan</label>
+                        </div>
+                    </div>
+
+                    <!-- ADVISOR NOTES -->
+                    <div class="checklist-section">
+                        <h3 class="checklist-section-title">Advisor Notes</h3>
                         <div class="form-group">
-                            <select name="adv_risk_level" id="advRiskLevel" required>
-                                <option value="">-- Select --</option>
-                                <option value="low">Low risk — straightforward application</option>
-                                <option value="medium">Medium risk — some factors to address</option>
-                                <option value="high">High risk — significant issues to address</option>
-                            </select>
+                            <label class="question-label">Special instructions or notes for this application:</label>
+                            <textarea name="adv_notes" id="advNotes" rows="4" maxlength="2000" placeholder="Enter any special instructions, concerns, or notes. Limited to 2000 characters."></textarea>
                         </div>
                     </div>
 
-                    <!-- Q14: Advisor Notes -->
-                    <div class="question-block">
-                        <label class="question-label">14. Advisor notes or special instructions for this application:</label>
-                        <div class="form-group">
-                            <textarea name="adv_notes" id="advNotes" rows="4" maxlength="2000" placeholder="Enter any special instructions, concerns, or notes for this application. Limited to 2000 characters."></textarea>
-                        </div>
-                    </div>
-
-                    <!-- Save & Close Button (Admin only) -->
+                    <!-- Save & Close Button -->
                     <div class="button-group" id="adminButtonGroup">
                         <button type="button" class="btn btn-primary" onclick="handleAdminSaveAndClose()">
                             Save & Close
@@ -820,6 +1030,7 @@
                     </div>
 
                 </div>
+
                 <!-- ============================================
                      STAGE 1: IDENTITY DETAILS
                      ============================================ -->
@@ -2890,7 +3101,100 @@
                     </div>
                 </div>
 
-                <div class="form-section" data-stage="11"><h2 class="section-title">Supporting Documents</h2><div class="section-description">This section will be implemented next.</div></div>
+                <!-- ============================================
+                     STAGE 11: SUPPORTING DOCUMENTS
+                     Upload fields are generated dynamically by
+                     setupSupportingDocuments() based on admin
+                     assessment answers from Stage 0.
+                ============================================ -->
+                <div class="form-section" data-stage="11">
+                    <h2 class="section-title">Supporting Documents</h2>
+                    <div class="section-description">
+                        Please upload all documents requested by your immigration advisor below.
+                        Items marked with <strong>"Add another file"</strong> allow multiple documents.
+                        Accepted formats: PDF, JPG, PNG, DOCX (max 25MB per file).
+                    </div>
+
+                    <!-- Upload status bar -->
+                    <div id="uploadStatusBar" style="display:none;background:#e8f4fd;border:1px solid #b8daff;border-radius:6px;padding:10px 16px;margin-bottom:20px;font-size:0.9rem;color:#0056b3;"></div>
+
+                    <!-- ═══ ALWAYS REQUIRED DOCUMENTS ═══ -->
+                    <div class="doc-section" id="docSection_required">
+                        <h3 class="doc-section-title">Required Documents</h3>
+                        <p class="doc-section-hint">These documents are always required regardless of your application type.</p>
+                        <!-- Generated dynamically by setupSupportingDocuments() -->
+                    </div>
+
+                    <!-- ═══ CONDITIONAL: Relationship to Sponsor ═══ -->
+                    <div class="doc-section" id="docSection_relationship" style="display:none;">
+                        <h3 class="doc-section-title">Evidence of Relationship to Sponsor</h3>
+                    </div>
+
+                    <!-- ═══ CONDITIONAL: Education & Training ═══ -->
+                    <div class="doc-section" id="docSection_education" style="display:none;">
+                        <h3 class="doc-section-title">Past Education and Training</h3>
+                    </div>
+
+                    <!-- ═══ CONDITIONAL: Employment Evidence ═══ -->
+                    <div class="doc-section" id="docSection_employment" style="display:none;">
+                        <h3 class="doc-section-title">Evidence of Employment</h3>
+                        <p class="doc-section-hint">Upload documents for current and previous employments (both applicant and financial undertaker).</p>
+                    </div>
+
+                    <!-- ═══ CONDITIONAL: Tuition Fee Payment ═══ -->
+                    <div class="doc-section" id="docSection_tuition" style="display:none;">
+                        <h3 class="doc-section-title">Evidence of Tuition Fee Payment</h3>
+                    </div>
+
+                    <!-- ═══ CONDITIONAL: Home Ties ═══ -->
+                    <div class="doc-section" id="docSection_homeTies" style="display:none;">
+                        <h3 class="doc-section-title">Home Ties — Evidence to Return Home</h3>
+                    </div>
+
+                    <!-- ═══ CONDITIONAL: Visa Refusals ═══ -->
+                    <div class="doc-section" id="docSection_visaRefusal" style="display:none;">
+                        <h3 class="doc-section-title">Visa Refusal Letters</h3>
+                    </div>
+
+                    <!-- ═══ CONDITIONAL: Financial - Evidence of Funds (Myself) ═══ -->
+                    <div class="doc-section" id="docSection_fundsMyself" style="display:none;">
+                        <h3 class="doc-section-title">Evidence of Funds — Myself (Student)</h3>
+                    </div>
+
+                    <!-- ═══ CONDITIONAL: Financial - Evidence of Funds (Sponsor) ═══ -->
+                    <div class="doc-section" id="docSection_fundsSponsor" style="display:none;">
+                        <h3 class="doc-section-title">Evidence of Funds — Sponsor / Financial Undertaker</h3>
+                    </div>
+
+                    <!-- ═══ CONDITIONAL: Education Loan ═══ -->
+                    <div class="doc-section" id="docSection_educationLoan" style="display:none;">
+                        <h3 class="doc-section-title">Education Loan</h3>
+                    </div>
+
+                    <!-- ═══ CONDITIONAL: Loan Repayment ═══ -->
+                    <div class="doc-section" id="docSection_loanRepayment" style="display:none;">
+                        <h3 class="doc-section-title">Education Loan Repayment Plan</h3>
+                    </div>
+
+                    <!-- ═══ CONDITIONAL: Source of Funds - Myself ═══ -->
+                    <div class="doc-section" id="docSection_sourceMyself" style="display:none;">
+                        <h3 class="doc-section-title">Source of Funds — Myself (Student)</h3>
+                    </div>
+
+                    <!-- ═══ CONDITIONAL: Source of Funds - Sponsor ═══ -->
+                    <div class="doc-section" id="docSection_sourceSponsor" style="display:none;">
+                        <h3 class="doc-section-title">Source of Funds — Sponsor / Financial Undertaker</h3>
+                    </div>
+
+                    <!-- Validation error message -->
+                    <div id="docValidationError" style="display:none;background:#f8d7da;border:1px solid #f5c6cb;color:#721c24;padding:12px 16px;border-radius:6px;margin:15px 0;"></div>
+
+                    <div class="button-group">
+                        <button type="button" class="btn-back" onclick="handleBack()">Back</button>
+                        <button type="button" class="btn-save-continue" onclick="handleSaveAndContinue()">Save and Continue</button>
+                    </div>
+                </div>
+
                 <div class="form-section" data-stage="12"><h2 class="section-title">Declaration</h2><div class="section-description">This section will be implemented next.</div></div>
                 
                 <div class="form-section" data-stage="13">
@@ -3064,6 +3368,14 @@
 
             // Photo upload handler
             setupPhotoUpload();
+
+            // Set up supporting documents (only for users)
+            if (FormUtils.FormContext.role === 'user') {
+                FormUtils.setupSupportingDocuments();
+            }
+
+            // Set up collapsible sections for both admin and user views
+            FormUtils.setupCollapsibleSections();
 
             // DEV MODE: unlock all stages for testing
             if (DEV_MODE) {
@@ -4328,6 +4640,16 @@
                 markStageCompleted(9);
                 unlockStage(11);
                 navigateToStage(11);
+            } else if (currentStage === 11) {
+                // Validate all required documents are uploaded
+                if (!FormUtils.validateDocumentUploads()) return;
+                FormUtils.saveDraft(FORM_CODE, form);
+                markStageCompleted(11);
+                var idx = STAGE_ORDER.indexOf(11);
+                if (idx >= 0 && idx < STAGE_ORDER.length - 1) {
+                    unlockStage(STAGE_ORDER[idx + 1]);
+                    navigateToStage(STAGE_ORDER[idx + 1]);
+                }
             } else if (currentStage < TOTAL_STAGES) {
                 FormUtils.saveDraft(FORM_CODE, form);
                 markStageCompleted(currentStage);
