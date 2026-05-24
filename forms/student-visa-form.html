@@ -3028,7 +3028,17 @@
                     <div class="section-description">
                         Please upload all documents requested by your immigration advisor below.
                         Items marked with <strong>"Add another file"</strong> allow multiple documents.
-                        Accepted formats: PDF, JPG, PNG, DOCX (max 25MB per file).
+                    </div>
+
+                    <div style="background:#fff3cd;border:1px solid #ffc107;border-radius:8px;padding:16px 20px;margin-bottom:20px;">
+                        <p style="font-weight:600;color:#856404;margin:0 0 8px;">Document Upload Rules</p>
+                        <ul style="margin:0;padding-left:20px;color:#856404;font-size:0.9rem;line-height:1.7;">
+                            <li>All documents must be in <strong>PDF format</strong>. Images must be <strong>JPEG/JPG</strong>.</li>
+                            <li>Each document must be uploaded as a <strong>single file</strong>. For example, if your bank statement is 4 pages, it must be uploaded as one PDF, not 4 separate files.</li>
+                            <li>Avoid uploading multiple copies of the same document.</li>
+                            <li>If uploading a copy of your passport or travel document, ensure it clearly shows your information page (photo, name, date of birth, and passport number).</li>
+                            <li>Maximum file size: <strong>25MB</strong> per file.</li>
+                        </ul>
                     </div>
 
                     <!-- Upload status bar -->
@@ -3111,8 +3121,130 @@
                     </div>
                 </div>
 
-                <div class="form-section" data-stage="12"><h2 class="section-title">Declaration</h2><div class="section-description">This section will be implemented next.</div></div>
-                
+                <!-- ============================================
+                     STAGE 12: DECLARATION
+                ============================================ -->
+                <div class="form-section" data-stage="12">
+                    <h2 class="section-title">Declaration</h2>
+                    <div class="section-description">
+                        Please read each statement carefully. You must agree to all declarations before you can submit your application.
+                    </div>
+
+                    <!-- Declaration intro -->
+                    <div class="declaration-box" style="background:#f8f9fa;border:1px solid #dee2e6;border-radius:8px;padding:20px 24px;margin-bottom:24px;">
+                        <p style="font-weight:600;color:var(--primary-color);margin:0 0 10px;">Important — Please read carefully</p>
+                        <p style="font-size:0.92rem;color:#444;margin:0;line-height:1.6;">
+                            By signing this declaration, you confirm that you understand the following obligations and that all information provided in this application is true and correct. Making false or misleading statements in a visa application is a serious matter and may result in your application being declined or your visa being revoked.
+                        </p>
+                    </div>
+
+                    <!-- Declaration 1: Truth and completeness -->
+                    <div class="declaration-item">
+                        <label class="declaration-label">
+                            <input type="checkbox" name="decl_true_correct" required>
+                            <span>I declare that the information I have provided in this application is <strong>true, correct, and complete</strong> to the best of my knowledge. I understand that providing false or misleading information may result in my application being declined, my visa being cancelled, or my deportation from New Zealand.</span>
+                        </label>
+                    </div>
+
+                    <!-- Declaration 2: Supporting documents -->
+                    <div class="declaration-item">
+                        <label class="declaration-label">
+                            <input type="checkbox" name="decl_documents_genuine" required>
+                            <span>I declare that all <strong>supporting documents</strong> I have provided with this application are genuine. I understand that providing fraudulent documents is an offence and may result in criminal prosecution.</span>
+                        </label>
+                    </div>
+
+                    <!-- Declaration 3: Change of circumstances -->
+                    <div class="declaration-item">
+                        <label class="declaration-label">
+                            <input type="checkbox" name="decl_notify_changes" required>
+                            <span>I understand that I must <strong>notify Immigration New Zealand</strong> of any changes in my circumstances that may affect my application, including changes to my health, character, or personal situation, while my application is being considered.</span>
+                        </label>
+                    </div>
+
+                    <!-- Declaration 4: Visa conditions -->
+                    <div class="declaration-item">
+                        <label class="declaration-label">
+                            <input type="checkbox" name="decl_visa_conditions" required>
+                            <span>I understand that if I am granted a student visa, I must <strong>comply with all conditions</strong> of that visa, including any conditions relating to study, work, and duration of stay in New Zealand.</span>
+                        </label>
+                    </div>
+
+                    <!-- Declaration 5: Study obligations -->
+                    <div class="declaration-item">
+                        <label class="declaration-label">
+                            <input type="checkbox" name="decl_study_obligations" required>
+                            <span>I understand that as the holder of a student visa, I am required to <strong>maintain enrolment</strong> at my education provider and maintain satisfactory attendance and academic progress. I must notify Immigration New Zealand if I change education providers, courses, or cease study.</span>
+                        </label>
+                    </div>
+
+                    <!-- Declaration 6: Financial obligations -->
+                    <div class="declaration-item">
+                        <label class="declaration-label">
+                            <input type="checkbox" name="decl_financial" required>
+                            <span>I declare that I have <strong>sufficient funds</strong> available to cover my tuition fees, living costs, and return travel for the duration of my intended stay in New Zealand, as outlined in the financial evidence provided with this application.</span>
+                        </label>
+                    </div>
+
+                    <!-- Declaration 7: Health and character -->
+                    <div class="declaration-item">
+                        <label class="declaration-label">
+                            <input type="checkbox" name="decl_health_character" required>
+                            <span>I declare that the information I have provided regarding my <strong>health and character</strong> is true and complete. I understand that Immigration New Zealand may verify this information and that failure to disclose relevant health or character issues may result in my application being declined.</span>
+                        </label>
+                    </div>
+
+                    <!-- Declaration 8: Medical insurance -->
+                    <div class="declaration-item">
+                        <label class="declaration-label">
+                            <input type="checkbox" name="decl_insurance" required>
+                            <span>I understand that I am required to hold <strong>appropriate medical and travel insurance</strong> for the duration of my stay in New Zealand, unless I am exempt under specific conditions.</span>
+                        </label>
+                    </div>
+
+                    <!-- Declaration 9: Privacy and data -->
+                    <div class="declaration-item">
+                        <label class="declaration-label">
+                            <input type="checkbox" name="decl_privacy" required>
+                            <span>I understand that the personal information collected in this application will be used for the purpose of assessing my visa application. I consent to Immigration New Zealand <strong>collecting, using, and sharing</strong> this information as required under the Immigration Act 2009 and the Privacy Act 2020. I authorise Southern Ferns Visa Advisor to act on my behalf in relation to this application.</span>
+                        </label>
+                    </div>
+
+                    <!-- Declaration 10: Leave NZ -->
+                    <div class="declaration-item">
+                        <label class="declaration-label">
+                            <input type="checkbox" name="decl_leave_nz" required>
+                            <span>I understand that I must <strong>leave New Zealand</strong> before my visa expires, or apply for a further visa before the expiry date. Overstaying my visa is a breach of immigration law and may affect future visa applications.</span>
+                        </label>
+                    </div>
+
+                    <!-- Declaration validation error -->
+                    <div id="declarationError" style="display:none;background:#f8d7da;border:1px solid #f5c6cb;color:#721c24;padding:12px 16px;border-radius:6px;margin:15px 0;">
+                        You must agree to all declarations before proceeding.
+                    </div>
+
+                    <!-- Signature section -->
+                    <div style="background:#f0f7ff;border:1px solid #b8daff;border-radius:8px;padding:20px 24px;margin-top:24px;">
+                        <p style="font-weight:600;color:var(--primary-color);margin:0 0 12px;">Electronic Signature</p>
+                        <div class="form-group">
+                            <label class="question-label mandatory">Full legal name (as shown in passport)</label>
+                            <input type="text" name="decl_signature_name" id="declSignatureName" required placeholder="Type your full legal name to confirm your agreement">
+                        </div>
+                        <div class="form-group">
+                            <label class="question-label mandatory">Date</label>
+                            <input type="date" name="decl_signature_date" id="declSignatureDate" required>
+                        </div>
+                        <p style="font-size:0.82rem;color:#666;margin:10px 0 0;">
+                            By typing your name above, you are electronically signing this declaration with the same legal effect as a handwritten signature.
+                        </p>
+                    </div>
+
+                    <div class="button-group" style="margin-top:24px;">
+                        <button type="button" class="btn-back" onclick="handleBack()">Back</button>
+                        <button type="button" class="btn-save-continue" onclick="handleSaveAndContinue()">Save and Continue</button>
+                    </div>
+                </div>
+
                 <div class="form-section" data-stage="13">
                     <h2 class="section-title">Review & Submit</h2>
                     <div class="section-description">
@@ -3236,7 +3368,7 @@
             FormUtils.applyRoleBasedRendering(STAGE_ORDER, navigateToStage, unlockStage);
 
             // Restore completed stage indicators and navigate to first incomplete stage
-            if (FormUtils.FormContext.role === 'user' && FormUtils.FormContext.currentPage > 0) {
+            if (FormUtils.FormContext.role === 'user' && FormUtils.FormContext.currentPage > 0 && FormUtils.FormContext.userResponse) {
                 var savedPage = FormUtils.FormContext.currentPage;
                 var savedPageIdx = STAGE_ORDER.indexOf(savedPage);
 
@@ -3322,6 +3454,12 @@
             setupAutocomplete('militia_country_0', 'militiaCountryList_0');
             setupAutocomplete('detention_country_0', 'detentionCountryList_0');
 
+            // Textarea character limit validation
+            FormUtils.setupTextareaValidation();
+
+            // Date field validation (past/future rules)
+            FormUtils.setupDateValidation();
+
             // Set up supporting documents (only for users)
             if (FormUtils.FormContext.role === 'user') {
                 FormUtils.setupSupportingDocuments();
@@ -3329,6 +3467,12 @@
 
             // Set up collapsible sections for both admin and user views
             FormUtils.setupCollapsibleSections();
+
+            // Set today's date as default for declaration signature
+            var declDate = document.getElementById('declSignatureDate');
+            if (declDate && !declDate.value) {
+                declDate.value = new Date().toISOString().split('T')[0];
+            }
 
             // DEV MODE: unlock all stages for testing
             if (DEV_MODE) {
@@ -4515,8 +4659,18 @@
         async function handleSaveAndContinue() {
             var form = document.getElementById('studentVisaForm');
 
+            // Show saving indicator
+            var overlay = document.getElementById('loadingOverlay');
+            if (overlay) {
+                overlay.querySelector('.loading-text').textContent = 'Saving...';
+                overlay.classList.add('active');
+            }
+
             // Save to Dataverse API
             await FormUtils.saveToApi(form, currentStage, false);
+
+            // Hide saving indicator
+            if (overlay) overlay.classList.remove('active');
 
             if (currentStage === 1) {
                 // Validate ALL sub-sections for stage 1
@@ -4593,7 +4747,65 @@
                     unlockStage(STAGE_ORDER[idx + 1]);
                     navigateToStage(STAGE_ORDER[idx + 1]);
                 }
-            } else if (currentStage < TOTAL_STAGES) {
+            } else if (currentStage === 12) {
+                // Validate all declaration checkboxes are checked
+                var declCheckboxes = form.querySelectorAll('.form-section[data-stage="12"] input[type="checkbox"][required]');
+                var allDeclChecked = true;
+                declCheckboxes.forEach(function(cb) {
+                    if (!cb.checked) {
+                        allDeclChecked = false;
+                        cb.closest('.declaration-item').style.borderColor = '#dc3545';
+                    } else {
+                        cb.closest('.declaration-item').style.borderColor = '';
+                    }
+                });
+
+                // Validate signature name and date
+                var sigName = document.getElementById('declSignatureName');
+                var sigDate = document.getElementById('declSignatureDate');
+                var sigValid = true;
+
+                if (!sigName || !sigName.value.trim()) {
+                    sigValid = false;
+                    if (sigName) sigName.classList.add('error');
+                } else {
+                    if (sigName) sigName.classList.remove('error');
+                }
+
+                if (!sigDate || !sigDate.value) {
+                    sigValid = false;
+                    if (sigDate) sigDate.classList.add('error');
+                } else {
+                    if (sigDate) sigDate.classList.remove('error');
+                }
+
+                if (!allDeclChecked || !sigValid) {
+                    var declError = document.getElementById('declarationError');
+                    if (declError) {
+                        declError.textContent = !allDeclChecked
+                            ? 'You must agree to all declarations before proceeding.'
+                            : 'Please type your full legal name and select the date to sign the declaration.';
+                        declError.style.display = 'block';
+                        declError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                    return;
+                }
+
+                // Hide error if valid
+                var declError = document.getElementById('declarationError');
+                if (declError) declError.style.display = 'none';
+
+                await FormUtils.saveToApi(form, currentStage, false);
+                FormUtils.saveDraft(FORM_CODE, form);
+                markStageCompleted(12);
+                var idx12 = STAGE_ORDER.indexOf(12);
+                if (idx12 >= 0 && idx12 < STAGE_ORDER.length - 1) {
+                    unlockStage(STAGE_ORDER[idx12 + 1]);
+                    navigateToStage(STAGE_ORDER[idx12 + 1]);
+                }
+                return;
+            }
+             else if (currentStage < TOTAL_STAGES) {
                 FormUtils.saveDraft(FORM_CODE, form);
                 markStageCompleted(currentStage);
                 // Find the next stage in STAGE_ORDER
@@ -4617,20 +4829,39 @@
 
         async function handleSaveAndExit() {
             var form = document.getElementById('studentVisaForm');
-            FormUtils.saveDraft(FORM_CODE, form);
-            await FormUtils.saveToApi(form, currentStage, false);
-
-            // Trigger immediate API save
-            FormUtils.triggerApiSaveNow();
 
             var overlay = document.getElementById('loadingOverlay');
             if (overlay) {
-                overlay.querySelector('.loading-text').textContent = 'Your progress has been saved.';
+                overlay.querySelector('.loading-text').textContent = 'Saving your progress...';
                 overlay.classList.add('active');
-                setTimeout(function() {
-                    overlay.classList.remove('active');
-                    overlay.querySelector('.loading-text').textContent = 'Submitting your form...';
-                }, 2000);
+            }
+
+            FormUtils.saveDraft(FORM_CODE, form);
+            var saved = await FormUtils.saveToApi(form, currentStage, false);
+
+            if (overlay) overlay.classList.remove('active');
+
+            if (saved) {
+                // Show saved confirmation page
+                document.querySelectorAll('.form-section').forEach(function(s) { s.classList.remove('active'); });
+                var stageNav = document.getElementById('stageNav');
+                if (stageNav) stageNav.style.display = 'none';
+                var sectionNav = document.querySelector('.section-nav-container');
+                if (sectionNav) sectionNav.style.display = 'none';
+
+                // Create a temporary success message
+                var container = document.querySelector('.form-content');
+                var savedDiv = document.createElement('div');
+                savedDiv.style.cssText = 'text-align:center;padding:60px 30px;';
+                savedDiv.innerHTML =
+                    '<svg viewBox="0 0 24 24" style="width:64px;height:64px;fill:#28a745;margin-bottom:20px"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>' +
+                    '<h2 style="color:#28a745;margin-bottom:15px;">Progress Saved</h2>' +
+                    '<p style="color:#666;margin-bottom:10px;">Your progress has been saved successfully.</p>' +
+                    '<p style="color:#666;margin-bottom:20px;">You can close this tab and return later using the same link from your email.</p>' +
+                    '<button type="button" onclick="window.location.reload()" style="background:#2e86c1;color:#fff;border:none;padding:10px 24px;border-radius:6px;cursor:pointer;font-size:0.95rem;">Return to Form</button>';
+                container.appendChild(savedDiv);
+            } else {
+                alert('Failed to save your progress. Please try again.');
             }
         }
 

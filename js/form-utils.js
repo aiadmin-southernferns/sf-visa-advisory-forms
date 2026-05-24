@@ -100,7 +100,7 @@ async function loadFormDataFromApi() {
         if (!response.ok) { console.warn('Failed to load form data:', response.status); return false; }
         const data = await response.json();
         FormContext.version = data.version || 1;
-        FormContext.currentPage = data.currentPage || 1;
+        FormContext.currentPage = (data.currentPage !== undefined && data.currentPage !== null) ? data.currentPage : 0;
         FormContext.adminResponse = data.adminResponse || null;
         FormContext.userResponse = data.userResponse || null;
         FormContext.lastSavedAt = data.lastSavedAt || null;
@@ -618,14 +618,14 @@ async function submitToApi(formElement) {
  * These are NOT controlled by admin checkboxes.
  */
 var ALWAYS_REQUIRED_DOCS = [
-    { fieldName: 'doc_passport_bio',    label: 'Passport Bio Pages + Visa Pages + Stamps', spFolder: 'Passport Bio Pages', multi: true, required: true, helpText: 'Upload clear copies of your passport bio-data page, all visa pages, and stamp pages.' },
+    { fieldName: 'doc_passport_bio',    label: 'Passport Bio Pages + Visa Pages + Stamps', spFolder: 'Passport Bio Pages', multi: true, required: true, helpText: 'Upload clear copies of your passport bio-data page, all visa pages, and stamp pages.' , accept: '.pdf,.jpg,.jpeg'},
     { fieldName: 'doc_photo', label: 'Your Photo (Passport Size)', spFolder: 'Photo', multi: false, required: true, helpText: 'Must be a .jpg or .jpeg file, between 500KB and 3MB, between 900×1200 pixels and 2250×3000 pixels. Passport style: less than 6 months old, colour, light background.', accept: '.jpg,.jpeg', validatePhoto: true },
-    { fieldName: 'doc_cv',              label: 'Fully Completed CV', spFolder: 'CV', multi: false, required: true },
-    { fieldName: 'doc_sop',             label: 'Statement of Purpose', spFolder: 'SOP', multi: false, required: true, helpText: 'Refer to the SOP guide provided by your advisor.' },
-    { fieldName: 'doc_police_cert',     label: 'Police Certificate', spFolder: 'Police Certificate', multi: false, required: true, helpText: 'Should be less than 6 months old.' },
-    { fieldName: 'doc_medical',         label: 'Medical Certificate', spFolder: 'Medical', multi: false, required: true, helpText: 'Should be less than 3 months old.' },
-    { fieldName: 'doc_offer_letter',    label: 'Offer Letter from Education Provider', spFolder: 'Offer Letter from Education Provider', multi: false, required: true },
-    { fieldName: 'doc_inz_forms',       label: 'INZ Forms (1012 / 1200 / 1226 / 1014 / 1025)', spFolder: 'INZ Forms (1012 -1200-1226-1014-1025)', multi: true, required: true, helpText: 'Upload all completed INZ forms as instructed by your advisor.' },
+    { fieldName: 'doc_cv',              label: 'Fully Completed CV', spFolder: 'CV', multi: false, required: true , accept: '.pdf'},
+    { fieldName: 'doc_sop',             label: 'Statement of Purpose', spFolder: 'SOP', multi: false, required: true, helpText: 'Refer to the SOP guide provided by your advisor.' , accept: '.pdf'},
+    { fieldName: 'doc_police_cert',     label: 'Police Certificate', spFolder: 'Police Certificate', multi: false, required: true, helpText: 'Should be less than 6 months old.' , accept: '.pdf,.jpg,.jpeg'},
+    { fieldName: 'doc_medical',         label: 'Medical Certificate', spFolder: 'Medical', multi: false, required: true, helpText: 'Should be less than 3 months old.' , accept: '.pdf,.jpg,.jpeg'},
+    { fieldName: 'doc_offer_letter',    label: 'Offer Letter from Education Provider', spFolder: 'Offer Letter from Education Provider', multi: false, required: true , accept: '.pdf'},
+    { fieldName: 'doc_inz_forms',       label: 'INZ Forms (1012 / 1200 / 1226 / 1014 / 1025)', spFolder: 'INZ Forms (1012 -1200-1226-1014-1025)', multi: true, required: true, helpText: 'Upload all completed INZ forms as instructed by your advisor.' , accept: '.pdf'},
 ];
 
 /**
@@ -867,7 +867,7 @@ var _uploadInProgress = 0;
  * Creates the HTML for a single upload item.
  */
 function createUploadItemHtml(fieldName, config, index) {
-    var accept = config.accept || '.pdf,.jpg,.jpeg,.png,.docx';
+    var accept = config.accept || '.pdf,.jpg,.jpeg';
     var uniqueId = fieldName + '_' + index;
     var validatePhoto = config.validatePhoto ? ' data-validate-photo="true"' : '';
     var html = '<div class="doc-upload-item" id="upload_' + uniqueId + '" data-field="' + fieldName + '" data-sp-folder="' + (config.spFolder || '') + '"' + validatePhoto + '>';
@@ -1058,7 +1058,7 @@ async function handleFileSelect(e) {
  
     // Validate type
     var ext = '.' + file.name.split('.').pop().toLowerCase();
-    var allowedExts = (input.getAttribute('accept') || '.pdf,.jpg,.jpeg,.png,.docx').split(',');
+    var allowedExts = (input.getAttribute('accept') || '.pdf,.jpg,.jpeg').split(',');
     if (allowedExts.indexOf(ext) === -1) {
         if (statusDiv) { statusDiv.innerHTML = '<span style="color:#dc3545;">&#10060; Invalid file type. Accepted: ' + allowedExts.join(', ') + '</span>'; statusDiv.style.display = 'block'; }
         input.value = '';
@@ -1453,6 +1453,147 @@ async function saveToApi(formElement, currentStage, isAdminSave) {
     }
 }
 
+/**
+ * Sets up character limit validation on textareas with maxlength.
+ * Shows a live counter and prevents exceeding the limit.
+ */
+function setupTextareaValidation() {
+    document.querySelectorAll('textarea[maxlength]').forEach(function(textarea) {
+        var max = parseInt(textarea.getAttribute('maxlength'));
+        if (isNaN(max)) return;
+
+        // Create counter element
+        var counter = document.createElement('div');
+        counter.style.cssText = 'font-size:0.8rem;color:#999;text-align:right;margin-top:4px;';
+        counter.textContent = '0 / ' + max + ' characters';
+        textarea.parentNode.insertBefore(counter, textarea.nextSibling);
+
+        function updateCounter() {
+            var len = textarea.value.length;
+            counter.textContent = len + ' / ' + max + ' characters';
+            if (len > max) {
+                counter.style.color = '#dc3545';
+                counter.style.fontWeight = '600';
+                textarea.style.borderColor = '#dc3545';
+            } else if (len > max * 0.9) {
+                counter.style.color = '#ffc107';
+                counter.style.fontWeight = 'normal';
+                textarea.style.borderColor = '';
+            } else {
+                counter.style.color = '#999';
+                counter.style.fontWeight = 'normal';
+                textarea.style.borderColor = '';
+            }
+        }
+
+        textarea.addEventListener('input', updateCounter);
+        updateCounter();
+    });
+}
+
+/**
+ * Sets up date validation rules on specific fields.
+ * - Past dates: DOB, passport issue date, etc.
+ * - Future dates: passport expiry, course end date, etc.
+ */
+function setupDateValidation() {
+    var today = new Date().toISOString().split('T')[0];
+
+    // Past-only dates (must be today or earlier)
+    var pastDateFields = [
+        'dob_date', 'passport_issue_date', 'partner_dob', 'partner_passport_issue',
+        'police_cert_issue_date', 'current_work_start', 'last_leave_nz',
+        'decl_signature_date'
+    ];
+    // Also repeatable past dates
+    var pastDatePatterns = [
+        'child_dob', 'parent_dob', 'sibling_dob', 'fpartner_dob',
+        'edu_start_date', 'edu_end_date', 'prev_work_start', 'prev_work_end',
+        'unemp_start', 'unemp_end', 'refusal_date'
+    ];
+
+    // Future-only dates (must be after today)
+    var futureDateFields = [
+        'passport_expiry_date', 'partner_passport_expiry', 'course_end_date'
+    ];
+
+    // Set max attribute for past dates
+    pastDateFields.forEach(function(name) {
+        var field = document.querySelector('input[name="' + name + '"]');
+        if (field) {
+            field.setAttribute('max', today);
+            field.addEventListener('change', function() {
+                if (field.value > today) {
+                    field.setCustomValidity('This date cannot be in the future.');
+                    field.classList.add('error');
+                    showDateError(field, 'This date cannot be in the future.');
+                } else {
+                    field.setCustomValidity('');
+                    field.classList.remove('error');
+                    clearDateError(field);
+                }
+            });
+        }
+    });
+
+    // Set max for repeatable past date patterns (match _0, _1, etc.)
+    pastDatePatterns.forEach(function(pattern) {
+        document.querySelectorAll('input[name^="' + pattern + '"]').forEach(function(field) {
+            if (field.type === 'date') {
+                field.setAttribute('max', today);
+                field.addEventListener('change', function() {
+                    if (field.value > today) {
+                        field.setCustomValidity('This date cannot be in the future.');
+                        field.classList.add('error');
+                        showDateError(field, 'This date cannot be in the future.');
+                    } else {
+                        field.setCustomValidity('');
+                        field.classList.remove('error');
+                        clearDateError(field);
+                    }
+                });
+            }
+        });
+    });
+
+    // Set min attribute for future dates
+    futureDateFields.forEach(function(name) {
+        var field = document.querySelector('input[name="' + name + '"]');
+        if (field) {
+            field.setAttribute('min', today);
+            field.addEventListener('change', function() {
+                if (field.value && field.value < today) {
+                    field.setCustomValidity('This date must be in the future.');
+                    field.classList.add('error');
+                    showDateError(field, 'This date must be in the future.');
+                } else {
+                    field.setCustomValidity('');
+                    field.classList.remove('error');
+                    clearDateError(field);
+                }
+            });
+        }
+    });
+}
+
+function showDateError(field, message) {
+    var existing = field.parentNode.querySelector('.date-error-msg');
+    if (!existing) {
+        var errDiv = document.createElement('div');
+        errDiv.className = 'date-error-msg';
+        errDiv.style.cssText = 'color:#dc3545;font-size:0.82rem;margin-top:4px;';
+        errDiv.textContent = message;
+        field.parentNode.appendChild(errDiv);
+    } else {
+        existing.textContent = message;
+    }
+}
+
+function clearDateError(field) {
+    var existing = field.parentNode.querySelector('.date-error-msg');
+    if (existing) existing.remove();
+}
+
 /* ── EXPORT ───────────────────────────────── */
 
 window.FormUtils = {
@@ -1470,7 +1611,8 @@ window.FormUtils = {
     CONDITIONAL_DOC_CONFIG: CONDITIONAL_DOC_CONFIG, setupSupportingDocuments: setupSupportingDocuments,
     addAnotherFile: addAnotherFile, removeUploadSlot: removeUploadSlot,
     validateDocumentUploads: validateDocumentUploads, resetAdminCheckboxes: resetAdminCheckboxes, setupCollapsibleSections: setupCollapsibleSections,
-    restoreUploadedDocuments: restoreUploadedDocuments, saveToApi: saveToApi, FormConfig: FormConfig, FormContext: FormContext, 
+    restoreUploadedDocuments: restoreUploadedDocuments, saveToApi: saveToApi, setupTextareaValidation: setupTextareaValidation,
+    setupDateValidation: setupDateValidation, FormConfig: FormConfig, FormContext: FormContext, 
 };
 
 window.addAnotherFile = addAnotherFile;
