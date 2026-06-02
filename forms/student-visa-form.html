@@ -5030,8 +5030,11 @@
 
                 FormUtils.saveDraft(FORM_CODE, form);
                 markStageCompleted(3);
-                unlockStage(4);
-                navigateToStage(4);
+                var idx3 = STAGE_ORDER.indexOf(3);
+                if (idx3 >= 0 && idx3 < STAGE_ORDER.length - 1) {
+                    unlockStage(STAGE_ORDER[idx3 + 1]);
+                    navigateToStage(STAGE_ORDER[idx3 + 1]);
+                }
             } else if (currentStage === 4) {
                 if (!validateStage4()) return;
 
