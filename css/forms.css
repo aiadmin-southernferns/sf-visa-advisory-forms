@@ -798,3 +798,52 @@ body {
     align-items: center;
     gap: 6px;
 }
+
+.repeatable-record {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 15px;
+    position: relative;
+}
+.record-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #dee2e6;
+}
+.record-title {
+    font-weight: 600;
+    color: var(--primary-color, #1a5276);
+    font-size: 0.95rem;
+}
+.btn-remove-record {
+    background: none;
+    border: 1px solid #dc3545;
+    color: #dc3545;
+    padding: 4px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+}
+.btn-remove-record:hover {
+    background: #dc3545;
+    color: #fff;
+}
+.btn-add-record {
+    background: none;
+    border: 1px dashed #2e86c1;
+    color: #2e86c1;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+.btn-add-record:hover {
+    background: #e8f4fd;
+}
