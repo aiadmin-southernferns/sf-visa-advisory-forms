@@ -428,7 +428,25 @@ function validateSection(sectionNumber) {
 }
 
 function validateEmail(email) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email); }
-function validatePhone(phone) { return /^[\d\s\-\+\(\)]{8,20}$/.test(phone); }
+//function validatePhone(phone) { return /^[\d\s\-\+\(\)]{8,20}$/.test(phone); }
+function validatePhone() {
+    var phoneFields = document.querySelectorAll('input[type="tel"], input[name="applicant_phone"], input[name="applicant_alt_phone"]');
+    phoneFields.forEach(function(field) {
+        field.addEventListener('input', function() {
+            // Allow only digits, spaces, +, -, (, )
+            field.value = field.value.replace(/[^0-9\s\+\-\(\)]/g, '');
+        });
+        field.addEventListener('blur', function() {
+            if (field.value && !/^[\d\s\-\+\(\)]{8,20}$/.test(field.value)) {
+                field.classList.add('error');
+                showDateError(field, 'Please enter a valid phone number (8-20 digits).');
+            } else {
+                field.classList.remove('error');
+                clearDateError(field);
+            }
+        });
+    });
+}
 
 /* ── FORM SUBMISSION ──────────────────────── */
 
@@ -618,10 +636,10 @@ async function submitToApi(formElement) {
  * These are NOT controlled by admin checkboxes.
  */
 var ALWAYS_REQUIRED_DOCS = [
-    { fieldName: 'doc_passport_bio',    label: 'Passport Bio Pages + Visa Pages + Stamps', spFolder: 'Passport Bio Pages', multi: true, required: true, helpText: 'Upload clear copies of your passport bio-data page, all visa pages, and stamp pages.' , accept: '.pdf,.jpg,.jpeg'},
+    { fieldName: 'doc_passport_bio',    label: 'Passport Bio Pages + Visa Pages + Stamps', spFolder: 'Passport Bio Pages', multi: true, required: true, helpText: 'Upload clear copies of your passport bio-data page. If you have international travel history, also include all visa pages and stamp pages. If you have no travel history, the bio-data page alone is sufficient.' , accept: '.pdf,.jpg,.jpeg'},
     { fieldName: 'doc_photo', label: 'Your Photo (Passport Size)', spFolder: 'Photo', multi: false, required: true, helpText: 'Must be a .jpg or .jpeg file, between 500KB and 3MB, between 900×1200 pixels and 2250×3000 pixels. Passport style: less than 6 months old, colour, light background.', accept: '.jpg,.jpeg', validatePhoto: true },
     { fieldName: 'doc_cv',              label: 'Fully Completed CV', spFolder: 'CV', multi: false, required: true , accept: '.pdf'},
-    { fieldName: 'doc_sop',             label: 'Statement of Purpose', spFolder: 'SOP', multi: false, required: true, helpText: 'Refer to the SOP guide provided by your advisor.' , accept: '.pdf'},
+    { fieldName: 'doc_sop', label: 'Statement of Purpose', spFolder: 'SOP', multi: false, required: true, helpText: 'Must be in Word (.docx) format. Refer to the SOP guide provided by your advisor.', accept: '.docx' },
     { fieldName: 'doc_police_cert',     label: 'Police Certificate', spFolder: 'Police Certificate', multi: false, required: true, helpText: 'Should be less than 6 months old.' , accept: '.pdf,.jpg,.jpeg'},
     { fieldName: 'doc_medical',         label: 'Medical Certificate', spFolder: 'Medical', multi: false, required: true, helpText: 'Should be less than 3 months old.' , accept: '.pdf,.jpg,.jpeg'},
     { fieldName: 'doc_offer_letter',    label: 'Offer Letter from Education Provider', spFolder: 'Offer Letter from Education Provider', multi: false, required: true , accept: '.pdf'},
@@ -687,7 +705,7 @@ var CONDITIONAL_DOC_CONFIG = {
 
     // ── Visa Refusals (Annexture 18) ──
     adv_visa_refusal_letter:      { label: 'Visa Refusal Letter issued by immigration', sectionId: 'docSection_visaRefusal', spFolder: 'Annexture 18 - Visa Decline Letters & Explanations', multi: true },
-    adv_visa_refusal_explanation: { label: 'Explanation letter written by the student', sectionId: 'docSection_visaRefusal', spFolder: 'Annexture 18 - Visa Decline Letters & Explanations', multi: true },
+    adv_visa_refusal_explanation: { label: 'Explanation letter written by the student', sectionId: 'docSection_visaRefusal', spFolder: 'Annexture 18 - Visa Decline Letters & Explanations', multi: true, accept: '.pdf,.jpg,.jpeg,.docx' },
 
     // ── Fixed Deposits Myself (Annexture 1A) ──
     adv_fd_m_certificates:    { label: 'Fixed deposit Certificates (Myself)', sectionId: 'docSection_fundsMyself', spFolder: 'Annexture 1A - Evidence of Funds - Fixed Deposit (Myself)', multi: true, subHeading: 'Fixed Deposits' },
@@ -708,8 +726,8 @@ var CONDITIONAL_DOC_CONFIG = {
     adv_sav_s_balance_confirm:{ label: 'Bank balance confirmations — Savings (Sponsor)', sectionId: 'docSection_fundsSponsor', spFolder: 'Annexture 2B - Evidence of Funds - Savings (Sponsor)', multi: true },
 
     // ── Large Deposit (Annexture 3) ──
-    adv_large_deposit_m_explain: { label: 'Explanation of large deposits with proofs (Myself)', sectionId: 'docSection_fundsMyself', spFolder: 'Annexture 3 - Evidence of Funds - Large Deposit Explanation', multi: true, subHeading: 'Large Deposit Explanation' },
-    adv_large_deposit_s_explain: { label: 'Explanation of large deposits with proofs (Sponsor)', sectionId: 'docSection_fundsSponsor', spFolder: 'Annexture 3 - Evidence of Funds - Large Deposit Explanation', multi: true, subHeading: 'Large Deposit Explanation' },
+    adv_large_deposit_m_explain: { label: 'Explanation of large deposits with proofs (Myself)', sectionId: 'docSection_fundsMyself', spFolder: 'Annexture 3 - Evidence of Funds - Large Deposit Explanation', multi: true, subHeading: 'Large Deposit Explanation', accept: '.pdf,.jpg,.jpeg,.docx' },
+    adv_large_deposit_s_explain: { label: 'Explanation of large deposits with proofs (Sponsor)', sectionId: 'docSection_fundsSponsor', spFolder: 'Annexture 3 - Evidence of Funds - Large Deposit Explanation', multi: true, subHeading: 'Large Deposit Explanation', accept: '.pdf,.jpg,.jpeg,.docx' },
 
     // ── Provident Fund Myself (Annexture 4A) ──
     adv_pf_m_epf_stmt:       { label: 'EPF — Member Account Statement (Myself)', sectionId: 'docSection_fundsMyself', spFolder: 'Annexture 4A - Evidence of Funds - Employee\'s Provident Fund (Myself)', multi: true, subHeading: 'Provident Fund (EPF/ETF)' },
@@ -943,6 +961,49 @@ function setupSupportingDocuments() {
     // 3. Set up file change handlers on all generated inputs
     document.querySelectorAll('.doc-file-input').forEach(function(input) {
         input.addEventListener('change', handleFileSelect);
+    });
+
+    // Show advisor note to student (if exists)
+    var studentNote = adminData['adv_note_to_student'];
+    if (studentNote && typeof studentNote === 'string' && studentNote.trim()) {
+        var noteHtml = '<div style="background:#e8f4fd;border:1px solid #b8daff;border-radius:8px;padding:16px 20px;margin-bottom:20px;">' +
+            '<p style="font-weight:600;color:#0056b3;margin:0 0 8px;">Immigration Advisor Note</p>' +
+            '<p style="margin:0;color:#333;font-size:0.92rem;white-space:pre-wrap;">' + escapeHtml(studentNote) + '</p></div>';
+        var requiredSection = document.getElementById('docSection_required');
+        if (requiredSection) requiredSection.insertAdjacentHTML('beforebegin', noteHtml);
+    }
+
+    // Show section-specific advisor notes
+    var sectionNoteMap = {
+        'adv_note_home_ties': 'docSection_homeTies',
+        'adv_note_fixed_deposits': 'docSection_fundsMyself',
+        'adv_note_savings': 'docSection_fundsMyself',
+        'adv_note_large_deposit': 'docSection_fundsMyself',
+        'adv_note_provident_fund': 'docSection_fundsMyself',
+        'adv_note_edu_loan': 'docSection_educationLoan',
+        'adv_note_sof_employment': 'docSection_sourceMyself',
+        'adv_note_sof_business': 'docSection_sourceMyself',
+        'adv_note_sof_rental': 'docSection_sourceMyself',
+        'adv_note_sof_epf': 'docSection_sourceMyself',
+        'adv_note_sof_other': 'docSection_sourceMyself',
+        'adv_note_loan_repayment': 'docSection_loanRepayment',
+    };
+
+    Object.keys(sectionNoteMap).forEach(function(noteKey) {
+        var noteVal = adminData[noteKey];
+        if (noteVal && typeof noteVal === 'string' && noteVal.trim()) {
+            var sectionId = sectionNoteMap[noteKey];
+            var section = document.getElementById(sectionId);
+            if (section && section.style.display !== 'none') {
+                var sectionTitle = noteKey.replace('adv_note_', '').replace(/_/g, ' ');
+                var noteDiv = '<div class="advisor-section-note" style="background:#fff3cd;border:1px solid #ffc107;border-radius:6px;padding:12px 16px;margin-bottom:15px;">' +
+                    '<p style="font-weight:600;color:#856404;margin:0 0 4px;font-size:0.85rem;">Advisor Note</p>' +
+                    '<p style="margin:0;color:#664d03;font-size:0.88rem;white-space:pre-wrap;">' + escapeHtml(noteVal) + '</p></div>';
+                // Insert after the section title
+                var title = section.querySelector('h3');
+                if (title) title.insertAdjacentHTML('afterend', noteDiv);
+            }
+        }
     });
 
     // 4. Show count summary
