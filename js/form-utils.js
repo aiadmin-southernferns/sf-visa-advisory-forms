@@ -339,7 +339,7 @@ function restoreFormData(data, formElement) {
             var radio = formElement.querySelector('input[name="' + key + '"][value="' + data[key] + '"]');
             if (radio) { radio.checked = true; fieldsToTrigger.push(radio); }
         } else if (field.tagName === 'SELECT' || field.type === 'text' || field.type === 'email' ||
-                   field.type === 'tel' || field.type === 'date' || field.type === 'number') {
+                   field.type === 'tel' || field.type === 'date' || field.type === 'month' || field.type === 'number') {
             field.value = data[key];
             fieldsToTrigger.push(field);
         } else if (field.tagName === 'TEXTAREA') {
@@ -359,7 +359,7 @@ function restoreFormData(data, formElement) {
 
 function collectFormData(formElement) {
     var data = {};
-    formElement.querySelectorAll('input[type="text"], input[type="email"], input[type="tel"], input[type="number"], input[type="date"], input[type="hidden"]').forEach(function(i) { if (i.name) data[i.name] = i.value; });
+    formElement.querySelectorAll('input[type="text"], input[type="email"], input[type="tel"], input[type="number"], input[type="date"], input[type="month"], input[type="hidden"]').forEach(function(i) { if (i.name) data[i.name] = i.value; });
     formElement.querySelectorAll('input[type="checkbox"]').forEach(function(cb) { if (cb.name) data[cb.name] = cb.checked; });
     formElement.querySelectorAll('input[type="radio"]:checked').forEach(function(r) { if (r.name) data[r.name] = r.value; });
     formElement.querySelectorAll('select').forEach(function(s) { if (s.name) data[s.name] = s.value; });
@@ -644,6 +644,8 @@ var ALWAYS_REQUIRED_DOCS = [
     { fieldName: 'doc_medical',         label: 'Medical Certificate', spFolder: 'Medical', multi: false, required: true, helpText: 'Should be less than 3 months old.' , accept: '.pdf,.jpg,.jpeg'},
     { fieldName: 'doc_offer_letter',    label: 'Offer Letter from Education Provider', spFolder: 'Offer Letter from Education Provider', multi: false, required: true , accept: '.pdf'},
     { fieldName: 'doc_inz_forms',       label: 'INZ Forms (1012 / 1200 / 1226 / 1014 / 1025)', spFolder: 'INZ Forms (1012 -1200-1226-1014-1025)', multi: true, required: true, helpText: 'Upload all completed INZ forms as instructed by your advisor.' , accept: '.pdf'},
+    // Optional additional documents — rendered at the END of the section (docSection_additional), saved to the "Other" folder.
+    { fieldName: 'doc_additional',      label: 'Additional Document', spFolder: 'Other', multi: true, required: false, sectionId: 'docSection_additional', helpText: 'Optional. Upload any other documents relevant to your application.', accept: '.pdf,.jpg,.jpeg,.png,.docx' },
 ];
 
 /**
@@ -665,6 +667,15 @@ var CONDITIONAL_DOC_CONFIG = {
     adv_edu_al:     { label: 'GCE A/L Certificate', sectionId: 'docSection_education', spFolder: 'Annexture 13 - Educational Qualifications', multi: false },
     adv_edu_degree: { label: 'Degree Certificates + Transcripts', sectionId: 'docSection_education', spFolder: 'Annexture 13 - Educational Qualifications', multi: true },
     adv_edu_ielts:  { label: 'IELTS or PTE Certificate', sectionId: 'docSection_education', spFolder: 'Annexture 13 - Educational Qualifications', multi: false },
+
+    // ── Residence Outside Country of Citizenship (Annexure 20) ──
+    adv_residency_work_permit:         { label: 'Work Permit', sectionId: 'docSection_residency', spFolder: 'Annexure 20', multi: true },
+    adv_residency_visa_copy:           { label: 'Visa Copy', sectionId: 'docSection_residency', spFolder: 'Annexure 20', multi: true },
+    adv_residency_passport_visa_pages: { label: 'Passport Visa Pages', sectionId: 'docSection_residency', spFolder: 'Annexure 20', multi: true },
+    adv_residency_other_docs:          { label: 'Other Documents', sectionId: 'docSection_residency', spFolder: 'Annexure 20', multi: true },
+
+    // ── Funding Plan for Multi-Year Course (Annexure 21) ──
+    adv_funding_plan_multiyear: { label: 'Funding Plan for Multi-Year Course', sectionId: 'docSection_fundingPlan', spFolder: 'Annexure 21', multi: true },
 
     // ── Employment (Annexture 14 & 15) ──
     adv_emp_service_letter: { label: 'Service Letter with salary confirmation', sectionId: 'docSection_employment', spFolder: 'Annexture 14 - Current Work Experience', multi: true },
@@ -913,17 +924,16 @@ function setupSupportingDocuments() {
     var adminData = FormContext.adminResponse || {};
     var lastSubHeading = {};
 
-    // 1. Generate always-required documents
-    var requiredSection = document.getElementById('docSection_required');
-    if (requiredSection) {
-        ALWAYS_REQUIRED_DOCS.forEach(function(doc) {
-            requiredSection.insertAdjacentHTML('beforeend', createUploadItemHtml(doc.fieldName, doc, 0));
-            if (doc.multi) {
-                requiredSection.insertAdjacentHTML('beforeend',
-                    '<button type="button" class="btn-add-another" data-field="' + doc.fieldName + '" onclick="addAnotherFile(\'' + doc.fieldName + '\')" style="background:none;border:1px dashed #2e86c1;color:#2e86c1;padding:6px 14px;border-radius:4px;cursor:pointer;font-size:0.85rem;margin:0 0 15px 0;">+ Add another file</button>');
-            }
-        });
-    }
+    // 1. Generate always-required documents (each renders into its sectionId, default docSection_required)
+    ALWAYS_REQUIRED_DOCS.forEach(function(doc) {
+        var target = document.getElementById(doc.sectionId || 'docSection_required');
+        if (!target) return;
+        target.insertAdjacentHTML('beforeend', createUploadItemHtml(doc.fieldName, doc, 0));
+        if (doc.multi) {
+            target.insertAdjacentHTML('beforeend',
+                '<button type="button" class="btn-add-another" data-field="' + doc.fieldName + '" onclick="addAnotherFile(\'' + doc.fieldName + '\')" style="background:none;border:1px dashed #2e86c1;color:#2e86c1;padding:6px 14px;border-radius:4px;cursor:pointer;font-size:0.85rem;margin:0 0 15px 0;">+ Add another file</button>');
+        }
+    });
 
     // 2. Generate conditional documents
     var sectionsShown = {};
@@ -1672,7 +1682,8 @@ window.FormUtils = {
     addAnotherFile: addAnotherFile, removeUploadSlot: removeUploadSlot,
     validateDocumentUploads: validateDocumentUploads, resetAdminCheckboxes: resetAdminCheckboxes, setupCollapsibleSections: setupCollapsibleSections,
     restoreUploadedDocuments: restoreUploadedDocuments, saveToApi: saveToApi, setupTextareaValidation: setupTextareaValidation,
-    setupDateValidation: setupDateValidation, FormConfig: FormConfig, FormContext: FormContext, 
+    setupDateValidation: setupDateValidation, handleFileSelect: handleFileSelect,
+    FormConfig: FormConfig, FormContext: FormContext,
 };
 
 window.addAnotherFile = addAnotherFile;

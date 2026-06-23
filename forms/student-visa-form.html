@@ -680,6 +680,37 @@
                         </div>
                     </div>
 
+                    <!-- RESIDENCE OUTSIDE COUNTRY OF CITIZENSHIP - Annexure 20 -->
+                    <div class="checklist-section">
+                        <h3 class="checklist-section-title">Residence Outside Country of Citizenship</h3>
+                        <p class="checklist-folder-ref">SharePoint: Annexure 20</p>
+                        <div class="question-block">
+                            <label class="question-label">Is the student living in a country that is not their country of citizenship?</label>
+                            <div class="radio-group" style="margin-top: 8px;">
+                                <label class="radio-item"><input type="radio" name="adv_residency_diff_country" value="yes"> Yes</label>
+                                <label class="radio-item"><input type="radio" name="adv_residency_diff_country" value="no"> No</label>
+                            </div>
+                        </div>
+                        <div class="conditional-group" id="residencyDocsGroup">
+                            <p class="checklist-hint">Select the documents the student must provide as evidence. ⊕ = multiple documents allowed.</p>
+                            <div class="checkbox-group">
+                                <label class="checkbox-item"><input type="checkbox" name="adv_residency_work_permit" value="yes"> Work Permit ⊕</label>
+                                <label class="checkbox-item"><input type="checkbox" name="adv_residency_visa_copy" value="yes"> Visa Copy ⊕</label>
+                                <label class="checkbox-item"><input type="checkbox" name="adv_residency_passport_visa_pages" value="yes"> Passport Visa Pages ⊕</label>
+                                <label class="checkbox-item"><input type="checkbox" name="adv_residency_other_docs" value="yes"> Other Documents ⊕</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- FUNDING PLAN FOR MULTI-YEAR COURSE - Annexure 21 -->
+                    <div class="checklist-section">
+                        <h3 class="checklist-section-title">Funding Plan for Multi-Year Course</h3>
+                        <p class="checklist-folder-ref">SharePoint: Annexure 21</p>
+                        <div class="checkbox-group">
+                            <label class="checkbox-item"><input type="checkbox" name="adv_funding_plan_multiyear" value="yes"> Funding Plan for Multi-Year Course ⊕</label>
+                        </div>
+                    </div>
+
                     <!-- EMPLOYMENT EVIDENCE - Annexture 14 & 15 -->
                     <div class="checklist-section">
                         <h3 class="checklist-section-title">Evidence of All Current and Past Employments</h3>
@@ -2252,103 +2283,50 @@
                      Between Eligibility (3) and Character (4)
                      ============================================ -->
                 <div class="form-section" data-stage="10">
-                    <h2 class="section-title">Evidence of Financial Support and Outward Travel</h2>
+                    <h2 class="section-title">Financial Support</h2>
+                    <div class="section-description">Tell us how your studies will be funded and provide details of the funds available to support you.</div>
 
-                    <!-- ═══ FINANCIAL SUPPORT ═══ -->
-                    <div class="question-block">
-                        <label class="question-label mandatory">How will you be financially supported to pay for your living costs during your stay in New Zealand?</label>
-                        <p class="field-hint">Answer Yes or No for each option that applies to you.</p>
+                    <!-- ═══ SECTION 1: FUNDING SOURCES ═══ -->
+                    <div class="form-card">
+                        <h3>Funding Sources</h3>
 
-                        <div class="fin-support-grid" style="margin-top:12px;">
-                            <div class="sub-question">
-                                <label class="question-label">I have funds (for example savings, an education loan, fixed term deposits)</label>
-                                <div class="radio-group radio-inline">
-                                    <label class="radio-item"><input type="radio" name="fin_support_funds" value="yes" required> Yes</label>
-                                    <label class="radio-item"><input type="radio" name="fin_support_funds" value="no"> No</label>
-                                </div>
+                        <div class="question-block" data-required="true">
+                            <label class="question-label mandatory">Who is going to fund your studies?</label>
+                            <p class="field-hint">Select all that apply.</p>
+                            <div class="checkbox-group" style="margin-top:8px;">
+                                <label class="checkbox-item"><input type="checkbox" name="fund_source_self" value="yes"> Yourself</label>
+                                <label class="checkbox-item"><input type="checkbox" name="fund_source_third_party" value="yes"> Third-party sponsor (only your immediate family member can be your sponsor)</label>
+                                <label class="checkbox-item"><input type="checkbox" name="fund_source_nz" value="yes"> New Zealand citizen / resident / organisation sponsor</label>
                             </div>
+                            <div class="field-error-msg" id="fundSourceError">Please select at least one option</div>
+                        </div>
 
-                            <div class="sub-question">
-                                <label class="question-label">I have sponsorship from a New Zealand citizen or resident or New Zealand organisation</label>
-                                <div class="radio-group radio-inline">
-                                    <label class="radio-item"><input type="radio" name="fin_support_sponsorship" value="yes" required> Yes</label>
-                                    <label class="radio-item"><input type="radio" name="fin_support_sponsorship" value="no"> No</label>
-                                </div>
-                            </div>
-
-                            <div class="sub-question">
-                                <label class="question-label">A third party has completed a Financial Undertaking for a Student form (INZ 1014) to support me</label>
-                                <div class="radio-group radio-inline">
-                                    <label class="radio-item"><input type="radio" name="fin_support_third_party" value="yes" required> Yes</label>
-                                    <label class="radio-item"><input type="radio" name="fin_support_third_party" value="no"> No</label>
-                                </div>
-                            </div>
-
-                            <div class="sub-question">
-                                <label class="question-label">I have pre-paid accommodation and/or living costs (for example school homestay accommodation or halls of residence accommodation)</label>
-                                <div class="radio-group radio-inline">
-                                    <label class="radio-item"><input type="radio" name="fin_support_prepaid" value="yes" required> Yes</label>
-                                    <label class="radio-item"><input type="radio" name="fin_support_prepaid" value="no"> No</label>
-                                </div>
-                            </div>
-
-                            <div class="sub-question">
-                                <label class="question-label">I have a full or partial scholarship that includes payment for living costs</label>
-                                <div class="radio-group radio-inline">
-                                    <label class="radio-item"><input type="radio" name="fin_support_scholarship" value="yes" required> Yes</label>
-                                    <label class="radio-item"><input type="radio" name="fin_support_scholarship" value="no"> No</label>
-                                </div>
+                        <!-- Relationship — shown when Third-party OR NZ sponsor selected -->
+                        <div class="question-block" id="sponsorRelationshipBlock" style="display:none;">
+                            <label class="question-label mandatory">What is your relationship with the sponsor?</label>
+                            <p class="field-hint">Only one of the following relatives may sponsor you: your father, mother, sibling, spouse, mother-in-law, or father-in-law.</p>
+                            <div class="form-group" style="margin-bottom:0;max-width:360px;">
+                                <select name="sponsor_relationship">
+                                    <option value="">-- Select --</option>
+                                    <option value="father">Father</option>
+                                    <option value="mother">Mother</option>
+                                    <option value="sibling">Sibling</option>
+                                    <option value="spouse">Spouse</option>
+                                    <option value="mother_in_law">Mother-in-law</option>
+                                    <option value="father_in_law">Father-in-law</option>
+                                </select>
                             </div>
                         </div>
                     </div>
 
-                    <!-- ═══ OUTWARD TRAVEL ═══ -->
-                    <div class="question-block" style="margin-top:30px;">
-                        <label class="question-label mandatory">What evidence of outward travel will you provide?</label>
-                        <p class="field-hint">You must have a ticket to leave New Zealand, enough extra funds to purchase one, or be sponsored for the cost of your travel out of New Zealand (outward travel).</p>
+                    <!-- ═══ THIRD-PARTY SPONSOR DETAILS (INZ 1014) — shown when Third-party sponsor selected ═══ -->
+                    <div id="thirdPartySponsorSection" style="display:none;margin-top:24px;border:2px solid var(--primary-color);border-radius:10px;padding:24px;">
+                        <h3 style="color:var(--primary-color);margin:0 0 6px;">Third-party Sponsor Details</h3>
+                        <p class="field-hint" style="margin-bottom:20px;">Your immediate family sponsor must complete a Financial Undertaking for a Student form (INZ 1014). These details will be used to pre-fill that form for their review and signature.</p>
+                        <!-- Third-party sponsor is always an individual (immediate family member) -->
+                        <input type="hidden" name="fu_party_type" value="person">
 
-                        <div class="fin-support-grid" style="margin-top:12px;">
-                            <div class="sub-question">
-                                <label class="question-label">I have sufficient funds to purchase outward travel, in addition to any funds I have for living costs</label>
-                                <div class="radio-group radio-inline">
-                                    <label class="radio-item"><input type="radio" name="outward_ticket_funds" value="yes" required> Yes</label>
-                                    <label class="radio-item"><input type="radio" name="outward_ticket_funds" value="no"> No</label>
-                                </div>
-                            </div>
-
-                            <div class="sub-question">
-                                <label class="question-label">A third party has completed a Financial Undertaking for a Student form (INZ 1014) agreeing to cover my outward travel costs</label>
-                                <div class="radio-group radio-inline">
-                                    <label class="radio-item"><input type="radio" name="outward_third_party" value="yes" required> Yes</label>
-                                    <label class="radio-item"><input type="radio" name="outward_third_party" value="no"> No</label>
-                                </div>
-                            </div>
-
-                            <div class="sub-question">
-                                <label class="question-label">I have evidence of a pre-paid booking</label>
-                                <div class="radio-group radio-inline">
-                                    <label class="radio-item"><input type="radio" name="outward_prepaid" value="yes" required> Yes</label>
-                                    <label class="radio-item"><input type="radio" name="outward_prepaid" value="no"> No</label>
-                                </div>
-                            </div>
-
-                            <div class="sub-question">
-                                <label class="question-label">I have a scholarship that includes payment for my outward travel</label>
-                                <div class="radio-group radio-inline">
-                                    <label class="radio-item"><input type="radio" name="outward_scholarship" value="yes" required> Yes</label>
-                                    <label class="radio-item"><input type="radio" name="outward_scholarship" value="no"> No</label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- ═══ FINANCIAL UNDERTAKING DETAILS ═══ -->
-                    <!-- Shown when fin_support_third_party=yes OR outward_third_party=yes -->
-                    <div id="financialUndertakingSection" style="display:none;margin-top:30px;border:2px solid var(--primary-color);border-radius:10px;padding:24px;">
-                        <h3 style="color:var(--primary-color);margin:0 0 6px;">Financial Undertaking — Third Party Details</h3>
-                        <p class="field-hint" style="margin-bottom:20px;">These details will be used to pre-fill the INZ 1014 Financial Undertaking form. The completed form will be sent to the third party for their review and signature.</p>
-
-                        <!-- Stay Duration (for INZ 1014 Section A2) -->
+                        <!-- Stay Duration (INZ 1014 Section A2) -->
                         <div class="question-block" style="background:#f0f7ff;border-radius:8px;padding:16px;margin-bottom:20px;">
                             <label class="question-label mandatory">How long is the student applying to stay in New Zealand?</label>
                             <div class="form-row" style="display:flex;gap:20px;margin-top:8px;">
@@ -2363,10 +2341,10 @@
                             </div>
                         </div>
 
-                        <!-- Financial Undertaking Length (for INZ 1014 Section C1) -->
+                        <!-- Financial Undertaking Length (INZ 1014 Section C1) -->
                         <div class="question-block" style="background:#f0f7ff;border-radius:8px;padding:16px;margin-bottom:20px;">
                             <label class="question-label mandatory">Length of financial undertaking</label>
-                            <p class="field-hint">How long will the third party financially support the student?</p>
+                            <p class="field-hint">How long will the sponsor financially support the student?</p>
                             <div class="form-row" style="display:flex;gap:20px;margin-top:8px;">
                                 <div class="form-group" style="flex:1;">
                                     <label>Years</label>
@@ -2379,9 +2357,9 @@
                             </div>
                         </div>
 
-                        <!-- Maintenance Type (for INZ 1014 Section C2) -->
+                        <!-- Maintenance Type (INZ 1014 Section C2) -->
                         <div class="question-block" style="margin-bottom:20px;">
-                            <label class="question-label mandatory">The third party undertakes responsibility for:</label>
+                            <label class="question-label mandatory">The sponsor undertakes responsibility for:</label>
                             <p class="field-hint">Select all that apply.</p>
                             <div class="checkbox-group">
                                 <label class="checkbox-item"><input type="checkbox" name="fu_maint_primary" value="yes"> Maintenance at NZ$17,000/year (primary, intermediate or secondary school student)</label>
@@ -2391,18 +2369,9 @@
                             </div>
                         </div>
 
-                        <!-- Party Type -->
-                        <div class="question-block">
-                            <label class="question-label mandatory">Is the third party providing the financial undertaking a person or a supporting organisation?</label>
-                            <div class="radio-group">
-                                <label class="radio-item"><input type="radio" name="fu_party_type" value="person" required> A person (friend or relative)</label>
-                                <label class="radio-item"><input type="radio" name="fu_party_type" value="organisation"> A supporting organisation</label>
-                            </div>
-                        </div>
-
-                        <!-- PERSON DETAILS (shown when fu_party_type = person) -->
-                        <div id="fuPersonDetails" style="display:none;margin-top:20px;background:#f8f9fa;border-radius:8px;padding:20px;">
-                            <h4 style="color:var(--primary-color);margin:0 0 16px;">Details of the person providing the financial undertaking</h4>
+                        <!-- PERSON DETAILS -->
+                        <div style="margin-top:8px;background:#f8f9fa;border-radius:8px;padding:20px;">
+                            <h4 style="color:var(--primary-color);margin:0 0 16px;">Details of the sponsor providing the financial undertaking</h4>
 
                             <div class="form-row" style="display:flex;gap:15px;">
                                 <div class="form-group" style="flex:1;">
@@ -2473,70 +2442,38 @@
                                 <label class="question-label">Email</label>
                                 <input type="email" name="fu_person_email" id="fuPersonEmail" maxlength="200">
                             </div>
+                        </div>
+                    </div>
 
-                            <div class="form-group">
-                                <label class="question-label">Relationship to student</label>
-                                <p class="field-hint">E.g., Father, Mother, Uncle, Family Friend</p>
-                                <input type="text" name="fu_person_relationship" id="fuPersonRelationship" maxlength="200">
-                            </div>
+                    <!-- ═══ NZ SPONSOR DETAILS — shown when NZ citizen/resident/organisation sponsor selected ═══ -->
+                    <div id="nzSponsorSection" style="display:none;margin-top:24px;border:2px solid var(--primary-color);border-radius:10px;padding:24px;">
+                        <h3 style="color:var(--primary-color);margin:0 0 6px;">New Zealand Sponsor Details</h3>
+                        <p class="field-hint" style="margin-bottom:20px;">Please enter details of your New Zealand sponsor.</p>
+
+                        <div class="form-group">
+                            <label class="question-label mandatory">Sponsor's full name</label>
+                            <input type="text" name="nz_sponsor_name" id="nzSponsorName" maxlength="200">
                         </div>
 
-                        <!-- ORGANISATION DETAILS (shown when fu_party_type = organisation) -->
-                        <div id="fuOrgDetails" style="display:none;margin-top:20px;background:#f8f9fa;border-radius:8px;padding:20px;">
-                            <h4 style="color:var(--primary-color);margin:0 0 16px;">Details of the authorised contact of the supporting organisation</h4>
-
-                            <div class="form-row" style="display:flex;gap:15px;">
-                                <div class="form-group" style="flex:1;">
-                                    <label class="question-label mandatory">Given or first name</label>
-                                    <input type="text" name="fu_org_contact_given" id="fuOrgContactGiven" maxlength="200">
-                                </div>
-                                <div class="form-group" style="flex:1;">
-                                    <label class="question-label mandatory">Surname or family name</label>
-                                    <input type="text" name="fu_org_contact_surname" id="fuOrgContactSurname" maxlength="200">
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="question-label">Position or title</label>
-                                <input type="text" name="fu_org_contact_position" id="fuOrgContactPosition" maxlength="200">
-                            </div>
-
-                            <div class="form-group">
-                                <label class="question-label mandatory">Organisation name</label>
-                                <input type="text" name="fu_org_name" id="fuOrgName" maxlength="500">
-                            </div>
-
-                            <div class="form-group">
-                                <label class="question-label">Description of organisation</label>
-                                <textarea name="fu_org_description" id="fuOrgDescription" rows="2" maxlength="500"></textarea>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="question-label">Street address</label>
-                                <textarea name="fu_org_street_address" id="fuOrgStreetAddress" rows="2" maxlength="500"></textarea>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="question-label">Postal address</label>
-                                <textarea name="fu_org_postal_address" id="fuOrgPostalAddress" rows="2" maxlength="500"></textarea>
-                            </div>
-
-                            <div class="form-row" style="display:flex;gap:15px;">
-                                <div class="form-group" style="flex:1;">
-                                    <label class="question-label">Telephone (daytime)</label>
-                                    <input type="tel" name="fu_org_phone_day" id="fuOrgPhoneDay" maxlength="30">
-                                </div>
-                                <div class="form-group" style="flex:1;">
-                                    <label class="question-label">Telephone (evening)</label>
-                                    <input type="tel" name="fu_org_phone_evening" id="fuOrgPhoneEvening" maxlength="30">
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="question-label">Email</label>
-                                <input type="email" name="fu_org_email" id="fuOrgEmail" maxlength="200">
-                            </div>
+                        <div class="form-group">
+                            <label class="question-label mandatory">Sponsor's email address</label>
+                            <p class="field-hint">Immigration will use this email address to contact your sponsor. Please check you have entered it correctly and ensure it is an email address that they check regularly.</p>
+                            <input type="email" name="nz_sponsor_email" id="nzSponsorEmail" maxlength="200">
                         </div>
+
+                        <div class="form-group">
+                            <label class="question-label mandatory">Sponsor's Sharing ID</label>
+                            <p class="field-hint">Contact your sponsor to get their sharing ID and enter it here. Find out how your sponsor finds their sharing ID.</p>
+                            <input type="text" name="nz_sponsor_sharing_id" id="nzSponsorSharingId" maxlength="100">
+                        </div>
+                    </div>
+
+                    <!-- ═══ SECTION 2: AVAILABLE FUNDS (repeatable) ═══ -->
+                    <div class="form-card" style="margin-top:24px;">
+                        <h3>Available Funds</h3>
+                        <p class="field-hint">Please provide the details of the funds available to support your studies. Use "Add another fund" to record more than one fund.</p>
+                        <div id="fundSourcesContainer"></div>
+                        <button type="button" class="add-btn" onclick="addFundSource()">+ ADD ANOTHER FUND</button>
                     </div>
 
                     <div class="button-group" style="margin-top:24px;">
@@ -3605,6 +3542,16 @@
                         <h3 class="doc-section-title">Past Education and Training</h3>
                     </div>
 
+                    <!-- ═══ CONDITIONAL: Residence Outside Country of Citizenship ═══ -->
+                    <div class="doc-section" id="docSection_residency" style="display:none;">
+                        <h3 class="doc-section-title">Residence Outside Country of Citizenship</h3>
+                    </div>
+
+                    <!-- ═══ CONDITIONAL: Funding Plan for Multi-Year Course ═══ -->
+                    <div class="doc-section" id="docSection_fundingPlan" style="display:none;">
+                        <h3 class="doc-section-title">Funding Plan for Multi-Year Course</h3>
+                    </div>
+
                     <!-- ═══ CONDITIONAL: Employment Evidence ═══ -->
                     <div class="doc-section" id="docSection_employment" style="display:none;">
                         <h3 class="doc-section-title">Evidence of Employment</h3>
@@ -3654,6 +3601,13 @@
                     <!-- ═══ CONDITIONAL: Source of Funds - Sponsor ═══ -->
                     <div class="doc-section" id="docSection_sourceSponsor" style="display:none;">
                         <h3 class="doc-section-title">Source of Funds — Sponsor / Financial Undertaker</h3>
+                    </div>
+
+                    <!-- ═══ ALWAYS AVAILABLE: Additional Documents (optional) ═══ -->
+                    <div class="doc-section" id="docSection_additional">
+                        <h3 class="doc-section-title">Additional Documents</h3>
+                        <p class="doc-section-hint">If you have any other documents to support your application, you can upload them here. This is optional.</p>
+                        <!-- Generated dynamically by setupSupportingDocuments() -->
                     </div>
 
                     <!-- Validation error message -->
@@ -3851,7 +3805,7 @@
         </div>
     </div>
 
-    <script src="../js/form-utils.js"></script>
+    <script src="../js/form-utils.js?v=4"></script>
     <script>
         /* ============================================
            STUDENT VISA FORM - CONTROLLER
@@ -4145,6 +4099,19 @@
             setupRadioConditional('militia_assoc', { 'yes': ['militiaFields'], 'no': [] });
             setupRadioConditional('detention', { 'yes': ['detentionFields'], 'no': [] });
 
+            // Admin assessment (Stage 0): residence outside country of citizenship → reveal document checkboxes
+            setupRadioConditional('adv_residency_diff_country', { 'yes': ['residencyDocsGroup'], 'no': [] });
+            // Clear residency document selections if advisor switches the answer away from "Yes"
+            document.querySelectorAll('input[name="adv_residency_diff_country"]').forEach(function(r) {
+                r.addEventListener('change', function() {
+                    if (this.value === 'yes') return;
+                    ['adv_residency_work_permit', 'adv_residency_visa_copy', 'adv_residency_passport_visa_pages', 'adv_residency_other_docs'].forEach(function(n) {
+                        var cb = document.querySelector('input[name="' + n + '"]');
+                        if (cb) cb.checked = false;
+                    });
+                });
+            });
+
             // PhD level dropdown → show PhD details / Study Abroad / course note
             const phdSelect = document.getElementById('phdLevelSelect');
             if (phdSelect) {
@@ -4366,36 +4333,15 @@
                 document.querySelectorAll(`input[name="${n}"]`).forEach(r => r.addEventListener('change', updatePoliceCertUpload));
             });
 
-            // Stage 10: Financial Undertaking section visibility
-            // Show when EITHER third party question is "yes"
-            function updateFinancialUndertakingVisibility() {
-                var finThirdParty = document.querySelector('input[name="fin_support_third_party"]:checked');
-                var outThirdParty = document.querySelector('input[name="outward_third_party"]:checked');
-                var show = (finThirdParty && finThirdParty.value === 'yes') ||
-                           (outThirdParty && outThirdParty.value === 'yes');
-                var section = document.getElementById('financialUndertakingSection');
-                if (section) section.style.display = show ? '' : 'none';
-            }
-            document.querySelectorAll('input[name="fin_support_third_party"], input[name="outward_third_party"]').forEach(function(r) {
-                r.addEventListener('change', updateFinancialUndertakingVisibility);
+            // Stage 10: Funding source sections visibility (Section 1)
+            document.querySelectorAll('input[name="fund_source_self"], input[name="fund_source_third_party"], input[name="fund_source_nz"]').forEach(function(c) {
+                c.addEventListener('change', updateFundingSourceSections);
             });
-            updateFinancialUndertakingVisibility();
+            updateFundingSourceSections();
 
-            // Person vs Organisation toggle
-            document.querySelectorAll('input[name="fu_party_type"]').forEach(function(r) {
-                r.addEventListener('change', function() {
-                    var personDiv = document.getElementById('fuPersonDetails');
-                    var orgDiv = document.getElementById('fuOrgDetails');
-                    if (r.value === 'person') {
-                        if (personDiv) personDiv.style.display = '';
-                        if (orgDiv) orgDiv.style.display = 'none';
-                    } else if (r.value === 'organisation') {
-                        if (personDiv) personDiv.style.display = 'none';
-                        if (orgDiv) orgDiv.style.display = '';
-                    }
-                });
-            });
-        
+            // Stage 10: build the initial / saved fund sections (Section 2)
+            initFundSources();
+
             // NZ Government Scholarship chain
             function updateScholarshipChain() {
                 var travelledNZ = document.querySelector('input[name="ever_travelled_nz"]:checked');
@@ -4672,6 +4618,14 @@
                 // Skip if inside a hidden conditional-group
                 const condParent = field.closest('.conditional-group');
                 if (condParent && !condParent.classList.contains('visible')) return;
+
+                // Skip if hidden by an inline display:none ancestor (e.g. nested
+                // NZ scholarship questions toggled via style.display rather than .conditional-group)
+                let ancestor = field;
+                while (ancestor && ancestor !== subsection) {
+                    if (ancestor.style && ancestor.style.display === 'none') return;
+                    ancestor = ancestor.parentElement;
+                }
 
                 if (!field.value.trim()) {
                     isValid = false;
@@ -5470,82 +5424,98 @@
                 }
                 return;
             } else if (currentStage === 10) {
-                // Validate financial support questions - at least answer all radio buttons
-                var finRadios = ['fin_support_funds', 'fin_support_sponsorship', 'fin_support_third_party',
-                                 'fin_support_prepaid', 'fin_support_scholarship',
-                                 'outward_ticket_funds', 'outward_third_party', 'outward_prepaid', 'outward_scholarship'];
-                var allAnswered = true;
-                finRadios.forEach(function(name) {
-                    var checked = document.querySelector('input[name="' + name + '"]:checked');
-                    if (!checked) {
-                        allAnswered = false;
-                        // Highlight unanswered
-                        var subQ = document.querySelector('input[name="' + name + '"]').closest('.sub-question');
-                        if (subQ) subQ.style.borderColor = '#dc3545';
-                    } else {
-                        var subQ = document.querySelector('input[name="' + name + '"]').closest('.sub-question');
-                        if (subQ) subQ.style.borderColor = '';
-                    }
+                // Section 1: at least one funding source
+                var anySource = ['fund_source_self', 'fund_source_third_party', 'fund_source_nz'].some(function(n) {
+                    var c = document.querySelector('input[name="' + n + '"]');
+                    return c && c.checked;
                 });
-
-                if (!allAnswered) {
-                    alert('Please answer all financial support and outward travel questions.');
+                if (!anySource) {
+                    alert('Please select at least one option for who will fund your studies.');
                     return;
                 }
 
-                // If Financial Undertaking section is visible, validate required fields
-                var fuSection = document.getElementById('financialUndertakingSection');
-                if (fuSection && fuSection.style.display !== 'none') {
-                    var partyType = document.querySelector('input[name="fu_party_type"]:checked');
-                    if (!partyType) {
-                        alert('Please select whether the third party is a person or an organisation.');
+                var tpSel = document.querySelector('input[name="fund_source_third_party"]');
+                var nzSel = document.querySelector('input[name="fund_source_nz"]');
+                var hasThirdParty = tpSel && tpSel.checked;
+                var hasNzSponsor = nzSel && nzSel.checked;
+
+                // Relationship required when a sponsor is involved
+                if (hasThirdParty || hasNzSponsor) {
+                    var relSel = document.querySelector('select[name="sponsor_relationship"]');
+                    if (relSel && !relSel.value) {
+                        relSel.classList.add('error');
+                        alert('Please select your relationship with the sponsor.');
                         return;
-                    }
-
-                    if (partyType.value === 'person') {
-                        var reqFields = ['fu_person_given_name', 'fu_person_surname', 'fu_person_birth_city',
-                                         'fu_person_birth_country', 'fu_person_citizenship', 'fu_person_address'];
-                        var missing = false;
-                        reqFields.forEach(function(name) {
-                            var field = document.querySelector('[name="' + name + '"]');
-                            if (field && !field.value.trim()) {
-                                missing = true;
-                                field.classList.add('error');
-                            } else if (field) {
-                                field.classList.remove('error');
-                            }
-                        });
-
-                        var genderChecked = document.querySelector('input[name="fu_person_gender"]:checked');
-                        var dobField = document.querySelector('input[name="fu_person_dob"]');
-                        if (!genderChecked) missing = true;
-                        if (!dobField || !dobField.value) { missing = true; if (dobField) dobField.classList.add('error'); }
-
-                        if (missing) {
-                            alert('Please complete all required fields for the financial guarantor (person).');
-                            return;
-                        }
-                    } else if (partyType.value === 'organisation') {
-                        var reqOrgFields = ['fu_org_contact_given', 'fu_org_contact_surname', 'fu_org_name'];
-                        var orgMissing = false;
-                        reqOrgFields.forEach(function(name) {
-                            var field = document.querySelector('[name="' + name + '"]');
-                            if (field && !field.value.trim()) {
-                                orgMissing = true;
-                                field.classList.add('error');
-                            } else if (field) {
-                                field.classList.remove('error');
-                            }
-                        });
-
-                        if (orgMissing) {
-                            alert('Please complete all required fields for the supporting organisation.');
-                            return;
-                        }
+                    } else if (relSel) {
+                        relSel.classList.remove('error');
                     }
                 }
 
-                await FormUtils.saveToApi(form, currentStage, false);
+                // Third-party sponsor → validate INZ 1014 person details
+                if (hasThirdParty) {
+                    var reqFields = ['fu_person_given_name', 'fu_person_surname', 'fu_person_birth_city',
+                                     'fu_person_birth_country', 'fu_person_citizenship', 'fu_person_address'];
+                    var missing = false;
+                    reqFields.forEach(function(name) {
+                        var field = document.querySelector('[name="' + name + '"]');
+                        if (field && !field.value.trim()) { missing = true; field.classList.add('error'); }
+                        else if (field) { field.classList.remove('error'); }
+                    });
+                    var genderChecked = document.querySelector('input[name="fu_person_gender"]:checked');
+                    var dobField = document.querySelector('input[name="fu_person_dob"]');
+                    if (!genderChecked) missing = true;
+                    if (!dobField || !dobField.value) { missing = true; if (dobField) dobField.classList.add('error'); }
+                    if (missing) {
+                        alert('Please complete all required sponsor details used to pre-fill the INZ 1014 form.');
+                        return;
+                    }
+                }
+
+                // NZ sponsor → validate sponsor contact details
+                if (hasNzSponsor) {
+                    var nzReq = ['nz_sponsor_name', 'nz_sponsor_email', 'nz_sponsor_sharing_id'];
+                    var nzMissing = false;
+                    nzReq.forEach(function(name) {
+                        var field = document.querySelector('[name="' + name + '"]');
+                        if (field && !field.value.trim()) { nzMissing = true; field.classList.add('error'); }
+                        else if (field) { field.classList.remove('error'); }
+                    });
+                    if (nzMissing) {
+                        alert('Please complete all New Zealand sponsor details.');
+                        return;
+                    }
+                }
+
+                // Section 2: validate each fund (amount, owner, type, at least one source of funds)
+                var fundItems = document.querySelectorAll('.fund-source-item');
+                if (fundItems.length === 0) {
+                    alert('Please add at least one fund.');
+                    return;
+                }
+                var fundValid = true;
+                fundItems.forEach(function(item) {
+                    var i = item.getAttribute('data-fund-index');
+                    ['fund_amount_' + i, 'fund_owner_' + i, 'fund_type_' + i].forEach(function(name) {
+                        var f = document.querySelector('[name="' + name + '"]');
+                        if (f && !f.value.trim()) { fundValid = false; f.classList.add('error'); }
+                        else if (f) { f.classList.remove('error'); }
+                    });
+                    var anyFundSrc = ['employment', 'self_employment', 'rental', 'other'].some(function(s) {
+                        var c = document.querySelector('input[name="fund_src_' + s + '_' + i + '"]');
+                        return c && c.checked;
+                    });
+                    if (!anyFundSrc) fundValid = false;
+                    var otherC = document.querySelector('input[name="fund_src_other_' + i + '"]');
+                    if (otherC && otherC.checked) {
+                        var od = document.querySelector('[name="fund_source_other_' + i + '"]');
+                        if (od && !od.value.trim()) { fundValid = false; od.classList.add('error'); }
+                    }
+                });
+                if (!fundValid) {
+                    alert('Please complete all required fields for each fund: amount, owner, type of funds, and at least one source of funds.');
+                    return;
+                }
+
                 FormUtils.saveDraft(FORM_CODE, form);
                 markStageCompleted(10);
                 var idx10 = STAGE_ORDER.indexOf(10);
@@ -5860,6 +5830,186 @@
         let s9PolAssocCount = 1;
         let s9MilitiaCount = 1;
         let s9DetentionCount = 1;
+
+        /* ============================================
+           STAGE 10: FINANCIAL SUPPORT
+           ============================================ */
+        var fundSourceCount = 0;
+
+        function updateFundingSourceSections() {
+            var tp = document.querySelector('input[name="fund_source_third_party"]');
+            var nz = document.querySelector('input[name="fund_source_nz"]');
+            var tpChecked = tp && tp.checked;
+            var nzChecked = nz && nz.checked;
+            var rel = document.getElementById('sponsorRelationshipBlock');
+            if (rel) rel.style.display = (tpChecked || nzChecked) ? '' : 'none';
+            var tpSec = document.getElementById('thirdPartySponsorSection');
+            if (tpSec) tpSec.style.display = tpChecked ? '' : 'none';
+            var nzSec = document.getElementById('nzSponsorSection');
+            if (nzSec) nzSec.style.display = nzChecked ? '' : 'none';
+        }
+
+        // SharePoint folder routing: owner = "self" → Annexure A folder, otherwise → B folder.
+        function fundFolderFor(type, owner) {
+            var isSelf = (owner === 'self');
+            if (type === 'savings') {
+                return isSelf ? 'Annexture 2A - Evidence of Funds - Savings (Myself)'
+                              : 'Annexture 2B - Evidence of Funds - Savings (Sponsor)';
+            }
+            if (type === 'fixed_deposit') {
+                return isSelf ? 'Annexture 1A - Evidence of Funds - Fixed Deposit (Myself)'
+                              : 'Annexture 1B - Evidence of Funds - Fixed Deposit (Sponsor)';
+            }
+            return '';
+        }
+
+        function updateFundUploads(idx) {
+            var typeEl = document.querySelector('[name="fund_type_' + idx + '"]');
+            var ownerEl = document.querySelector('[name="fund_owner_' + idx + '"]');
+            var type = typeEl ? typeEl.value : '';
+            var owner = ownerEl ? ownerEl.value : '';
+            var savingsBlock = document.getElementById('fundSavingsUploads_' + idx);
+            var fdBlock = document.getElementById('fundFdUploads_' + idx);
+            if (savingsBlock) savingsBlock.style.display = (type === 'savings') ? '' : 'none';
+            if (fdBlock) fdBlock.style.display = (type === 'fixed_deposit') ? '' : 'none';
+            // Re-point the SharePoint folder targets based on the selected owner
+            var savingsFolder = fundFolderFor('savings', owner);
+            var fdFolder = fundFolderFor('fixed_deposit', owner);
+            ['doc_fund_savings_stmt_' + idx, 'doc_fund_savings_balance_' + idx].forEach(function(fn) {
+                var item = document.querySelector('.doc-upload-item[data-field="' + fn + '"]');
+                if (item) item.setAttribute('data-sp-folder', savingsFolder);
+            });
+            ['doc_fund_fd_cert_' + idx, 'doc_fund_fd_balance_' + idx].forEach(function(fn) {
+                var item = document.querySelector('.doc-upload-item[data-field="' + fn + '"]');
+                if (item) item.setAttribute('data-sp-folder', fdFolder);
+            });
+        }
+
+        function toggleFundSourceOther(idx) {
+            var cb = document.querySelector('input[name="fund_src_other_' + idx + '"]');
+            var wrap = document.getElementById('fundSourceOtherWrap_' + idx);
+            if (wrap) wrap.style.display = (cb && cb.checked) ? '' : 'none';
+        }
+
+        function buildFundSourceHtml(idx) {
+            var removeBtn = idx > 0
+                ? '<button type="button" onclick="removeFundSource(' + idx + ')" style="background:none;border:1px solid #dc3545;color:#dc3545;padding:4px 10px;border-radius:4px;cursor:pointer;font-size:0.8rem;">✕ Remove</button>'
+                : '';
+            return '' +
+            '<div class="fund-source-item" data-fund-index="' + idx + '" style="border:1px solid var(--border-color);border-radius:8px;padding:18px;margin-bottom:18px;">' +
+                '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">' +
+                    '<h4 style="margin:0;color:var(--primary-color);">Fund ' + (idx + 1) + '</h4>' + removeBtn +
+                '</div>' +
+                '<div class="form-group"><label class="question-label mandatory">Amount</label>' +
+                    '<input type="text" name="fund_amount_' + idx + '" inputmode="numeric" maxlength="20" placeholder="e.g. 25000"></div>' +
+                '<div class="form-group"><label class="question-label mandatory">Owner of the funds</label>' +
+                    '<select name="fund_owner_' + idx + '" data-fund-index="' + idx + '" onchange="updateFundUploads(' + idx + ')">' +
+                        '<option value="">-- Select --</option>' +
+                        '<option value="self">Yourself</option>' +
+                        '<option value="third_party">Third-party sponsor</option>' +
+                        '<option value="nz">NZ citizen / resident / organisation sponsor</option>' +
+                    '</select></div>' +
+                '<div class="form-group"><label class="question-label mandatory">Type of funds</label>' +
+                    '<select name="fund_type_' + idx + '" data-fund-index="' + idx + '" onchange="updateFundUploads(' + idx + ')">' +
+                        '<option value="">-- Select --</option>' +
+                        '<option value="savings">Savings in bank account</option>' +
+                        '<option value="provident">Provident fund that can be withdrawn</option>' +
+                        '<option value="loan">Education loan</option>' +
+                        '<option value="fixed_deposit">Fixed term deposits</option>' +
+                    '</select></div>' +
+                '<div class="fund-upload-block" id="fundSavingsUploads_' + idx + '" style="display:none;margin:10px 0;padding:14px;background:#f0f7ff;border-radius:6px;">' +
+                    '<p class="field-hint" style="margin-bottom:10px;">Please upload the following documents for the specified savings account. These documents must be within two weeks of the date of submission of this form.</p>' +
+                    '<div class="doc-upload-item" data-field="doc_fund_savings_stmt_' + idx + '" data-sp-folder="">' +
+                        '<label class="question-label">Last 3-month Bank Statement</label>' +
+                        '<div class="upload-area"><input type="file" class="doc-file-input" data-field-name="doc_fund_savings_stmt_' + idx + '" accept=".pdf,.jpg,.jpeg"><div class="upload-status"></div></div></div>' +
+                    '<div class="doc-upload-item" data-field="doc_fund_savings_balance_' + idx + '" data-sp-folder="">' +
+                        '<label class="question-label">Latest Balance Confirmation</label>' +
+                        '<div class="upload-area"><input type="file" class="doc-file-input" data-field-name="doc_fund_savings_balance_' + idx + '" accept=".pdf,.jpg,.jpeg"><div class="upload-status"></div></div></div>' +
+                '</div>' +
+                '<div class="fund-upload-block" id="fundFdUploads_' + idx + '" style="display:none;margin:10px 0;padding:14px;background:#f0f7ff;border-radius:6px;">' +
+                    '<p class="field-hint" style="margin-bottom:10px;">Please upload the following documents for the specified fixed deposit account. These documents must be within two weeks of the date of submission of this form.</p>' +
+                    '<div class="doc-upload-item" data-field="doc_fund_fd_cert_' + idx + '" data-sp-folder="">' +
+                        '<label class="question-label">Fixed Deposit Certificate</label>' +
+                        '<div class="upload-area"><input type="file" class="doc-file-input" data-field-name="doc_fund_fd_cert_' + idx + '" accept=".pdf,.jpg,.jpeg"><div class="upload-status"></div></div></div>' +
+                    '<div class="doc-upload-item" data-field="doc_fund_fd_balance_' + idx + '" data-sp-folder="">' +
+                        '<label class="question-label">Fixed Deposit Balance Confirmation</label>' +
+                        '<div class="upload-area"><input type="file" class="doc-file-input" data-field-name="doc_fund_fd_balance_' + idx + '" accept=".pdf,.jpg,.jpeg"><div class="upload-status"></div></div></div>' +
+                '</div>' +
+                '<div class="question-block" style="margin-top:12px;margin-bottom:0;">' +
+                    '<label class="question-label mandatory">Source of Funds</label>' +
+                    '<p class="field-hint">Select one or more of the following options regarding the sources of your fund.</p>' +
+                    '<div class="checkbox-group">' +
+                        '<label class="checkbox-item"><input type="checkbox" name="fund_src_employment_' + idx + '" value="yes"> Employment (wages or salary)</label>' +
+                        '<label class="checkbox-item"><input type="checkbox" name="fund_src_self_employment_' + idx + '" value="yes"> Income from self-employment (excluding rental property ownership)</label>' +
+                        '<label class="checkbox-item"><input type="checkbox" name="fund_src_rental_' + idx + '" value="yes"> Income from rental property ownership</label>' +
+                        '<label class="checkbox-item"><input type="checkbox" name="fund_src_other_' + idx + '" value="yes" onchange="toggleFundSourceOther(' + idx + ')"> Other sources</label>' +
+                    '</div>' +
+                    '<div id="fundSourceOtherWrap_' + idx + '" style="display:none;margin-top:10px;">' +
+                        '<label class="question-label">Please describe the other sources of funds</label>' +
+                        '<textarea name="fund_source_other_' + idx + '" maxlength="1000" placeholder="Limited to 1000 characters."></textarea>' +
+                    '</div>' +
+                '</div>' +
+            '</div>';
+        }
+
+        function addFundSource() {
+            var container = document.getElementById('fundSourcesContainer');
+            if (!container) return;
+            var idx = fundSourceCount;
+            fundSourceCount++;
+            container.insertAdjacentHTML('beforeend', buildFundSourceHtml(idx));
+            var item = container.querySelector('.fund-source-item[data-fund-index="' + idx + '"]');
+            if (item) {
+                item.querySelectorAll('.doc-file-input').forEach(function(inp) {
+                    if (FormUtils.handleFileSelect) inp.addEventListener('change', FormUtils.handleFileSelect);
+                });
+            }
+            return idx;
+        }
+
+        function removeFundSource(idx) {
+            var item = document.querySelector('.fund-source-item[data-fund-index="' + idx + '"]');
+            if (item) item.remove();
+        }
+
+        // Build initial fund section(s); reconstruct multiple from saved API data on reload.
+        function initFundSources() {
+            var container = document.getElementById('fundSourcesContainer');
+            if (!container) return;
+            var data = (FormUtils.FormContext && FormUtils.FormContext.userResponse) ? FormUtils.FormContext.userResponse : null;
+            var maxIdx = -1;
+            if (data) {
+                Object.keys(data).forEach(function(k) {
+                    var m = k.match(/^fund_amount_(\d+)$/);
+                    if (m) { var n = parseInt(m[1], 10); if (n > maxIdx) maxIdx = n; }
+                });
+            }
+            var count = Math.max(1, maxIdx + 1);
+            for (var i = 0; i < count; i++) { addFundSource(); }
+
+            // Re-apply saved values to the dynamically created fund fields
+            if (data) {
+                Object.keys(data).forEach(function(k) {
+                    if (!/^(fund_amount_|fund_owner_|fund_type_|fund_src_|fund_source_other_)/.test(k)) return;
+                    var el = document.querySelector('[name="' + k + '"]');
+                    if (!el || el.type === 'file') return;
+                    if (el.type === 'checkbox') {
+                        el.checked = (data[k] === true || data[k] === 'yes' || data[k] === 'on' || data[k] === 'Yes');
+                    } else {
+                        el.value = data[k];
+                    }
+                });
+            }
+
+            // Fire conditionals so upload blocks and "other" textareas reflect restored values
+            document.querySelectorAll('#fundSourcesContainer select[data-fund-index]').forEach(function(s) {
+                updateFundUploads(parseInt(s.getAttribute('data-fund-index'), 10));
+            });
+            document.querySelectorAll('#fundSourcesContainer input[name^="fund_src_other_"]').forEach(function(c) {
+                var m = c.name.match(/_(\d+)$/);
+                if (m) toggleFundSourceOther(parseInt(m[1], 10));
+            });
+        }
 
         function addRepeaterItem(containerId, prefix) {
             const container = document.getElementById(containerId);
