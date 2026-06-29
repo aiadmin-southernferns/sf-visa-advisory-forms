@@ -3805,7 +3805,7 @@
         </div>
     </div>
 
-    <script src="../js/form-utils.js?v=4"></script>
+    <script src="../js/form-utils.js?v=5"></script>
     <script>
         /* ============================================
            STUDENT VISA FORM - CONTROLLER
@@ -3815,10 +3815,11 @@
         const TOTAL_STAGES = 16;
         const STAGE_ORDER = [0, 1, 2, 3, 10, 4, 5, 6, 7, 8, 9, 14, 15, 11, 12, 13];
 
-        // ⚠️ DEV MODE: Set to true to unlock all stage tabs for click-navigation during testing.
-        // All validations (Save and Continue, sub-section nav) still fire normally.
-        // Set to false before deploying to production.
-        const DEV_MODE = true;
+        // ⚠️ DEV MODE: unlocks all stage tabs for click-navigation during testing (validations still fire).
+        // Derived from hostname so PROD can never accidentally ship with it on: it is true ONLY when the
+        // page is served from one of DEV_HOSTS. Add your DEV web app hostname below; leave PROD out.
+        const DEV_HOSTS = ['localhost', '127.0.0.1' , 'visamanagerdev'];
+        const DEV_MODE = DEV_HOSTS.some(function (h) { return location.hostname.indexOf(h) !== -1; });
 
         // Track state
         let currentStage = 0;
