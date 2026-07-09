@@ -15,7 +15,7 @@
     "X-Frame-Options": "DENY",
     "X-XSS-Protection": "1; mode=block",
     "Referrer-Policy": "strict-origin-when-cross-origin",
-    "Content-Security-Policy": "connect-src 'self' https://*.logic.azure.com http://localhost:7071 https://visamanagerdev-bwcpf7aqcugtekhe.australiaeast-01.azurewebsites.net https://orange-bay-064a81f00.7.azurestaticapps.net"
+    "Content-Security-Policy": "connect-src 'self' https://*.logic.azure.com http://localhost:7071 https://visamanagerdev-bwcpf7aqcugtekhe.australiaeast-01.azurewebsites.net https://visamanagerprod-e9dxf5exh0ctddfb.australiaeast-01.azurewebsites.net"
   },
   "mimeTypes": {
     ".json": "application/json"
