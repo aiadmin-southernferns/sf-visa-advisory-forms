@@ -126,7 +126,9 @@ function makeStageReadOnly(stageNum) {
     });
 
     section.querySelectorAll('button').forEach(function(btn) {
-        if (!btn.classList.contains('btn-nav')) {
+        // Keep nav buttons and any explicitly-exempt control (e.g. the checklist "Download PDF"
+        // button, which must stay clickable for students on the read-only Advisor Assessment tab).
+        if (!btn.classList.contains('btn-nav') && !btn.hasAttribute('data-keep-enabled')) {
             btn.disabled = true;
             btn.style.opacity = '0.5';
             btn.style.cursor = 'not-allowed';
