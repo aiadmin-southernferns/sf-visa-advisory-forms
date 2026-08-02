@@ -606,9 +606,8 @@
     <div class="container">
         <!-- Header -->
         <div class="form-header">
-            <h1>Student Visa Application</h1>
+            <h1 id="formHeading">Student Visa Checklist</h1>
             <p>New Zealand Student Visa Application Form</p>
-            <span class="form-code">INZ 1012</span>
         </div>
 
         <!-- Stage Navigation (horizontal tabs) -->
@@ -3813,7 +3812,7 @@
         </div>
     </div>
 
-    <script src="../js/form-utils.js?v=6"></script>
+    <script src="../js/form-utils.js?v=7"></script>
     <script>
         /* ============================================
            STUDENT VISA FORM - CONTROLLER
@@ -5269,8 +5268,9 @@
         function collectChecklistSections() {
             var stage = document.querySelector('.form-section[data-stage="0"]');
             var sections = [];
+            var noteToStudent = '';
             var current = null;
-            if (!stage) return sections;
+            if (!stage) return { sections: sections, noteToStudent: noteToStudent };
 
             function txt(el) { return el ? (el.textContent || '').replace(/\s+/g, ' ').trim() : ''; }
             function ensure() {
@@ -5289,8 +5289,15 @@
                     current = { title: txt(node), major: true, items: [] };
                     sections.push(current);
                 } else if (node.matches('.checklist-section-title')) {
-                    current = { title: txt(node), major: false, items: [] };
-                    sections.push(current);
+                    var secTitle = txt(node);
+                    // The dedicated "Note to Student" section is surfaced at the top of the PDF,
+                    // so skip its heading in the body (don't add it to the section list).
+                    if (secTitle.toLowerCase() === 'note to student') {
+                        current = { title: secTitle, major: false, items: [], skip: true };
+                    } else {
+                        current = { title: secTitle, major: false, items: [] };
+                        sections.push(current);
+                    }
                 } else if (node.matches('.checklist-col-title')) {
                     ensure().items.push({ label: txt(node), subheading: true });
                 } else if (node.matches('.question-block')) {
@@ -5301,16 +5308,23 @@
                         var lbl = checked.closest('label');
                         val = lbl ? txt(lbl) : (checked.value || 'Selected');
                     }
-                    ensure().items.push({ label: txt(qLabel) || 'Question', value: val });
+                    ensure().items.push({ label: txt(qLabel) || 'Question', value: val, radio: true });
                 } else if (node.matches('.checkbox-item')) {
                     var input = node.querySelector('input');
                     ensure().items.push({ label: txt(node), value: (input && input.checked) ? 'Yes' : 'No' });
                 } else if (node.matches('textarea')) {
-                    ensure().items.push({ label: 'Advisor note', value: node.value || '—', note: true });
+                    var noteVal = (node.value || '').trim();
+                    if (node.name === 'adv_note_to_student') {
+                        // Dedicated "Note to Student" → highlighted callout at the very top.
+                        noteToStudent = noteVal;
+                    } else if (noteVal) {
+                        // Other advisor notes stay inline, highlighted, below their section.
+                        ensure().items.push({ label: 'Advisor note', value: noteVal, note: true });
+                    }
                 }
             });
 
-            return sections;
+            return { sections: sections, noteToStudent: noteToStudent };
         }
 
         async function downloadChecklistPdf(btn) {
@@ -5318,9 +5332,11 @@
             try {
                 if (btn) { btn.disabled = true; btn.style.opacity = '0.6'; btn.innerHTML = '<span>Preparing…</span>'; }
 
+                var collected = collectChecklistSections();
                 var payload = {
                     title: 'Advisor Assessment — Document Checklist',
-                    sections: collectChecklistSections()
+                    sections: collected.sections,
+                    noteToStudent: collected.noteToStudent
                 };
 
                 var url = FormConfig.apiUrl + '/form-data/' + encodeURIComponent(FormContext.formInstanceId) + '/checklist-pdf';
