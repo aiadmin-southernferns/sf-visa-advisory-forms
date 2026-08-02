@@ -152,12 +152,23 @@ function makeStageReadOnly(stageNum) {
     }
 }
 
+function _setFormTitle(title) {
+    document.title = title;
+    var heading = document.getElementById('formHeading');
+    if (heading) heading.textContent = title;
+}
+
 function applyRoleBasedRendering(stageOrder, navigateToStageFn, unlockStageFn) {
     var role = FormContext.role;
     var status = FormContext.currentStatus;
     var adminStage = FormConfig.adminStage;
 
     console.log('Applying role-based rendering. Role:', role, 'Status:', status);
+
+    // Title reflects the mode: admin sees only the checklist; the student sees the full application.
+    _setFormTitle(role === 'admin'
+        ? 'Student Visa Checklist'
+        : 'Student Visa Checklist and Application');
 
     if (role === 'admin') {
         // ADMIN: Show only admin stage (stage 0), editable. Hide everything else.
