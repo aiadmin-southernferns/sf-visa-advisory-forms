@@ -1,9 +1,19 @@
 /* ============================================
    VISA ADVISORY FORMS - SHARED UTILITIES
    ============================================ */
+// API base URL is resolved from the current host so the SAME form-utils.js works in DEV and PROD.
+// → Fill in PROD_WEBAPP_HOST (the PROD forms web app hostname) and PROD_API_URL (the PROD Function base).
+//   Any host that doesn't match PROD falls back to DEV.
+function _resolveApiUrl() {
+    var host = (typeof location !== 'undefined' && location.hostname) ? location.hostname : '';
+    var PROD_WEBAPP_HOST = 'orange-bay-064a81f00.7.azurestaticapps.net';
+    var PROD_API_URL     = 'https://visamanagerprod-e9dxf5exh0ctddfb.australiaeast-01.azurewebsites.net/api'; 
+    if (PROD_WEBAPP_HOST && PROD_API_URL && host.indexOf(PROD_WEBAPP_HOST) !== -1) return PROD_API_URL;
+    return 'https://visamanagerdev-bwcpf7aqcugtekhe.australiaeast-01.azurewebsites.net/api'; // DEV / default
+}
 
 const FormConfig = {
-    apiUrl: 'https://visamanagerdev-bwcpf7aqcugtekhe.australiaeast-01.azurewebsites.net/api',
+    apiUrl: _resolveApiUrl(),
     submitEndpoint: 'YOUR_POWER_AUTOMATE_HTTP_TRIGGER_URL',
     autoSaveInterval: 30000,
     tokenParam: 'key',
