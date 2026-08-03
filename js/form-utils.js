@@ -136,7 +136,9 @@ function makeStageReadOnly(stageNum) {
     });
 
     section.querySelectorAll('button').forEach(function(btn) {
-        if (!btn.classList.contains('btn-nav')) {
+        // Keep nav buttons and any explicitly-exempt control (e.g. the checklist "Download PDF"
+        // button, which must stay clickable for students on the read-only Advisor Assessment tab).
+        if (!btn.classList.contains('btn-nav') && !btn.hasAttribute('data-keep-enabled')) {
             btn.disabled = true;
             btn.style.opacity = '0.5';
             btn.style.cursor = 'not-allowed';
@@ -160,12 +162,23 @@ function makeStageReadOnly(stageNum) {
     }
 }
 
+function _setFormTitle(title) {
+    document.title = title;
+    var heading = document.getElementById('formHeading');
+    if (heading) heading.textContent = title;
+}
+
 function applyRoleBasedRendering(stageOrder, navigateToStageFn, unlockStageFn) {
     var role = FormContext.role;
     var status = FormContext.currentStatus;
     var adminStage = FormConfig.adminStage;
 
     console.log('Applying role-based rendering. Role:', role, 'Status:', status);
+
+    // Title reflects the mode: admin sees only the checklist; the student sees the full application.
+    _setFormTitle(role === 'admin'
+        ? 'Student Visa Checklist'
+        : 'Student Visa Checklist and Application');
 
     if (role === 'admin') {
         // ADMIN: Show only admin stage (stage 0), editable. Hide everything else.
