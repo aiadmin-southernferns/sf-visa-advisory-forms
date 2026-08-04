@@ -5613,7 +5613,7 @@
                 var fundValid = true;
                 fundItems.forEach(function(item) {
                     var i = item.getAttribute('data-fund-index');
-                    ['fund_amount_' + i, 'fund_owner_' + i, 'fund_type_' + i].forEach(function(name) {
+                    ['fund_amount_' + i, 'fund_bank_name_' + i, 'fund_account_number_' + i, 'fund_owner_' + i, 'fund_type_' + i].forEach(function(name) {
                         var f = document.querySelector('[name="' + name + '"]');
                         if (f && !f.value.trim()) { fundValid = false; f.classList.add('error'); }
                         else if (f) { f.classList.remove('error'); }
@@ -5630,7 +5630,7 @@
                     }
                 });
                 if (!fundValid) {
-                    alert('Please complete all required fields for each fund: amount, owner, type of funds, and at least one source of funds.');
+                    alert('Please complete all required fields for each fund: amount, bank name, account number, owner, type of funds, and at least one source of funds.');
                     return;
                 }
 
@@ -6020,6 +6020,10 @@
                 '</div>' +
                 '<div class="form-group"><label class="question-label mandatory">Amount</label>' +
                     '<input type="text" name="fund_amount_' + idx + '" inputmode="numeric" maxlength="20" placeholder="e.g. 25000"></div>' +
+                '<div class="form-group"><label class="question-label mandatory">Bank Name</label>' +
+                    '<input type="text" name="fund_bank_name_' + idx + '" maxlength="100" placeholder="e.g. Bank of Ceylon"></div>' +
+                '<div class="form-group"><label class="question-label mandatory">Account Number</label>' +
+                    '<input type="text" name="fund_account_number_' + idx + '" maxlength="50" placeholder="Account number"></div>' +
                 '<div class="form-group"><label class="question-label mandatory">Owner of the funds</label>' +
                     '<select name="fund_owner_' + idx + '" data-fund-index="' + idx + '" onchange="updateFundUploads(' + idx + ')">' +
                         '<option value="">-- Select --</option>' +
@@ -6031,8 +6035,6 @@
                     '<select name="fund_type_' + idx + '" data-fund-index="' + idx + '" onchange="updateFundUploads(' + idx + ')">' +
                         '<option value="">-- Select --</option>' +
                         '<option value="savings">Savings in bank account</option>' +
-                        '<option value="provident">Provident fund that can be withdrawn</option>' +
-                        '<option value="loan">Education loan</option>' +
                         '<option value="fixed_deposit">Fixed term deposits</option>' +
                     '</select></div>' +
                 '<div class="fund-upload-block" id="fundSavingsUploads_' + idx + '" style="display:none;margin:10px 0;padding:14px;background:#f0f7ff;border-radius:6px;">' +
@@ -6062,9 +6064,11 @@
                         '<label class="checkbox-item"><input type="checkbox" name="fund_src_rental_' + idx + '" value="yes"> Income from rental property ownership</label>' +
                         '<label class="checkbox-item"><input type="checkbox" name="fund_src_other_' + idx + '" value="yes" onchange="toggleFundSourceOther(' + idx + ')"> Other sources</label>' +
                     '</div>' +
-                    '<div id="fundSourceOtherWrap_' + idx + '" style="display:none;margin-top:10px;">' +
+                    '<div id="fundSourceOtherWrap_' + idx + '" class="question-block" style="display:none;margin-top:10px;margin-bottom:0;">' +
                         '<label class="question-label">Please describe the other sources of funds</label>' +
-                        '<textarea name="fund_source_other_' + idx + '" maxlength="1000" placeholder="Limited to 1000 characters."></textarea>' +
+                        '<div class="form-group" style="margin-bottom:0;">' +
+                            '<textarea name="fund_source_other_' + idx + '" maxlength="1000" placeholder="Limited to 1000 characters."></textarea>' +
+                        '</div>' +
                     '</div>' +
                 '</div>' +
             '</div>';
@@ -6108,7 +6112,7 @@
             // Re-apply saved values to the dynamically created fund fields
             if (data) {
                 Object.keys(data).forEach(function(k) {
-                    if (!/^(fund_amount_|fund_owner_|fund_type_|fund_src_|fund_source_other_)/.test(k)) return;
+                    if (!/^(fund_amount_|fund_bank_name_|fund_account_number_|fund_owner_|fund_type_|fund_src_|fund_source_other_)/.test(k)) return;
                     var el = document.querySelector('[name="' + k + '"]');
                     if (!el || el.type === 'file') return;
                     if (el.type === 'checkbox') {

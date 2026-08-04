@@ -302,13 +302,13 @@ async function handleAdminSaveAndCloseAction(formElement) {
         // Save to localStorage as backup
         saveDraft('ADMIN_' + FormContext.formInstanceId, formElement);
 
-        alert('Advisor Assessment saved successfully.\n\nYou can now close this window and click "Send INZ Form to Contact" in Dynamics CE to send the form to the client.');
+        alert('Advisor Assessment saved successfully.\n\nYou can now close this window and click "Send Form to Contact" in Dynamics CE to send the form to the client.');
 
         window.close();
 
         // If window.close doesn't work, show success page
         setTimeout(function() {
-            document.body.innerHTML = '<div class="container"><div class="form-content" style="border-radius:10px;margin-top:50px;"><div style="text-align:center;padding:60px 30px;"><svg viewBox="0 0 24 24" style="width:64px;height:64px;fill:#28a745;margin-bottom:20px"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg><h2 style="color:#28a745;margin-bottom:15px;">Advisor Assessment Saved</h2><p style="color:#666;margin-bottom:20px;">Your assessment has been saved successfully. You can safely close this tab.</p><p style="color:#666;">Return to Dynamics CE and click <strong>"Send INZ Form to Contact"</strong> to send the form to the client.</p></div></div></div>';
+            document.body.innerHTML = '<div class="container"><div class="form-content" style="border-radius:10px;margin-top:50px;"><div style="text-align:center;padding:60px 30px;"><svg viewBox="0 0 24 24" style="width:64px;height:64px;fill:#28a745;margin-bottom:20px"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg><h2 style="color:#28a745;margin-bottom:15px;">Advisor Assessment Saved</h2><p style="color:#666;margin-bottom:20px;">Your assessment has been saved successfully. You can safely close this tab.</p><p style="color:#666;">Return to Dynamics CE and click <strong>"Send Form to Contact"</strong> to send the form to the client.</p></div></div></div>';
         }, 500);
 
     } catch (error) {
