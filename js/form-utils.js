@@ -684,6 +684,8 @@ var CONDITIONAL_DOC_CONFIG = {
     adv_rel_marriage_cert_trans: { label: 'Student\'s Marriage Certificate — Translation', sectionId: 'docSection_relationship', spFolder: 'Annexture 17 - Relationship to Sponsor', multi: false },
     adv_rel_parent_id_orig:   { label: 'Birth certificate of sponsor / Passport / ID — Original', sectionId: 'docSection_relationship', spFolder: 'Annexture 17 - Relationship to Sponsor', multi: true },
     adv_rel_parent_id_trans:  { label: 'Birth certificate of sponsor / Passport / ID — Translation', sectionId: 'docSection_relationship', spFolder: 'Annexture 17 - Relationship to Sponsor', multi: true },
+    adv_rel_parent_marriage_orig:  { label: 'Marriage Certificate of Parents — Original', sectionId: 'docSection_relationship', spFolder: 'Annexture 17 - Relationship to Sponsor', multi: true },
+    adv_rel_parent_marriage_trans: { label: 'Marriage Certificate of Parents — Translation', sectionId: 'docSection_relationship', spFolder: 'Annexture 17 - Relationship to Sponsor', multi: true },
 
     // ── Education (Annexture 13) ──
     adv_edu_ol:     { label: 'GCE O/L Certificate', sectionId: 'docSection_education', spFolder: 'Annexture 13 - Educational Qualifications', multi: false },
@@ -712,6 +714,8 @@ var CONDITIONAL_DOC_CONFIG = {
     adv_tuition_invoice:   { label: 'Invoice from college (Acknowledgement Invoice)', sectionId: 'docSection_tuition', spFolder: 'Annexture 19 - Evidence of Tuition Fee Payment', multi: false },
     adv_tuition_tt_proof:  { label: 'TT transfer proof (Debit Advice / Order)', sectionId: 'docSection_tuition', spFolder: 'Annexture 19 - Evidence of Tuition Fee Payment', multi: false },
     adv_tuition_bank_stmt: { label: 'Bank statement — Post TT', sectionId: 'docSection_tuition', spFolder: 'Annexture 19 - Evidence of Tuition Fee Payment', multi: false },
+    adv_tuition_balance_pre_tt:  { label: 'Balance Confirmation - Pre TT', sectionId: 'docSection_tuition', spFolder: 'Annexture 19 - Evidence of Tuition Fee Payment', multi: false },
+    adv_tuition_balance_post_tt: { label: 'Balance Confirmation - Post TT', sectionId: 'docSection_tuition', spFolder: 'Annexture 19 - Evidence of Tuition Fee Payment', multi: false },
 
     // ── Home Ties ──
     adv_home_deed_orig:       { label: 'Transfer deeds (original) — Home and Properties', sectionId: 'docSection_homeTies', spFolder: 'Annexture 16 - Travel History', multi: true },
@@ -719,6 +723,8 @@ var CONDITIONAL_DOC_CONFIG = {
     adv_home_successor:       { label: 'Nomination of Successor Form / Affidavit', sectionId: 'docSection_homeTies', spFolder: 'Annexture 16 - Travel History', multi: true },
     adv_home_child_birth_orig:{ label: 'Birth Certificates of Children — Original', sectionId: 'docSection_homeTies', spFolder: 'Annexture 16 - Travel History', multi: true },
     adv_home_child_birth_trans:{ label: 'Birth Certificates of Children — Translation', sectionId: 'docSection_homeTies', spFolder: 'Annexture 16 - Travel History', multi: true },
+    adv_home_sibling_birth_orig:{ label: 'Birth Certificates of Siblings — Original', sectionId: 'docSection_homeTies', spFolder: 'Annexture 16 - Travel History', multi: true },
+    adv_home_sibling_birth_trans:{ label: 'Birth Certificates of Siblings — Translation', sectionId: 'docSection_homeTies', spFolder: 'Annexture 16 - Travel History', multi: true },
     adv_home_marriage_orig:   { label: 'Marriage Certificate — Original', sectionId: 'docSection_homeTies', spFolder: 'Annexture 16 - Travel History', multi: false },
     adv_home_marriage_trans:  { label: 'Marriage Certificate — Translation', sectionId: 'docSection_homeTies', spFolder: 'Annexture 16 - Travel History', multi: false },
     adv_home_parent_id:       { label: 'Identity documents of parents with translation', sectionId: 'docSection_homeTies', spFolder: 'Annexture 16 - Travel History', multi: true },
