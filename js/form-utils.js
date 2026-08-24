@@ -136,7 +136,9 @@ function makeStageReadOnly(stageNum) {
     });
 
     section.querySelectorAll('button').forEach(function(btn) {
-        if (!btn.classList.contains('btn-nav')) {
+        // Keep nav buttons and any explicitly-exempt control (e.g. the checklist "Download PDF"
+        // button, which must stay clickable for students on the read-only Advisor Assessment tab).
+        if (!btn.classList.contains('btn-nav') && !btn.hasAttribute('data-keep-enabled')) {
             btn.disabled = true;
             btn.style.opacity = '0.5';
             btn.style.cursor = 'not-allowed';
@@ -160,12 +162,23 @@ function makeStageReadOnly(stageNum) {
     }
 }
 
+function _setFormTitle(title) {
+    document.title = title;
+    var heading = document.getElementById('formHeading');
+    if (heading) heading.textContent = title;
+}
+
 function applyRoleBasedRendering(stageOrder, navigateToStageFn, unlockStageFn) {
     var role = FormContext.role;
     var status = FormContext.currentStatus;
     var adminStage = FormConfig.adminStage;
 
     console.log('Applying role-based rendering. Role:', role, 'Status:', status);
+
+    // Title reflects the mode: admin sees only the checklist; the student sees the full application.
+    _setFormTitle(role === 'admin'
+        ? 'Student Visa Checklist'
+        : 'Student Visa Checklist and Application');
 
     if (role === 'admin') {
         // ADMIN: Show only admin stage (stage 0), editable. Hide everything else.
@@ -289,13 +302,13 @@ async function handleAdminSaveAndCloseAction(formElement) {
         // Save to localStorage as backup
         saveDraft('ADMIN_' + FormContext.formInstanceId, formElement);
 
-        alert('Advisor Assessment saved successfully.\n\nYou can now close this window and click "Send INZ Form to Contact" in Dynamics CE to send the form to the client.');
+        alert('Advisor Assessment saved successfully.\n\nYou can now close this window and click "Send Form to Contact" in Dynamics CE to send the form to the client.');
 
         window.close();
 
         // If window.close doesn't work, show success page
         setTimeout(function() {
-            document.body.innerHTML = '<div class="container"><div class="form-content" style="border-radius:10px;margin-top:50px;"><div style="text-align:center;padding:60px 30px;"><svg viewBox="0 0 24 24" style="width:64px;height:64px;fill:#28a745;margin-bottom:20px"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg><h2 style="color:#28a745;margin-bottom:15px;">Advisor Assessment Saved</h2><p style="color:#666;margin-bottom:20px;">Your assessment has been saved successfully. You can safely close this tab.</p><p style="color:#666;">Return to Dynamics CE and click <strong>"Send INZ Form to Contact"</strong> to send the form to the client.</p></div></div></div>';
+            document.body.innerHTML = '<div class="container"><div class="form-content" style="border-radius:10px;margin-top:50px;"><div style="text-align:center;padding:60px 30px;"><svg viewBox="0 0 24 24" style="width:64px;height:64px;fill:#28a745;margin-bottom:20px"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg><h2 style="color:#28a745;margin-bottom:15px;">Advisor Assessment Saved</h2><p style="color:#666;margin-bottom:20px;">Your assessment has been saved successfully. You can safely close this tab.</p><p style="color:#666;">Return to Dynamics CE and click <strong>"Send Form to Contact"</strong> to send the form to the client.</p></div></div></div>';
         }, 500);
 
     } catch (error) {
@@ -671,6 +684,8 @@ var CONDITIONAL_DOC_CONFIG = {
     adv_rel_marriage_cert_trans: { label: 'Student\'s Marriage Certificate — Translation', sectionId: 'docSection_relationship', spFolder: 'Annexture 17 - Relationship to Sponsor', multi: false },
     adv_rel_parent_id_orig:   { label: 'Birth certificate of sponsor / Passport / ID — Original', sectionId: 'docSection_relationship', spFolder: 'Annexture 17 - Relationship to Sponsor', multi: true },
     adv_rel_parent_id_trans:  { label: 'Birth certificate of sponsor / Passport / ID — Translation', sectionId: 'docSection_relationship', spFolder: 'Annexture 17 - Relationship to Sponsor', multi: true },
+    adv_rel_parent_marriage_orig:  { label: 'Marriage Certificate of Parents — Original', sectionId: 'docSection_relationship', spFolder: 'Annexture 17 - Relationship to Sponsor', multi: true },
+    adv_rel_parent_marriage_trans: { label: 'Marriage Certificate of Parents — Translation', sectionId: 'docSection_relationship', spFolder: 'Annexture 17 - Relationship to Sponsor', multi: true },
 
     // ── Education (Annexture 13) ──
     adv_edu_ol:     { label: 'GCE O/L Certificate', sectionId: 'docSection_education', spFolder: 'Annexture 13 - Educational Qualifications', multi: false },
@@ -699,6 +714,8 @@ var CONDITIONAL_DOC_CONFIG = {
     adv_tuition_invoice:   { label: 'Invoice from college (Acknowledgement Invoice)', sectionId: 'docSection_tuition', spFolder: 'Annexture 19 - Evidence of Tuition Fee Payment', multi: false },
     adv_tuition_tt_proof:  { label: 'TT transfer proof (Debit Advice / Order)', sectionId: 'docSection_tuition', spFolder: 'Annexture 19 - Evidence of Tuition Fee Payment', multi: false },
     adv_tuition_bank_stmt: { label: 'Bank statement — Post TT', sectionId: 'docSection_tuition', spFolder: 'Annexture 19 - Evidence of Tuition Fee Payment', multi: false },
+    adv_tuition_balance_pre_tt:  { label: 'Balance Confirmation - Pre TT', sectionId: 'docSection_tuition', spFolder: 'Annexture 19 - Evidence of Tuition Fee Payment', multi: false },
+    adv_tuition_balance_post_tt: { label: 'Balance Confirmation - Post TT', sectionId: 'docSection_tuition', spFolder: 'Annexture 19 - Evidence of Tuition Fee Payment', multi: false },
 
     // ── Home Ties ──
     adv_home_deed_orig:       { label: 'Transfer deeds (original) — Home and Properties', sectionId: 'docSection_homeTies', spFolder: 'Annexture 16 - Travel History', multi: true },
@@ -706,6 +723,8 @@ var CONDITIONAL_DOC_CONFIG = {
     adv_home_successor:       { label: 'Nomination of Successor Form / Affidavit', sectionId: 'docSection_homeTies', spFolder: 'Annexture 16 - Travel History', multi: true },
     adv_home_child_birth_orig:{ label: 'Birth Certificates of Children — Original', sectionId: 'docSection_homeTies', spFolder: 'Annexture 16 - Travel History', multi: true },
     adv_home_child_birth_trans:{ label: 'Birth Certificates of Children — Translation', sectionId: 'docSection_homeTies', spFolder: 'Annexture 16 - Travel History', multi: true },
+    adv_home_sibling_birth_orig:{ label: 'Birth Certificates of Siblings — Original', sectionId: 'docSection_homeTies', spFolder: 'Annexture 16 - Travel History', multi: true },
+    adv_home_sibling_birth_trans:{ label: 'Birth Certificates of Siblings — Translation', sectionId: 'docSection_homeTies', spFolder: 'Annexture 16 - Travel History', multi: true },
     adv_home_marriage_orig:   { label: 'Marriage Certificate — Original', sectionId: 'docSection_homeTies', spFolder: 'Annexture 16 - Travel History', multi: false },
     adv_home_marriage_trans:  { label: 'Marriage Certificate — Translation', sectionId: 'docSection_homeTies', spFolder: 'Annexture 16 - Travel History', multi: false },
     adv_home_parent_id:       { label: 'Identity documents of parents with translation', sectionId: 'docSection_homeTies', spFolder: 'Annexture 16 - Travel History', multi: true },

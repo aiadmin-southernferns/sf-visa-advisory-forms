@@ -606,9 +606,8 @@
     <div class="container">
         <!-- Header -->
         <div class="form-header">
-            <h1>Student Visa Application</h1>
+            <h1 id="formHeading">Student Visa Checklist</h1>
             <p>New Zealand Student Visa Application Form</p>
-            <span class="form-code">INZ 1012</span>
         </div>
 
         <!-- Stage Navigation (horizontal tabs) -->
@@ -646,6 +645,14 @@
 
                 <div class="form-section" data-stage="0" id="advisorAssessmentStage">
 
+                    <button type="button" id="downloadChecklistPdfBtn" data-keep-enabled
+                            onclick="downloadChecklistPdf(this)"
+                            title="Download the checklist responses as a PDF"
+                            style="float:right;display:inline-flex;align-items:center;gap:6px;background:#1a5276;color:#fff;border:none;border-radius:6px;padding:9px 16px;font-size:0.85rem;font-weight:600;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,0.15);">
+                        <svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:currentColor;flex-shrink:0"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+                        <span>Download PDF</span>
+                    </button>
+
                     <h2 class="section-title">Advisor Assessment — Document Checklist</h2>
                     <div class="section-description">
                         <strong>This section is completed by the immigration advisor only.</strong><br>
@@ -665,6 +672,8 @@
                             <label class="checkbox-item"><input type="checkbox" name="adv_rel_marriage_cert_trans" value="yes"> Student's Marriage Certificate — Translation</label>
                             <label class="checkbox-item"><input type="checkbox" name="adv_rel_parent_id_orig" value="yes"> Birth certificate of sponsor / Passport / ID — Original ⊕</label>
                             <label class="checkbox-item"><input type="checkbox" name="adv_rel_parent_id_trans" value="yes"> Birth certificate of sponsor / Passport / ID — Translation ⊕</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_rel_parent_marriage_orig" value="yes"> Marriage Certificate of Parents — Original ⊕</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_rel_parent_marriage_trans" value="yes"> Marriage Certificate of Parents — Translation ⊕</label>
                         </div>
                     </div>
 
@@ -734,6 +743,8 @@
                             <label class="checkbox-item"><input type="checkbox" name="adv_tuition_invoice" value="yes"> Invoice from college (Acknowledgement Invoice)</label>
                             <label class="checkbox-item"><input type="checkbox" name="adv_tuition_tt_proof" value="yes"> TT transfer proof (Debit Advice / Order)</label>
                             <label class="checkbox-item"><input type="checkbox" name="adv_tuition_bank_stmt" value="yes"> Bank statement — Post TT</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_tuition_balance_pre_tt" value="yes"> Balance Confirmation - Pre TT</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_tuition_balance_post_tt" value="yes"> Balance Confirmation - Post TT</label>
                         </div>
                     </div>
 
@@ -747,6 +758,8 @@
                             <label class="checkbox-item"><input type="checkbox" name="adv_home_successor" value="yes"> Nomination of Successor Form / Affidavit ⊕</label>
                             <label class="checkbox-item"><input type="checkbox" name="adv_home_child_birth_orig" value="yes"> Birth Certificates of Children — Original ⊕</label>
                             <label class="checkbox-item"><input type="checkbox" name="adv_home_child_birth_trans" value="yes"> Birth Certificates of Children — Translation ⊕</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_home_sibling_birth_orig" value="yes"> Birth Certificates of Siblings — Original ⊕</label>
+                            <label class="checkbox-item"><input type="checkbox" name="adv_home_sibling_birth_trans" value="yes"> Birth Certificates of Siblings — Translation ⊕</label>
                             <label class="checkbox-item"><input type="checkbox" name="adv_home_marriage_orig" value="yes"> Marriage Certificate — Original</label>
                             <label class="checkbox-item"><input type="checkbox" name="adv_home_marriage_trans" value="yes"> Marriage Certificate — Translation</label>
                             <label class="checkbox-item"><input type="checkbox" name="adv_home_parent_id" value="yes"> Identity documents of parents with translation ⊕</label>
@@ -3805,7 +3818,7 @@
         </div>
     </div>
 
-    <script src="../js/form-utils.js?v=6"></script>
+    <script src="../js/form-utils.js?v=8"></script>
     <script>
         /* ============================================
            STUDENT VISA FORM - CONTROLLER
@@ -5252,6 +5265,116 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
+        /* ============================================
+           CHECKLIST → PDF DOWNLOAD (Advisor Assessment)
+           Reads every field currently on the Stage 0 checklist tab straight from the DOM
+           (labels + on-screen values, nothing missed), posts the structure to the backend,
+           and downloads the rendered PDF. Available to both admin and student.
+           ============================================ */
+        function collectChecklistSections() {
+            var stage = document.querySelector('.form-section[data-stage="0"]');
+            var sections = [];
+            var noteToStudent = '';
+            var current = null;
+            if (!stage) return { sections: sections, noteToStudent: noteToStudent };
+
+            function txt(el) { return el ? (el.textContent || '').replace(/\s+/g, ' ').trim() : ''; }
+            function ensure() {
+                if (!current) { current = { title: '', major: false, items: [] }; sections.push(current); }
+                return current;
+            }
+
+            // Walk the relevant nodes in document order so headings, sub-headings and fields
+            // stay in the exact sequence the advisor/student sees on screen.
+            var selector = '.checklist-major-title, .checklist-section-title, .checklist-col-title,'
+                         + ' .question-block, .checkbox-item, textarea[name^="adv_note"]';
+            var nodes = stage.querySelectorAll(selector);
+
+            nodes.forEach(function (node) {
+                if (node.matches('.checklist-major-title')) {
+                    current = { title: txt(node), major: true, items: [] };
+                    sections.push(current);
+                } else if (node.matches('.checklist-section-title')) {
+                    var secTitle = txt(node);
+                    // The dedicated "Note to Student" section is surfaced at the top of the PDF,
+                    // so skip its heading in the body (don't add it to the section list).
+                    if (secTitle.toLowerCase() === 'note to student') {
+                        current = { title: secTitle, major: false, items: [], skip: true };
+                    } else {
+                        current = { title: secTitle, major: false, items: [] };
+                        sections.push(current);
+                    }
+                } else if (node.matches('.checklist-col-title')) {
+                    ensure().items.push({ label: txt(node), subheading: true });
+                } else if (node.matches('.question-block')) {
+                    var qLabel = node.querySelector('.question-label');
+                    var checked = node.querySelector('input:checked');
+                    var val = '—';
+                    if (checked) {
+                        var lbl = checked.closest('label');
+                        val = lbl ? txt(lbl) : (checked.value || 'Selected');
+                    }
+                    ensure().items.push({ label: txt(qLabel) || 'Question', value: val, radio: true });
+                } else if (node.matches('.checkbox-item')) {
+                    var input = node.querySelector('input');
+                    ensure().items.push({ label: txt(node), value: (input && input.checked) ? 'Yes' : 'No' });
+                } else if (node.matches('textarea')) {
+                    var noteVal = (node.value || '').trim();
+                    if (node.name === 'adv_note_to_student') {
+                        // Dedicated "Note to Student" → highlighted callout at the very top.
+                        noteToStudent = noteVal;
+                    } else if (noteVal) {
+                        // Other advisor notes stay inline, highlighted, below their section.
+                        ensure().items.push({ label: 'Advisor note', value: noteVal, note: true });
+                    }
+                }
+            });
+
+            return { sections: sections, noteToStudent: noteToStudent };
+        }
+
+        async function downloadChecklistPdf(btn) {
+            var original = btn ? btn.innerHTML : '';
+            try {
+                if (btn) { btn.disabled = true; btn.style.opacity = '0.6'; btn.innerHTML = '<span>Preparing…</span>'; }
+
+                var collected = collectChecklistSections();
+                var payload = {
+                    title: 'Advisor Assessment — Document Checklist',
+                    sections: collected.sections,
+                    noteToStudent: collected.noteToStudent
+                };
+
+                var url = FormConfig.apiUrl + '/form-data/' + encodeURIComponent(FormContext.formInstanceId) + '/checklist-pdf';
+                var response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    var msg = 'Failed to generate PDF (' + response.status + ').';
+                    try { var err = await response.json(); if (err && err.message) msg = err.message; } catch (e) {}
+                    throw new Error(msg);
+                }
+
+                var blob = await response.blob();
+                var objectUrl = URL.createObjectURL(blob);
+                var a = document.createElement('a');
+                a.href = objectUrl;
+                a.download = 'Advisor-Assessment-Checklist.pdf';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                setTimeout(function () { URL.revokeObjectURL(objectUrl); }, 4000);
+            } catch (e) {
+                console.error('Checklist PDF download failed:', e);
+                alert(e && e.message ? e.message : 'Could not download the checklist PDF. Please try again.');
+            } finally {
+                if (btn) { btn.disabled = false; btn.style.opacity = '1'; btn.innerHTML = original; }
+            }
+        }
+
         function unlockStage(stageNum) {
             unlockedStages.add(stageNum);
             const tab = document.querySelector(`.stage-tab[data-stage="${stageNum}"]`);
@@ -5496,7 +5619,7 @@
                 var fundValid = true;
                 fundItems.forEach(function(item) {
                     var i = item.getAttribute('data-fund-index');
-                    ['fund_amount_' + i, 'fund_owner_' + i, 'fund_type_' + i].forEach(function(name) {
+                    ['fund_amount_' + i, 'fund_bank_name_' + i, 'fund_account_number_' + i, 'fund_owner_' + i, 'fund_type_' + i].forEach(function(name) {
                         var f = document.querySelector('[name="' + name + '"]');
                         if (f && !f.value.trim()) { fundValid = false; f.classList.add('error'); }
                         else if (f) { f.classList.remove('error'); }
@@ -5513,7 +5636,7 @@
                     }
                 });
                 if (!fundValid) {
-                    alert('Please complete all required fields for each fund: amount, owner, type of funds, and at least one source of funds.');
+                    alert('Please complete all required fields for each fund: amount, bank name, account number, owner, type of funds, and at least one source of funds.');
                     return;
                 }
 
@@ -5903,6 +6026,10 @@
                 '</div>' +
                 '<div class="form-group"><label class="question-label mandatory">Amount</label>' +
                     '<input type="text" name="fund_amount_' + idx + '" inputmode="numeric" maxlength="20" placeholder="e.g. 25000"></div>' +
+                '<div class="form-group"><label class="question-label mandatory">Bank Name</label>' +
+                    '<input type="text" name="fund_bank_name_' + idx + '" maxlength="100" placeholder="e.g. Bank of Ceylon"></div>' +
+                '<div class="form-group"><label class="question-label mandatory">Account Number</label>' +
+                    '<input type="text" name="fund_account_number_' + idx + '" maxlength="50" placeholder="Account number"></div>' +
                 '<div class="form-group"><label class="question-label mandatory">Owner of the funds</label>' +
                     '<select name="fund_owner_' + idx + '" data-fund-index="' + idx + '" onchange="updateFundUploads(' + idx + ')">' +
                         '<option value="">-- Select --</option>' +
@@ -5914,8 +6041,6 @@
                     '<select name="fund_type_' + idx + '" data-fund-index="' + idx + '" onchange="updateFundUploads(' + idx + ')">' +
                         '<option value="">-- Select --</option>' +
                         '<option value="savings">Savings in bank account</option>' +
-                        '<option value="provident">Provident fund that can be withdrawn</option>' +
-                        '<option value="loan">Education loan</option>' +
                         '<option value="fixed_deposit">Fixed term deposits</option>' +
                     '</select></div>' +
                 '<div class="fund-upload-block" id="fundSavingsUploads_' + idx + '" style="display:none;margin:10px 0;padding:14px;background:#f0f7ff;border-radius:6px;">' +
@@ -5945,9 +6070,11 @@
                         '<label class="checkbox-item"><input type="checkbox" name="fund_src_rental_' + idx + '" value="yes"> Income from rental property ownership</label>' +
                         '<label class="checkbox-item"><input type="checkbox" name="fund_src_other_' + idx + '" value="yes" onchange="toggleFundSourceOther(' + idx + ')"> Other sources</label>' +
                     '</div>' +
-                    '<div id="fundSourceOtherWrap_' + idx + '" style="display:none;margin-top:10px;">' +
+                    '<div id="fundSourceOtherWrap_' + idx + '" class="question-block" style="display:none;margin-top:10px;margin-bottom:0;">' +
                         '<label class="question-label">Please describe the other sources of funds</label>' +
-                        '<textarea name="fund_source_other_' + idx + '" maxlength="1000" placeholder="Limited to 1000 characters."></textarea>' +
+                        '<div class="form-group" style="margin-bottom:0;">' +
+                            '<textarea name="fund_source_other_' + idx + '" maxlength="1000" placeholder="Limited to 1000 characters."></textarea>' +
+                        '</div>' +
                     '</div>' +
                 '</div>' +
             '</div>';
@@ -5991,7 +6118,7 @@
             // Re-apply saved values to the dynamically created fund fields
             if (data) {
                 Object.keys(data).forEach(function(k) {
-                    if (!/^(fund_amount_|fund_owner_|fund_type_|fund_src_|fund_source_other_)/.test(k)) return;
+                    if (!/^(fund_amount_|fund_bank_name_|fund_account_number_|fund_owner_|fund_type_|fund_src_|fund_source_other_)/.test(k)) return;
                     var el = document.querySelector('[name="' + k + '"]');
                     if (!el || el.type === 'file') return;
                     if (el.type === 'checkbox') {
