@@ -1310,14 +1310,18 @@ function restoreUploadedDocuments(documents) {
         var inputs = document.querySelectorAll('.doc-file-input[data-field-name="' + fieldName + '"]');
         if (inputs.length === 0) return;
  
-        // Find the first input that doesn't already show an upload
+        // Find the first slot that isn't already showing a restored/uploaded file.
         var targetInput = null;
         for (var i = 0; i < inputs.length; i++) {
             var area = inputs[i].closest('.upload-area');
             var status = area ? area.querySelector('.upload-status') : null;
             if (status && status.style.display !== 'block') { targetInput = inputs[i]; break; }
         }
-        if (!targetInput) targetInput = inputs[0];
+        // No free slot left: for multi-file fields, create an extra slot so EACH saved file gets its
+        // own row (mirrors the user clicking "+ Add another file"). Without this, a field with several
+        // saved files collapses into the single static slot and only one file shows on reload — even
+        // though all exist in SharePoint. Non-multi fields (one file) reuse the first slot as before.
+        if (!targetInput) targetInput = _createRestoreSlot(fieldName) || inputs[0];
  
         var uploadArea = targetInput.closest('.upload-area');
         var statusDiv = uploadArea ? uploadArea.querySelector('.upload-status') : null;
@@ -1334,6 +1338,31 @@ function restoreUploadedDocuments(documents) {
     });
  
     console.log('Restored', documents.length, 'uploaded document indicators.');
+}
+
+/**
+ * Creates an extra upload slot for a MULTI-file field during restore and returns its <input>,
+ * so multiple saved files for the same field each get their own row on reload. Reuses the same
+ * mechanism as "+ Add another file". Returns null if the field is not a multi-file field with an
+ * "Add another file" control (single-file fields, or fields without the button — e.g. fund slots),
+ * in which case the caller falls back to the first existing slot.
+ */
+function _createRestoreSlot(fieldName) {
+    var config = findDocConfig(fieldName);
+    if (!config || !config.multi) return null;
+
+    var btn = document.querySelector('.btn-add-another[data-field="' + fieldName + '"]');
+    if (!btn) return null;
+
+    _uploadCounter++;
+    btn.insertAdjacentHTML('beforebegin', createUploadItemHtml(fieldName, config, _uploadCounter));
+
+    var newItem = document.getElementById('upload_' + fieldName + '_' + _uploadCounter);
+    if (!newItem) return null;
+
+    var input = newItem.querySelector('.doc-file-input');
+    if (input) input.addEventListener('change', handleFileSelect);
+    return input;
 }
 
 /**
