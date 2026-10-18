@@ -175,10 +175,11 @@ function applyRoleBasedRendering(stageOrder, navigateToStageFn, unlockStageFn) {
 
     console.log('Applying role-based rendering. Role:', role, 'Status:', status);
 
-    // Title reflects the mode: admin sees only the checklist; the student sees the full application.
+    // Title reflects the mode. Each form may override the defaults via FormConfig.adminTitle /
+    // FormConfig.userTitle (e.g. the Partner Visa form); the student-visa defaults are kept otherwise.
     _setFormTitle(role === 'admin'
-        ? 'Student Visa Checklist'
-        : 'Student Visa Checklist and Application');
+        ? (FormConfig.adminTitle || 'Student Visa Checklist')
+        : (FormConfig.userTitle || 'Student Visa Checklist and Application'));
 
     if (role === 'admin') {
         // ADMIN: Show only admin stage (stage 0), editable. Hide everything else.
@@ -1376,7 +1377,17 @@ function findDocConfig(fieldName) {
     // Check conditional (doc_ prefix maps to adv_ prefix)
     var adminField = fieldName.replace('doc_', 'adv_');
     if (CONDITIONAL_DOC_CONFIG[adminField]) return CONDITIONAL_DOC_CONFIG[adminField];
+    // Form-provided extra doc configs (keyed by actual field name) — e.g. the Partner Visa form.
+    // Backward-compatible: the student form never sets FormConfig.extraDocConfigs.
+    if (FormConfig.extraDocConfigs && FormConfig.extraDocConfigs[fieldName]) {
+        return FormConfig.extraDocConfigs[fieldName];
+    }
     return null;
+}
+
+/** True if at least one file has been uploaded (and tracked) for the given doc field. */
+function isDocUploaded(fieldName) {
+    return !!(_uploadedDocs[fieldName] && _uploadedDocs[fieldName].length > 0);
 }
 
 /**
@@ -1741,6 +1752,7 @@ window.FormUtils = {
     validateDocumentUploads: validateDocumentUploads, resetAdminCheckboxes: resetAdminCheckboxes, setupCollapsibleSections: setupCollapsibleSections,
     restoreUploadedDocuments: restoreUploadedDocuments, saveToApi: saveToApi, setupTextareaValidation: setupTextareaValidation,
     setupDateValidation: setupDateValidation, handleFileSelect: handleFileSelect,
+    findDocConfig: findDocConfig, isDocUploaded: isDocUploaded,
     FormConfig: FormConfig, FormContext: FormContext,
 };
 
