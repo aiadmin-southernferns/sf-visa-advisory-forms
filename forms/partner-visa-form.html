@@ -1476,42 +1476,11 @@
                             <div class="repeater-container" id="citizenshipRepeater">
                                 <div class="repeater-item" data-index="0">
                                     <div class="question-block"><label class="question-label mandatory">Country of other citizenship</label><div class="autocomplete-wrapper"><input type="text" name="citizen_country_0" placeholder="Start typing and select a country from the list..." autocomplete="off"><div class="autocomplete-list" id="citizenCountryList_0"></div></div></div>
-                                    <div class="question-block"><label class="question-label mandatory">Have you provided us with a police certificate from this country in a previous New Zealand visa application?</label><div class="radio-group" style="margin-top:8px;"><div class="radio-item"><input type="radio" name="citizen_police_cert_0" value="yes" onchange="updateCitizenCertVisibility(0)"><label>Yes</label></div><div class="radio-item"><input type="radio" name="citizen_police_cert_0" value="no" onchange="updateCitizenCertVisibility(0)"><label>No</label></div></div></div>
-                                    <div class="conditional-group" id="citizenCert36_0" style="display:none;"><div class="question-block"><label class="question-label mandatory">Was this police certificate issued within the last 36 months?</label><div class="radio-group" style="margin-top:8px;"><div class="radio-item"><input type="radio" name="citizen_cert_36_0" value="yes" onchange="updateCitizenCertUpload(0)"><label>Yes</label></div><div class="radio-item"><input type="radio" name="citizen_cert_36_0" value="no" onchange="updateCitizenCertUpload(0)"><label>No</label></div></div></div></div>
-                                    <div id="citizenCertUpload_0" style="display:none;"></div>
                                     <div class="question-block"><label class="question-label mandatory">Do you hold a passport in this citizenship?</label><div class="radio-group" style="margin-top:8px;"><div class="radio-item"><input type="radio" name="citizen_passport_0" value="yes" onchange="updateCitizenPassport(0)"><label>Yes</label></div><div class="radio-item"><input type="radio" name="citizen_passport_0" value="no" onchange="updateCitizenPassport(0)"><label>No</label></div></div></div>
                                     <div id="citizenPassportDetails_0" style="display:none;"></div>
                                 </div>
                             </div>
                             <button type="button" class="add-btn" onclick="addCitizenshipEntry()">+ ADD ANOTHER COUNTRY OF CITIZENSHIP</button>
-                        </div>
-                    </div>
-
-                    <!-- ====== SECTION: Police Certificates from Other Countries ====== -->
-                    <div class="form-card">
-                        <h3>Police certificates from other countries you have lived in</h3>
-
-                        <div class="question-block" data-required="true">
-                            <label class="question-label mandatory">Have you lived in any country for 5 years or more since the age of 17?</label>
-                            <p class="help-text">This includes combined periods spent in a country which together add up to 5 years or more. You do not need to include your citizenship countries.</p>
-                            <div class="radio-group" id="s4Lived5YrsRadio" style="margin-top:8px;">
-                                <div class="radio-item"><input type="radio" id="lived5YrsYes" name="lived_5_years" value="yes"><label for="lived5YrsYes">Yes</label></div>
-                                <div class="radio-item"><input type="radio" id="lived5YrsNo" name="lived_5_years" value="no"><label for="lived5YrsNo">No</label></div>
-                            </div>
-                            <div class="field-error-msg" id="lived5YrsError">Please select an option</div>
-                        </div>
-
-                        <div class="conditional-group" id="lived5YrsFields">
-                            <p style="font-weight:600; margin-bottom:15px; color:var(--primary-color);">Provide details about these countries</p>
-                            <div class="repeater-container" id="livedCountryRepeater">
-                                <div class="repeater-item" data-index="0">
-                                    <div class="question-block"><label class="question-label mandatory">Country or territory</label><div class="autocomplete-wrapper"><input type="text" name="lived_country_0" placeholder="Start typing and select a country from the list..." autocomplete="off"><div class="autocomplete-list" id="livedCountryList_0"></div></div></div>
-                                    <div class="question-block"><label class="question-label mandatory">Have you provided us with a police certificate from this country in a previous New Zealand visa application?</label><div class="radio-group" style="margin-top:8px;"><div class="radio-item"><input type="radio" name="lived_police_cert_0" value="yes" onchange="updateLivedCertVisibility(0)"><label>Yes</label></div><div class="radio-item"><input type="radio" name="lived_police_cert_0" value="no" onchange="updateLivedCertVisibility(0)"><label>No</label></div></div></div>
-                                    <div class="conditional-group" id="livedCert36_0" style="display:none;"><div class="question-block"><label class="question-label mandatory">Was this police certificate issued within the last 36 months?</label><div class="radio-group" style="margin-top:8px;"><div class="radio-item"><input type="radio" name="lived_cert_36_0" value="yes" onchange="updateLivedCertUpload(0)"><label>Yes</label></div><div class="radio-item"><input type="radio" name="lived_cert_36_0" value="no" onchange="updateLivedCertUpload(0)"><label>No</label></div></div></div></div>
-                                    <div id="livedCertUpload_0" style="display:none;"></div>
-                                </div>
-                            </div>
-                            <button type="button" class="add-btn" onclick="addLivedCountryEntry()">+ ADD ANOTHER COUNTRY OR TERRITORY</button>
                         </div>
                     </div>
 
@@ -1621,15 +1590,6 @@
                         <h3>Medical examinations</h3>
 
                         <div class="question-block" data-required="true">
-                            <label class="question-label mandatory">Have you had a medical examination for a previous New Zealand visa application?</label>
-                            <div class="radio-group" id="s5PrevMedRadio" style="margin-top:8px;">
-                                <div class="radio-item"><input type="radio" id="prevMedYes" name="prev_medical_exam" value="yes"><label for="prevMedYes">Yes</label></div>
-                                <div class="radio-item"><input type="radio" id="prevMedNo" name="prev_medical_exam" value="no"><label for="prevMedNo">No</label></div>
-                            </div>
-                            <div class="field-error-msg" id="prevMedError">Please select an option</div>
-                        </div>
-
-                        <div class="question-block" data-required="true">
                             <label class="question-label mandatory">Have you already had a medical examination for this visa application?</label>
                             <div class="radio-group" id="s5ThisMedRadio" style="margin-top:8px;">
                                 <div class="radio-item"><input type="radio" id="thisMedYes" name="this_medical_exam" value="yes"><label for="thisMedYes">Yes</label></div>
@@ -1638,7 +1598,7 @@
                             <div class="field-error-msg" id="thisMedError">Please select an option</div>
                         </div>
 
-                        <!-- Shows when prev_medical=yes OR this_medical=yes -->
+                        <!-- Shows when this_medical=yes -->
                         <div class="conditional-group" id="eMedicalRefWrapper">
                             <div class="question-block">
                                 <label class="question-label" style="font-weight:600;">Enter the eMedical reference number (NZER) or INZ health case reference number (NZHR) for your most recent medical examination.</label>
@@ -1647,33 +1607,6 @@
                                 <div class="form-group" style="margin-bottom:0;">
                                     <input type="text" name="emedical_ref" id="emedicalRef" placeholder="e.g. N123456789">
                                 </div>
-                            </div>
-                        </div>
-
-                        <!-- Shows when prev_medical=yes (regardless of this_medical) -->
-                        <div class="conditional-group" id="prevMedFollowUp">
-                            <div class="question-block" data-required="true" data-conditional-required="prevMedFollowUp">
-                                <label class="question-label mandatory">Did your most recent medical examination include a chest X-ray that was taken within the last 36 months?</label>
-                                <div class="radio-group" id="s5ChestXrayRadio" style="margin-top:8px;">
-                                    <div class="radio-item"><input type="radio" id="chestXrayYes" name="chest_xray_36" value="yes"><label for="chestXrayYes">Yes</label></div>
-                                    <div class="radio-item"><input type="radio" id="chestXrayNo" name="chest_xray_36" value="no"><label for="chestXrayNo">No</label></div>
-                                </div>
-                                <div class="field-error-msg" id="chestXrayError">Please select an option</div>
-                            </div>
-
-                            <div class="question-block" data-required="true" data-conditional-required="prevMedFollowUp">
-                                <label class="question-label mandatory">Has your health deteriorated since this medical examination?</label>
-                                <div class="radio-group" id="s5DeterioratedRadio" style="margin-top:8px;">
-                                    <div class="radio-item"><input type="radio" id="deterioratedYes" name="health_deteriorated" value="yes"><label for="deterioratedYes">Yes</label></div>
-                                    <div class="radio-item"><input type="radio" id="deterioratedNo" name="health_deteriorated" value="no"><label for="deterioratedNo">No</label></div>
-                                </div>
-                                <div class="field-error-msg" id="deterioratedError">Please select an option</div>
-                            </div>
-
-                            <!-- CONDITIONAL: health_deteriorated = Yes -->
-                            <div class="conditional-group" id="deterioratedFields">
-                                <div class="question-block"><label class="question-label mandatory">Provide details of how your health has changed</label><div class="form-group" style="margin-bottom:0;"><textarea name="health_deteriorated_details" maxlength="1000"></textarea><span class="error-message">This is a required field</span></div></div>
-                                <p class="help-text">Please upload evidence about the change to your health on the supporting documents page.</p>
                             </div>
                         </div>
                     </div>
@@ -1763,6 +1696,7 @@
                             <div class="radio-group" id="s7CurrentWorkRadio" style="margin-top:8px;">
                                 <div class="radio-item"><input type="radio" id="currentWorkYes" name="currently_working" value="yes"><label for="currentWorkYes">Yes</label></div>
                                 <div class="radio-item"><input type="radio" id="currentWorkNo" name="currently_working" value="no"><label for="currentWorkNo">No</label></div>
+                                <div class="radio-item"><input type="radio" id="currentWorkRetired" name="currently_working" value="retired"><label for="currentWorkRetired">Retired</label></div>
                             </div>
                             <div class="field-error-msg" id="currentWorkError">Please select an option</div>
                         </div>
@@ -2077,25 +2011,6 @@
                         </div>
                     </div>
 
-                    <!-- Political associations -->
-                    <div class="form-card">
-                        <h3>Political associations</h3>
-                        <div class="question-block" data-required="true"><label class="question-label mandatory">Have you ever supported, been a member of, or otherwise been associated with any political party, group or organisation in any country?</label><div class="radio-group" id="s9PolAssocRadio" style="margin-top:8px;"><div class="radio-item"><input type="radio" id="polAssocYes" name="political_association" value="yes"><label for="polAssocYes">Yes</label></div><div class="radio-item"><input type="radio" id="polAssocNo" name="political_association" value="no"><label for="polAssocNo">No</label></div></div><div class="field-error-msg" id="polAssocError">Please select an option</div></div>
-                        <div class="conditional-group" id="polAssocFields">
-                            <p style="font-weight:600;margin-bottom:20px;color:var(--primary-color);">Provide details of your political associations</p>
-                            <div class="repeater-container" id="polAssocRepeater">
-                                <div class="repeater-item" data-index="0">
-                                    <div class="question-block"><label class="question-label mandatory">Start date of association</label><p class="help-text">Enter month and year</p><div class="monthyear-wrapper"><input type="month" name="polassoc_start_0"></div></div>
-                                    <div class="question-block"><label class="question-label">End date of association</label><p class="help-text">Enter month and year</p><div class="monthyear-wrapper"><input type="month" name="polassoc_end_0"></div></div>
-                                    <div class="question-block"><label class="question-label mandatory">Name of party, group or organisation</label><div class="form-group" style="margin-bottom:0;"><input type="text" name="polassoc_name_0"></div></div>
-                                    <div class="question-block"><label class="question-label mandatory">Country or territory</label><div class="autocomplete-wrapper"><input type="text" id="polassoc_country_0" name="polassoc_country_0" placeholder="Start typing and select a country from the list..." autocomplete="off"><div class="autocomplete-list" id="polassocCountryList_0"></div></div></div>
-                                    <div class="question-block"><label class="question-label">Your rank or position</label><div class="form-group" style="margin-bottom:0;"><input type="text" name="polassoc_rank_0"></div></div>
-                                    <div class="question-block" style="margin-bottom:0;"><label class="question-label">Description of your duties</label><div class="form-group" style="margin-bottom:0;"><textarea name="polassoc_duties_0" maxlength="1000"></textarea></div></div>
-                                </div>
-                            </div>
-                            <button type="button" class="add-btn" onclick="addPolAssocEntry()">+ ADD ANOTHER POLITICAL ASSOCIATION</button>
-                        </div>
-                    </div>
 
                     <!-- Other associations -->
                     <div class="form-card">
@@ -2474,15 +2389,15 @@
                     <div class="declaration-item">
                         <label class="declaration-label">
                             <input type="checkbox" name="decl_visa_conditions" required>
-                            <span>I understand that if I am granted a student visa, I must <strong>comply with all conditions</strong> of that visa, including any conditions relating to study, work, and duration of stay in New Zealand.</span>
+                            <span>I understand that if I am granted a visa, I must <strong>comply with all conditions</strong> of that visa, including any conditions relating to work and duration of stay in New Zealand.</span>
                         </label>
                     </div>
 
-                    <!-- Declaration 5: Study obligations -->
+                    <!-- Declaration 5: Partnership obligations -->
                     <div class="declaration-item">
                         <label class="declaration-label">
-                            <input type="checkbox" name="decl_study_obligations" required>
-                            <span>I understand that as the holder of a student visa, I am required to <strong>maintain enrolment</strong> at my education provider and maintain satisfactory attendance and academic progress. I must notify Immigration New Zealand if I change education providers, courses, or cease study.</span>
+                            <input type="checkbox" name="decl_partnership_obligations" required>
+                            <span>I understand that this visa is granted on the basis of my <strong>genuine and stable partnership</strong> with my supporting partner. I must notify Immigration New Zealand if my relationship circumstances change, including if my partnership ends or my partner's visa status changes.</span>
                         </label>
                     </div>
 
@@ -2490,7 +2405,7 @@
                     <div class="declaration-item">
                         <label class="declaration-label">
                             <input type="checkbox" name="decl_financial" required>
-                            <span>I declare that I have <strong>sufficient funds</strong> available to cover my tuition fees, living costs, and return travel for the duration of my intended stay in New Zealand, as outlined in the financial evidence provided with this application.</span>
+                            <span>I declare that I have <strong>sufficient funds</strong> available to support myself for the duration of my intended stay in New Zealand, as outlined in the financial evidence provided with this application.</span>
                         </label>
                     </div>
 
@@ -2682,6 +2597,8 @@
         var PV_DOC_SECTIONS = [
             { containerId: 'pvDocs1', items: [
                 { kind: 'yesno', name: 'docs_in_english', q: 'Are all the documents you intend to upload in English?' },
+                { kind: 'section', title: 'Identity evidence' },
+                { kind: 'upload', field: 'doc_photo', label: 'Recent passport-style photograph', multi: false, required: true, accept: '.jpg,.jpeg,.png' },
                 { kind: 'upload', field: 'doc_additional_passport', label: 'Additional passport or travel document pages (optional)', multi: true, required: false },
                 { kind: 'yesnoReveal', name: 'living_diff_country', q: 'Are you living in a country that is not your country of citizenship?', reveal: { kind: 'country', name: 'living_country', label: 'What country are you living in?' } },
                 { kind: 'section', title: 'Provide evidence that your partnership is genuine and stable' },
@@ -2825,6 +2742,14 @@
             }
 
             FormUtils.setupTextareaValidation();
+        }
+
+        function pvValidateSupportingDocs1() {
+            if (!FormUtils.isDocUploaded('doc_photo')) {
+                alert('Please upload the following required documents before continuing:\n\n• Recent passport-style photograph');
+                return false;
+            }
+            return true;
         }
 
         function pvValidateSupportingDocs2() {
@@ -3077,7 +3002,6 @@
             // ===== STAGE 9 CONDITIONALS =====
             setupRadioConditional('cultural_position', { 'yes': ['culturalFields'], 'no': [] });
             setupRadioConditional('political_appointment', { 'yes': ['polApptFields'], 'no': [] });
-            setupRadioConditional('political_association', { 'yes': ['polAssocFields'], 'no': [] });
             setupRadioConditional('intelligence_assoc', { 'yes': ['intelFields'], 'no': [] });
             setupRadioConditional('ill_treatment', { 'yes': ['illtreatFields'], 'no': [] });
             setupRadioConditional('armed_conflict', { 'yes': ['armedFields'], 'no': [] });
@@ -3207,23 +3131,19 @@
             setupRadioConditional('under_investigation', { 'yes': ['investigationFields'], 'no': [] });
             setupRadioConditional('deported', { 'yes': ['deportedFields'], 'no': [] });
             setupRadioConditional('visa_refused', { 'yes': ['refusedFields'], 'no': [] });
-            setupRadioConditional('police_cert_passport', { 'yes': ['policeCert36Wrapper'], 'no': [] });
-            setupRadioConditional('police_cert_english', { 'yes': [], 'no': ['policeCertTranslation'] });
             setupRadioConditional('other_citizenships', { 'yes': ['otherCitizenFields'], 'no': [] });
-            setupRadioConditional('lived_5_years', { 'yes': ['lived5YrsFields'], 'no': [] });
 
             // ===== STAGE 5 CONDITIONALS =====
             setupRadioConditional('has_tb', { 'yes': ['tbFields'], 'no': [] });
             setupRadioConditional('renal_dialysis', { 'yes': ['dialysisFields'], 'no': [] });
             setupRadioConditional('hospital_care', { 'yes': ['hospitalFields'], 'no': [] });
             setupRadioConditional('residential_care', { 'yes': ['residentialFields'], 'no': [] });
-            setupRadioConditional('health_deteriorated', { 'yes': ['deterioratedFields'], 'no': [] });
 
             // ===== STAGE 6 CONDITIONALS =====
             setupRadioConditional('tertiary_education', { 'yes': ['tertiaryFields'], 'no': [] });
 
             // ===== STAGE 7 CONDITIONALS =====
-            setupRadioConditional('currently_working', { 'yes': ['currentWorkFields'], 'no': [] });
+            setupRadioConditional('currently_working', { 'yes': ['currentWorkFields'], 'no': [], 'retired': [] });
             // Employer type → Prison service details
             var empTypeSelect = document.getElementById('currentWorkEmployerType');
             if (empTypeSelect) {
@@ -3265,33 +3185,19 @@
                 });
             }
 
-            // Medical examinations: eMedical ref shows when prev=yes OR this=yes
-            // prevMedFollowUp (chest xray + deteriorated) shows when prev=yes
+            // Medical examinations: eMedical ref shows when this_medical=yes
             function updateMedicalExamVisibility() {
-                const prev = document.querySelector('input[name="prev_medical_exam"]:checked');
                 const curr = document.querySelector('input[name="this_medical_exam"]:checked');
                 const eMedEl = document.getElementById('eMedicalRefWrapper');
-                const prevFollowEl = document.getElementById('prevMedFollowUp');
-
-                const prevYes = prev && prev.value === 'yes';
-                const currYes = curr && curr.value === 'yes';
-
-                if (prevYes || currYes) {
+                if (!eMedEl) return;
+                if (curr && curr.value === 'yes') {
                     eMedEl.classList.add('visible');
                 } else {
                     eMedEl.classList.remove('visible');
                 }
-
-                if (prevYes) {
-                    prevFollowEl.classList.add('visible');
-                } else {
-                    prevFollowEl.classList.remove('visible');
-                }
             }
-            ['prev_medical_exam', 'this_medical_exam'].forEach(n => {
-                document.querySelectorAll(`input[name="${n}"]`).forEach(r => {
-                    r.addEventListener('change', updateMedicalExamVisibility);
-                });
+            document.querySelectorAll('input[name="this_medical_exam"]').forEach(r => {
+                r.addEventListener('change', updateMedicalExamVisibility);
             });
 
             // Further info: visible when any character question = yes
@@ -3393,81 +3299,73 @@
         /* ============================================
            CONDITIONAL LOGIC - VALUE BASED (DOB, Birth Country)
            ============================================ */
+        // Collects a sync fn for every value-conditional so we can re-run them once after
+        // restore. Restored (saved) values dispatch 'change', not 'countrySelected'/'input',
+        // so each value-conditional below ALSO listens for 'change' and is synced on load —
+        // otherwise a dependent section stays hidden after a reload and its required fields
+        // become unfillable, silently blocking Save & Continue navigation.
+        var _valueConditionalSyncs = [];
+        function _wireValueConditional(inputEl, syncFn, events) {
+            if (!inputEl) return;
+            (events || ['countrySelected', 'input', 'change']).forEach(function (ev) {
+                inputEl.addEventListener(ev, syncFn);
+            });
+            _valueConditionalSyncs.push(syncFn);
+        }
+
         function setupValueConditionals() {
             // Birth country populated → show state + town
-            const birthCountryInput = document.getElementById('birthCountry');
-            if (birthCountryInput) {
-                birthCountryInput.addEventListener('countrySelected', function() {
-                    toggleBirthLocationFields();
-                });
-                birthCountryInput.addEventListener('input', function() {
-                    toggleBirthLocationFields();
-                });
-            }
+            _wireValueConditional(document.getElementById('birthCountry'), toggleBirthLocationFields);
 
             // Nationality populated → show National Identity Details
-            const nationalityInput = document.getElementById('passportNationality');
-            if (nationalityInput) {
-                nationalityInput.addEventListener('countrySelected', function() {
-                    toggleNationalIdentitySection();
-                });
-                nationalityInput.addEventListener('input', function() {
-                    toggleNationalIdentitySection();
-                });
-            }
+            _wireValueConditional(document.getElementById('passportNationality'), toggleNationalIdentitySection);
 
             // Education provider populated → show "Where will you be studying?"
             const eduProviderInput = document.getElementById('eduProvider');
-            if (eduProviderInput) {
-                eduProviderInput.addEventListener('input', function() {
-                    const section = document.getElementById('studyLocationWrapper');
-                    if (this.value.trim()) {
-                        section.classList.add('visible');
-                    } else {
-                        section.classList.remove('visible');
-                    }
-                });
-            }
+            _wireValueConditional(eduProviderInput, function () {
+                const section = document.getElementById('studyLocationWrapper');
+                if (!section) return;
+                if (eduProviderInput.value.trim()) section.classList.add('visible');
+                else section.classList.remove('visible');
+            }, ['input', 'change']);
 
             // Study location populated → show "Does your course require another location?"
             const studyLocInput = document.getElementById('studyLocation');
-            if (studyLocInput) {
-                studyLocInput.addEventListener('input', function() {
-                    const section = document.getElementById('anotherLocationWrapper');
-                    if (this.value.trim()) {
-                        section.classList.add('visible');
-                    } else {
-                        section.classList.remove('visible');
-                    }
-                });
-            }
+            _wireValueConditional(studyLocInput, function () {
+                const section = document.getElementById('anotherLocationWrapper');
+                if (!section) return;
+                if (studyLocInput.value.trim()) section.classList.add('visible');
+                else section.classList.remove('visible');
+            }, ['input', 'change']);
 
             // Stage 7: Current work country → show state
             const cwCountry = document.getElementById('currentWorkCountry');
-            if (cwCountry) {
-                cwCountry.addEventListener('countrySelected', function() {
-                    document.getElementById('currentWorkStateWrapper').classList.add('visible');
-                });
-                cwCountry.addEventListener('input', function() {
-                    if (this.value.trim() && COUNTRIES.includes(this.value.trim())) {
-                        document.getElementById('currentWorkStateWrapper').classList.add('visible');
-                    } else {
-                        document.getElementById('currentWorkStateWrapper').classList.remove('visible');
-                    }
-                });
-            }
+            _wireValueConditional(cwCountry, function () {
+                const wrap = document.getElementById('currentWorkStateWrapper');
+                if (!wrap) return;
+                const v = cwCountry.value.trim();
+                if (v && COUNTRIES.includes(v)) wrap.classList.add('visible');
+                else wrap.classList.remove('visible');
+            });
 
             // Stage 7: Previous work country → show state (for initial entry)
             setupPrevWorkCountryListener(0);
+
+            // Sync once after load so restored values reveal their dependent sections.
+            setTimeout(function () {
+                _valueConditionalSyncs.forEach(function (fn) {
+                    try { fn(); } catch (e) {}
+                });
+            }, 300);
         }
 
         function setupPrevWorkCountryListener(idx) {
             const input = document.getElementById(`prev_work_country_${idx}`);
             const stateEl = document.getElementById(`prevWorkState_${idx}`);
             if (input && stateEl) {
-                input.addEventListener('countrySelected', function() { stateEl.style.display = 'block'; });
-                input.addEventListener('input', function() {
-                    stateEl.style.display = (this.value.trim() && COUNTRIES.includes(this.value.trim())) ? 'block' : 'none';
+                _wireValueConditional(input, function () {
+                    const v = input.value.trim();
+                    stateEl.style.display = (v && COUNTRIES.includes(v)) ? 'block' : 'none';
                 });
             }
         }
@@ -3620,10 +3518,13 @@
                 }
             });
 
-            // 4. Birth location fields (conditional on country being selected)
+            // 4. Birth location fields (conditional on country being selected).
+            // Only require them when the section is actually visible — otherwise a value that
+            // never revealed the fields would make them required-but-unfillable and block nav.
             if (subsectionName === 'passport') {
                 const birthCountryVal = document.getElementById('birthCountry')?.value?.trim();
-                if (birthCountryVal && COUNTRIES.includes(birthCountryVal)) {
+                const birthLocationVisible = document.getElementById('birthLocationFields')?.classList.contains('visible');
+                if (birthCountryVal && COUNTRIES.includes(birthCountryVal) && birthLocationVisible) {
                     const birthState = document.getElementById('birthState');
                     const birthCity = document.getElementById('birthCity');
                     if (birthState && !birthState.value.trim()) {
@@ -3645,12 +3546,6 @@
 
             if (firstErrorEl) {
                 firstErrorEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
-
-            if (!isValid) {
-                console.warn('[PV-DEBUG] validateSubSection FAILED for "' + subsectionName + '". First error:',
-                    firstErrorEl ? (firstErrorEl.name || firstErrorEl.id || firstErrorEl.className || firstErrorEl.tagName) : '(none)',
-                    firstErrorEl);
             }
 
             return isValid;
@@ -3847,15 +3742,8 @@
             valR('deported', 'deportedError');
             valR('visa_refused', 'refusedError');
 
-            // Police certificates
-            valR('police_cert_passport', 'policeCertError');
-            valR('police_cert_36', 'policeCert36Error');
-
             // Other citizenships
             valR('other_citizenships', 'otherCitizenError');
-
-            // Lived 5 years
-            valR('lived_5_years', 'lived5YrsError');
 
             if (firstErrorEl) {
                 firstErrorEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -3911,10 +3799,7 @@
             valR('hospital_care', 'hospitalError');
             valR('residential_care', 'residentialError');
             valF('lengthOfStay');
-            valR('prev_medical_exam', 'prevMedError');
             valR('this_medical_exam', 'thisMedError');
-            valR('chest_xray_36', 'chestXrayError');
-            valR('health_deteriorated', 'deterioratedError');
 
             if (firstErrorEl) {
                 firstErrorEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -4068,7 +3953,6 @@
             }
             valR('cultural_position', 'culturalError');
             valR('political_appointment', 'polApptError');
-            valR('political_association', 'polAssocError');
             valR('intelligence_assoc', 'intelError');
             valR('ill_treatment', 'illtreatError');
             valR('armed_conflict', 'armedError');
@@ -4167,10 +4051,13 @@
             if (overlay) overlay.classList.remove('active');
 
             if (currentStage === 1) {
-                // Validate ALL sub-sections for stage 1
+                // Validate ALL sub-sections for stage 1 — the Identity tab has three sub-tabs, so a blank
+                // required field on a sub-tab you haven't opened will block navigation. Make it obvious.
+                var subLabels = { identity: 'Identity', immigration: 'NZ immigration history', passport: 'Passport and birth details' };
                 for (const sub of subSectionOrder) {
                     if (!validateSubSection(sub)) {
                         showSubSection(sub);
+                        alert('Please complete all required fields before continuing.\n\nCheck the highlighted field in the "' + (subLabels[sub] || sub) + '" section.');
                         return;
                     }
                 }
@@ -4238,7 +4125,8 @@
                     navigateToStage(STAGE_ORDER[idx9 + 1]);
                 }
             } else if (currentStage === 11) {
-                // Supporting documents (1): all items are optional ("if applicable") — nothing required here.
+                // Supporting documents (1): a passport-style photograph is required; other items are optional.
+                if (!pvValidateSupportingDocs1()) return;
                 FormUtils.saveDraft(FORM_CODE, form);
                 markStageCompleted(11);
                 var idx = STAGE_ORDER.indexOf(11);
@@ -4651,9 +4539,6 @@
             item.dataset.index = index;
             item.innerHTML = `<button type="button" class="remove-btn" onclick="this.closest('.repeater-item').remove()">✕ Remove</button>
                 <div class="question-block"><label class="question-label mandatory">Country of other citizenship</label><div class="autocomplete-wrapper"><input type="text" name="citizen_country_${index}" placeholder="Start typing and select a country from the list..." autocomplete="off"><div class="autocomplete-list" id="citizenCountryList_${index}"></div></div></div>
-                <div class="question-block"><label class="question-label mandatory">Have you provided us with a police certificate from this country in a previous New Zealand visa application?</label><div class="radio-group" style="margin-top:8px;"><div class="radio-item"><input type="radio" name="citizen_police_cert_${index}" value="yes" onchange="updateCitizenCertVisibility(${index})"><label>Yes</label></div><div class="radio-item"><input type="radio" name="citizen_police_cert_${index}" value="no" onchange="updateCitizenCertVisibility(${index})"><label>No</label></div></div></div>
-                <div class="conditional-group" id="citizenCert36_${index}" style="display:none;"><div class="question-block"><label class="question-label mandatory">Was this police certificate issued within the last 36 months?</label><div class="radio-group" style="margin-top:8px;"><div class="radio-item"><input type="radio" name="citizen_cert_36_${index}" value="yes" onchange="updateCitizenCertUpload(${index})"><label>Yes</label></div><div class="radio-item"><input type="radio" name="citizen_cert_36_${index}" value="no" onchange="updateCitizenCertUpload(${index})"><label>No</label></div></div></div></div>
-                <div id="citizenCertUpload_${index}" style="display:none;"></div>
                 <div class="question-block"><label class="question-label mandatory">Do you hold a passport in this citizenship?</label><div class="radio-group" style="margin-top:8px;"><div class="radio-item"><input type="radio" name="citizen_passport_${index}" value="yes" onchange="updateCitizenPassport(${index})"><label>Yes</label></div><div class="radio-item"><input type="radio" name="citizen_passport_${index}" value="no" onchange="updateCitizenPassport(${index})"><label>No</label></div></div></div>
                 <div id="citizenPassportDetails_${index}" style="display:none;"></div>`;
             container.appendChild(item);
