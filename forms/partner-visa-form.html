@@ -876,69 +876,6 @@
                                         <input type="month" name="last_leave_nz" id="lastLeaveNZ">
                                     </div>
                                 </div>
-                                
-                                <!-- NZ Government Scholarship chain - shown when ever_travelled_nz = yes -->
-                                <div id="nzScholarshipSection">
-                                    <div class="question-block">
-                                        <label class="question-label">Do you currently hold, or in the past two years have you held, a visa to study, while supported by a New Zealand Government Scholarship?</label>
-                                        <div class="radio-group radio-inline">
-                                            <label class="radio-item"><input type="radio" name="nz_govt_scholarship_held" value="yes"> Yes</label>
-                                            <label class="radio-item"><input type="radio" name="nz_govt_scholarship_held" value="no"> No</label>
-                                        </div>
-                                    </div>
-
-                                    <!-- Q-B: shown when nz_govt_scholarship_held = yes -->
-                                    <div id="nzScholarshipQB" style="display:none;" class="question-block">
-                                        <label class="question-label">Was the scholarship a New Zealand Short Term Training Scholarship (NZSTTS) or a New Zealand English Language Training for Officials (NZELTO) scholarship?</label>
-                                        <div class="radio-group radio-inline">
-                                            <label class="radio-item"><input type="radio" name="nz_scholarship_nzstts" value="yes"> Yes</label>
-                                            <label class="radio-item"><input type="radio" name="nz_scholarship_nzstts" value="no"> No</label>
-                                        </div>
-                                    </div>
-
-                                    <!-- Q-C: shown when nz_scholarship_nzstts = yes -->
-                                    <div id="nzScholarshipQC" style="display:none;" class="question-block">
-                                        <label class="question-label">Was the course 12 months or less in duration?</label>
-                                        <div class="radio-group radio-inline">
-                                            <label class="radio-item"><input type="radio" name="nz_scholarship_12months" value="yes"> Yes</label>
-                                            <label class="radio-item"><input type="radio" name="nz_scholarship_12months" value="no"> No</label>
-                                        </div>
-                                    </div>
-
-                                    <!-- Q-D: shown when nz_scholarship_12months = yes -->
-                                    <div id="nzScholarshipQD" style="display:none;" class="question-block">
-                                        <label class="question-label">Did the visa expire one year or more ago? Answer No if it is still current.</label>
-                                        <div class="radio-group radio-inline">
-                                            <label class="radio-item"><input type="radio" name="nz_scholarship_expired_1yr" value="yes"> Yes</label>
-                                            <label class="radio-item"><input type="radio" name="nz_scholarship_expired_1yr" value="no"> No</label>
-                                        </div>
-                                    </div>
-
-                                    <!-- Q-F: shown when nz_scholarship_nzstts = no OR nz_scholarship_12months = no -->
-                                    <div id="nzScholarshipQF" style="display:none;" class="question-block">
-                                        <label class="question-label">Did the visa expire two years or more ago? Answer No if it is still current.</label>
-                                        <div class="radio-group radio-inline">
-                                            <label class="radio-item"><input type="radio" name="nz_scholarship_expired_2yr" value="yes"> Yes</label>
-                                            <label class="radio-item"><input type="radio" name="nz_scholarship_expired_2yr" value="no"> No</label>
-                                        </div>
-                                    </div>
-
-                                    <!-- Q-E: shown when Q-D=no OR Q-F=no -->
-                                    <div id="nzScholarshipQE" style="display:none;" class="question-block">
-                                        <label class="question-label">Do you have written approval from the Ministry of Foreign Affairs and Trade (MFAT) to apply for this Student Visa?</label>
-                                        <div class="radio-group radio-inline">
-                                            <label class="radio-item"><input type="radio" name="nz_scholarship_mfat" value="yes"> Yes</label>
-                                            <label class="radio-item"><input type="radio" name="nz_scholarship_mfat" value="no"> No</label>
-                                        </div>
-                                    </div>
-
-                                    <!-- Q-G: shown when Q-E = no -->
-                                    <div id="nzScholarshipQG" style="display:none;" class="question-block">
-                                        <label class="question-label mandatory">If you did not complete your scholarship, explain what happened</label>
-                                        <p class="field-hint">Please provide a detailed explanation of why you did not complete your scholarship programme.</p>
-                                        <textarea name="nz_scholarship_explain" maxlength="1000" placeholder="Limited to 1000 characters." data-validate="required"></textarea>
-                                    </div>
-                                </div>
                             </div>
 
                             <!-- Q: Total time 24 months+ -->
@@ -963,43 +900,6 @@
                                     <div>
                                         <div class="alert-title">ALERT</div>
                                         <p style="margin:0; font-size: 0.92rem;">Your total time in New Zealand helps to determine if a police certificate is required for your visa, and may affect the length of any visa granted.</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- CONDITIONAL: Previously applied = Yes → Scholarship question -->
-                            <div class="conditional-group" id="scholarshipWrapper">
-                                <!-- Q: NZ Government Scholarship -->
-                                <div class="question-block" data-required="true" data-conditional-required="scholarshipWrapper">
-                                    <label class="question-label mandatory">Do you currently hold, or in the past two years have you held, a visa to study, while supported by a New Zealand Government Scholarship?</label>
-                                    <div class="radio-group" id="scholarshipRadioGroup" style="margin-top: 8px;">
-                                        <div class="radio-item">
-                                            <input type="radio" id="scholarshipYes" name="nz_govt_scholarship" value="yes">
-                                            <label for="scholarshipYes">Yes</label>
-                                        </div>
-                                        <div class="radio-item">
-                                            <input type="radio" id="scholarshipNo" name="nz_govt_scholarship" value="no">
-                                            <label for="scholarshipNo">No</label>
-                                        </div>
-                                    </div>
-                                    <div class="field-error-msg" id="scholarshipError">Please select an option</div>
-                                </div>
-
-                                <!-- CONDITIONAL: Scholarship = Yes -->
-                                <div class="conditional-group" id="scholarshipFields">
-                                    <div class="question-block" style="margin-bottom:0;">
-                                        <label class="question-label mandatory">Was the scholarship a New Zealand Short Term Training Scholarship (NZSTTS) or a New Zealand English Language Training for Officials (NZELTO) scholarship?</label>
-                                        <div class="radio-group" id="nzsttsRadioGroup" style="margin-top: 8px;">
-                                            <div class="radio-item">
-                                                <input type="radio" id="nzsttsYes" name="nzstts_nzelto" value="yes">
-                                                <label for="nzsttsYes">Yes</label>
-                                            </div>
-                                            <div class="radio-item">
-                                                <input type="radio" id="nzsttsNo" name="nzstts_nzelto" value="no">
-                                                <label for="nzsttsNo">No</label>
-                                            </div>
-                                        </div>
-                                        <div class="field-error-msg" id="nzsttsError">Please select an option</div>
                                     </div>
                                 </div>
                             </div>
@@ -3077,7 +2977,7 @@
                 'no': []
             });
             setupRadioConditional('previously_applied', {
-                'yes': ['prevAppliedFields', 'scholarshipWrapper'],
+                'yes': ['prevAppliedFields'],
                 'no': []
             });
             setupRadioConditional('previously_nzeta', {
