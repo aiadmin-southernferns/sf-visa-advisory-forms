@@ -851,6 +851,22 @@
                                 </div>
                             </div>
 
+                            <!-- Q: Australian Permanent Resident Visa -->
+                            <div class="question-block" data-required="true">
+                                <label class="question-label mandatory">Do you hold an Australian Permanent Resident Visa?</label>
+                                <div class="radio-group" id="ausPrRadioGroup" style="margin-top: 8px;">
+                                    <div class="radio-item">
+                                        <input type="radio" id="ausPrYes" name="australian_pr_visa" value="yes" required>
+                                        <label for="ausPrYes">Yes</label>
+                                    </div>
+                                    <div class="radio-item">
+                                        <input type="radio" id="ausPrNo" name="australian_pr_visa" value="no">
+                                        <label for="ausPrNo">No</label>
+                                    </div>
+                                </div>
+                                <div class="field-error-msg" id="ausPrError">Please select an option</div>
+                            </div>
+
                             <!-- Q: Ever travelled to NZ -->
                             <div class="question-block" data-required="true">
                                 <label class="question-label mandatory">Have you ever travelled to New Zealand?</label>
@@ -3629,6 +3645,12 @@
 
             if (firstErrorEl) {
                 firstErrorEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+
+            if (!isValid) {
+                console.warn('[PV-DEBUG] validateSubSection FAILED for "' + subsectionName + '". First error:',
+                    firstErrorEl ? (firstErrorEl.name || firstErrorEl.id || firstErrorEl.className || firstErrorEl.tagName) : '(none)',
+                    firstErrorEl);
             }
 
             return isValid;
