@@ -1484,7 +1484,7 @@
                             <p style="font-weight:600; margin-bottom:15px; color:var(--primary-color);">Provide details of all refusals</p>
                             <div class="repeater-container" id="refusalRepeater">
                                 <div class="repeater-item" data-index="0">
-                                    <div class="question-block"><label class="question-label mandatory">Country or territory</label><div class="form-group" style="margin-bottom:0;"><input type="text" name="refusal_country_0" placeholder="Start typing and select a country from the list..."></div></div>
+                                    <div class="question-block"><label class="question-label mandatory">Country or territory</label><div class="autocomplete-wrapper"><input type="text" id="refusal_country_0" name="refusal_country_0" placeholder="Start typing and select a country from the list..." autocomplete="off"><div class="autocomplete-list" id="refusalCountryList_0"></div></div></div>
                                     <div class="question-block"><label class="question-label mandatory">Visa or permit type</label><div class="form-group" style="margin-bottom:0;"><input type="text" name="refusal_visa_type_0"></div></div>
                                     <div class="question-block" style="margin-bottom:0;"><label class="question-label mandatory">Date of refusal</label><p class="help-text">Enter month and year</p><div class="date-picker-wrapper"><input type="month" name="refusal_date_0"></div></div>
                                 </div>
@@ -2180,7 +2180,9 @@
                     <!-- Explanation — shown when exempt=no -->
                     <div id="militaryExemptExplainSection" style="display:none;" class="question-block">
                         <label class="question-label mandatory">Provide details explaining how you avoided undertaking military service</label>
-                        <textarea name="military_exempt_explain" rows="5" maxlength="1000" placeholder="Provide a detailed explanation. Limited to 1000 characters."></textarea>
+                        <div class="form-group" style="margin-bottom:0;">
+                            <textarea name="military_exempt_explain" maxlength="1000" placeholder="Provide a detailed explanation. Limited to 1000 characters."></textarea>
+                        </div>
                     </div>
 
                     <!-- Military Service Details — shown when undertaken=yes -->
@@ -2210,8 +2212,7 @@
 
                                 <div class="form-group">
                                     <label class="question-label mandatory">Country or territory</label>
-                                    <input type="text" name="mil_country_0" id="mil_country_0" maxlength="200" list="milCountryList_0" autocomplete="off">
-                                    <datalist id="milCountryList_0"></datalist>
+                                    <div class="autocomplete-wrapper"><input type="text" name="mil_country_0" id="mil_country_0" maxlength="200" autocomplete="off" placeholder="Start typing and select a country from the list..."><div class="autocomplete-list" id="milCountryList_0"></div></div>
                                 </div>
 
                                 <div class="form-group" id="milStateWrapper_0" style="display:none;">
@@ -2313,8 +2314,7 @@
 
                                 <div class="form-group">
                                     <label class="question-label mandatory">Destination</label>
-                                    <input type="text" name="travel_dest_0" id="travel_dest_0" maxlength="200" list="travelDestList_0" autocomplete="off" placeholder="Start typing and select a country from the list...">
-                                    <datalist id="travelDestList_0"></datalist>
+                                    <div class="autocomplete-wrapper"><input type="text" name="travel_dest_0" id="travel_dest_0" maxlength="200" autocomplete="off" placeholder="Start typing and select a country from the list..."><div class="autocomplete-list" id="travelDestList_0"></div></div>
                                 </div>
 
                                 <div class="form-row" style="display:flex;gap:15px;">
@@ -2661,10 +2661,11 @@
         /* ============================================
            PARTNER VISA — SUPPORTING DOCUMENTS (two always-shown tabs, no checklist gating)
            Config-driven. Each "docq" shows a Yes/No; the upload reveals on "Yes".
-           All uploads save to the CASE ROOT folder (data-sp-folder=""). Field configs are
+           All uploads save to a "Visa Documents" sub-folder in the case folder. Field configs are
            registered in FormConfig.extraDocConfigs so add-another + restore work via form-utils.
            ============================================ */
         var PV_DOC_ACCEPT = '.pdf,.jpg,.jpeg,.png,.docx';
+        var PV_DOC_FOLDER = 'Visa Documents';
 
         var PV_DOC_SECTIONS = [
             { containerId: 'pvDocs1', items: [
@@ -2704,7 +2705,7 @@
 
         function pvUploadHtml(field, label, multi, accept, required) {
             var reqCls = required ? ' mandatory' : '';
-            var h = '<div class="doc-upload-item" id="upload_' + field + '_0" data-field="' + field + '" data-sp-folder="">' +
+            var h = '<div class="doc-upload-item" id="upload_' + field + '_0" data-field="' + field + '" data-sp-folder="' + pvEscAttr(PV_DOC_FOLDER) + '">' +
                     '<label class="question-label' + reqCls + '">' + label + '</label>' +
                     '<div class="upload-area"><input type="file" class="doc-file-input" data-field-name="' + field + '" data-upload-index="0" accept="' + accept + '"><div class="upload-status"></div></div>' +
                     '</div>';
@@ -2736,7 +2737,7 @@
             }
             if (it.kind === 'upload') {
                 var acc = it.accept || PV_DOC_ACCEPT;
-                FormConfig.extraDocConfigs[it.field] = { label: it.label, spFolder: '', multi: !!it.multi, accept: acc, required: !!it.required };
+                FormConfig.extraDocConfigs[it.field] = { label: it.label, spFolder: PV_DOC_FOLDER, multi: !!it.multi, accept: acc, required: !!it.required };
                 return '<div class="form-card"><div class="question-block" style="margin-bottom:0;">' +
                        pvUploadHtml(it.field, it.label, !!it.multi, acc, !!it.required) + '</div></div>';
             }
@@ -2747,8 +2748,8 @@
                 } else if (it.reveal.kind === 'otherEvidence') {
                     var typeOpts = ['Adoption evidence', 'Birth certificate', 'Cover letter', 'Evidence of character', 'Evidence of funds', 'Financial dependence of child', 'Household registration', 'Marriage/civil union certificate', 'National identity document', 'Other country immigration status', 'Other document, not listed', 'Other genuine/stable evidence', 'Other living together evidence', 'Other medical information', 'Partnership timeline', 'Passport or travel document', 'Police certificate', 'Sole custody evidence'];
                     var optsT = '<option value="">-- Select --</option>' + typeOpts.map(function(c) { return '<option value="' + pvEscAttr(c) + '">' + c + '</option>'; }).join('');
-                    FormConfig.extraDocConfigs['doc_other_evidence'] = { label: 'Additional evidence', spFolder: '', multi: true, accept: PV_DOC_ACCEPT };
-                    FormConfig.extraDocConfigs['doc_other_evidence_translation'] = { label: 'Additional evidence — translation', spFolder: '', multi: true, accept: PV_DOC_ACCEPT };
+                    FormConfig.extraDocConfigs['doc_other_evidence'] = { label: 'Additional evidence', spFolder: PV_DOC_FOLDER, multi: true, accept: PV_DOC_ACCEPT };
+                    FormConfig.extraDocConfigs['doc_other_evidence_translation'] = { label: 'Additional evidence — translation', spFolder: PV_DOC_FOLDER, multi: true, accept: PV_DOC_ACCEPT };
                     revealHtml = '<div class="question-block"><label class="question-label mandatory">Type of evidence</label><div class="form-group"><select name="other_evidence_type">' + optsT + '</select></div></div>' +
                                  pvUploadHtml('doc_other_evidence', 'Upload the additional evidence', true, PV_DOC_ACCEPT, false) +
                                  '<label class="question-label" style="display:block;margin-top:10px;">If the above document is not in English and has been translated, upload the translation</label>' +
@@ -2759,10 +2760,10 @@
             }
             if (it.kind === 'docq') {
                 var acc2 = it.accept || PV_DOC_ACCEPT;
-                FormConfig.extraDocConfigs[it.field] = { label: it.label, spFolder: '', multi: !!it.multi, accept: acc2 };
+                FormConfig.extraDocConfigs[it.field] = { label: it.label, spFolder: PV_DOC_FOLDER, multi: !!it.multi, accept: acc2 };
                 var inner = pvUploadHtml(it.field, it.label, !!it.multi, acc2, false);
                 if (it.translation) {
-                    FormConfig.extraDocConfigs[it.field + '_translation'] = { label: it.label + ' — translation', spFolder: '', multi: !!it.multi, accept: acc2 };
+                    FormConfig.extraDocConfigs[it.field + '_translation'] = { label: it.label + ' — translation', spFolder: PV_DOC_FOLDER, multi: !!it.multi, accept: acc2 };
                     inner += '<label class="question-label" style="display:block;margin-top:10px;">If the above document is not in English and has been translated, upload the translation</label>' +
                              pvUploadHtml(it.field + '_translation', 'Translation', !!it.multi, acc2, false);
                 }
@@ -2903,6 +2904,7 @@
             setupAutocomplete('postalCountry', 'postalCountryList');
             // Stage 4 autocompletes
             setupAutocomplete('citizen_country_0', 'citizenCountryList_0');
+            setupAutocomplete('refusal_country_0', 'refusalCountryList_0');
             setupAutocomplete('lived_country_0', 'livedCountryList_0');
             setupAutocomplete('police_cert_country', 'policeCertCountryList');
             setupAutocomplete('police_cert_translation_country', 'policeCertTransCountryList');
@@ -4662,11 +4664,12 @@
                     <div class="question-block" style="margin-bottom:0;"><label class="question-label mandatory">Provide details of the circumstances and date of the conviction</label><div class="form-group" style="margin-bottom:0;"><textarea name="offence_details_${index}" maxlength="1000" placeholder="Limited to 1000 characters."></textarea><span class="error-message">This is a required field</span></div></div>`;
             } else if (prefix === 'refusal') {
                 item.innerHTML = `<button type="button" class="remove-btn" onclick="this.closest('.repeater-item').remove()">✕ Remove</button>
-                    <div class="question-block"><label class="question-label mandatory">Country or territory</label><div class="form-group" style="margin-bottom:0;"><input type="text" name="refusal_country_${index}" placeholder="Start typing and select a country from the list..."></div></div>
+                    <div class="question-block"><label class="question-label mandatory">Country or territory</label><div class="autocomplete-wrapper"><input type="text" id="refusal_country_${index}" name="refusal_country_${index}" placeholder="Start typing and select a country from the list..." autocomplete="off"><div class="autocomplete-list" id="refusalCountryList_${index}"></div></div></div>
                     <div class="question-block"><label class="question-label mandatory">Visa or permit type</label><div class="form-group" style="margin-bottom:0;"><input type="text" name="refusal_visa_type_${index}"></div></div>
                     <div class="question-block" style="margin-bottom:0;"><label class="question-label mandatory">Date of refusal</label><p class="help-text">Enter month and year</p><div class="date-picker-wrapper"><input type="month" name="refusal_date_${index}"></div></div>`;
             }
             container.appendChild(item);
+            if (prefix === 'refusal') setupAutocomplete(`refusal_country_${index}`, `refusalCountryList_${index}`);
         }
 
         function addCitizenshipEntry() {
@@ -5059,7 +5062,9 @@
            COUNTRY AUTOCOMPLETE
            ============================================ */
         function setupAutocomplete(inputId, listId) {
-            const input = document.getElementById(inputId);
+            // Some repeating fields carry only a name (no id); fall back to a name lookup
+            // so the dropdown still wires up (inputId is unique — it includes the index).
+            const input = document.getElementById(inputId) || document.querySelector('[name="' + inputId + '"]');
             const list = document.getElementById(listId);
             if (!input || !list) return;
 
@@ -5132,8 +5137,7 @@
         }
 
         // Reveal a "State or province or region" wrapper once a country is chosen.
-        // Works for both autocomplete-wrapper fields (fire 'countrySelected') and the
-        // datalist-backed military/travel fields (fire 'input'/'change').
+        // Listens for 'countrySelected' (autocomplete pick) plus 'input'/'change' as a fallback.
         function wireCountryStateReveal(countryId, stateWrapperId) {
             var input = document.getElementById(countryId);
             var wrap = document.getElementById(stateWrapperId);
@@ -5242,7 +5246,7 @@
                 '<div class="form-group" style="flex:1;"><label class="question-label mandatory">Start date</label><p class="field-hint">Enter month and year</p><div class="monthyear-wrapper"><input type="month" name="mil_start_date_' + idx + '"></div></div>' +
                 '<div class="form-group" style="flex:1;"><label class="question-label mandatory">End date</label><p class="field-hint">Enter month and year</p><div class="monthyear-wrapper"><input type="month" name="mil_end_date_' + idx + '"></div></div>' +
                 '</div>' +
-                '<div class="form-group"><label class="question-label mandatory">Country or territory</label><input type="text" name="mil_country_' + idx + '" id="mil_country_' + idx + '" maxlength="200" list="milCountryList_' + idx + '" autocomplete="off"><datalist id="milCountryList_' + idx + '"></datalist></div>' +
+                '<div class="form-group"><label class="question-label mandatory">Country or territory</label><div class="autocomplete-wrapper"><input type="text" name="mil_country_' + idx + '" id="mil_country_' + idx + '" maxlength="200" autocomplete="off" placeholder="Start typing and select a country from the list..."><div class="autocomplete-list" id="milCountryList_' + idx + '"></div></div></div>' +
                 '<div class="form-group" id="milStateWrapper_' + idx + '" style="display:none;"><label class="question-label">State or province or region</label><input type="text" name="mil_state_' + idx + '" maxlength="200"></div>' +
                 '<div class="form-group"><label class="question-label">Town or city or base</label><input type="text" name="mil_city_' + idx + '" maxlength="200"></div>' +
                 '<div class="form-group"><label class="question-label mandatory">Branch</label><p class="field-hint">Army, Navy, Border Guards, etc.</p><input type="text" name="mil_branch_' + idx + '" maxlength="200"></div>' +
@@ -5278,7 +5282,7 @@
                 '<span class="record-title">Trip #' + (idx + 1) + '</span>' +
                 '<button type="button" class="btn-remove-record" onclick="removeTravelRecord(' + idx + ')">Remove</button>' +
                 '</div>' +
-                '<div class="form-group"><label class="question-label mandatory">Destination</label><input type="text" name="travel_dest_' + idx + '" id="travel_dest_' + idx + '" maxlength="200" list="travelDestList_' + idx + '" autocomplete="off" placeholder="Start typing and select a country from the list..."><datalist id="travelDestList_' + idx + '"></datalist></div>' +
+                '<div class="form-group"><label class="question-label mandatory">Destination</label><div class="autocomplete-wrapper"><input type="text" name="travel_dest_' + idx + '" id="travel_dest_' + idx + '" maxlength="200" autocomplete="off" placeholder="Start typing and select a country from the list..."><div class="autocomplete-list" id="travelDestList_' + idx + '"></div></div></div>' +
                 '<div class="form-row" style="display:flex;gap:15px;">' +
                 '<div class="form-group" style="flex:1;"><label class="question-label mandatory">Date entered</label><p class="field-hint">Enter month and year</p><div class="monthyear-wrapper"><input type="month" name="travel_enter_date_' + idx + '"></div></div>' +
                 '<div class="form-group" style="flex:1;"><label class="question-label">Date exited</label><p class="field-hint">Enter month and year. Leave blank if still in this country.</p><div class="monthyear-wrapper"><input type="month" name="travel_exit_date_' + idx + '"></div></div>' +
