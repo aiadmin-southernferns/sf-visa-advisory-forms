@@ -2687,7 +2687,7 @@
             { containerId: 'pvDocs1', items: [
                 { kind: 'yesno', name: 'docs_in_english', q: 'Are all the documents you intend to upload in English?' },
                 { kind: 'section', title: 'Identity evidence' },
-                { kind: 'upload', field: 'doc_photo', label: 'Recent passport-style photograph', multi: false, required: true, accept: '.jpg,.jpeg,.png' },
+                { kind: 'upload', field: 'doc_photo', label: 'Recent passport-style photograph', multi: false, required: true, accept: '.jpg,.jpeg', note: { intro: 'Most photographs taken by professional passport photo shops are fine.', items: ['Must have been taken within the last 6 months.', 'Colour photograph only.', 'No filters, AI enhancement, editing, portrait effects or digitally altered images.', 'JPG or JPEG format only.'] } },
                 { kind: 'upload', field: 'doc_additional_passport', label: 'Additional passport or travel document pages (optional)', multi: true, required: false },
                 { kind: 'yesnoReveal', name: 'living_diff_country', q: 'Are you living in a country that is not your country of citizenship?', reveal: { kind: 'country', name: 'living_country', label: 'What country are you living in?' } },
                 { kind: 'section', title: 'Provide evidence that your partnership is genuine and stable' },
@@ -2731,6 +2731,18 @@
             return h;
         }
 
+        // Renders a guidance callout beside an upload (e.g. the passport photo requirements).
+        function pvNoteHtml(note) {
+            var items = (note.items || []).map(function (t) {
+                return '<li>' + t + '</li>';
+            }).join('');
+            return '<div class="pv-photo-note" style="margin-top:10px;background:#eaf2f8;border:1px solid #aed6f1;border-left:4px solid #2e86c1;border-radius:6px;padding:12px 14px;">' +
+                   '<div style="font-weight:600;color:#1a5276;margin-bottom:6px;font-size:0.9rem;">Photograph requirements</div>' +
+                   (note.intro ? '<div style="font-size:0.85rem;color:#444;margin-bottom:6px;">' + note.intro + '</div>' : '') +
+                   '<ul style="margin:0;padding-left:18px;font-size:0.85rem;color:#333;line-height:1.6;">' + items + '</ul>' +
+                   '</div>';
+        }
+
         function pvYesNo(name, q, required) {
             return '<div class="question-block"' + (required ? ' data-required="true"' : '') + '>' +
                    '<label class="question-label' + (required ? ' mandatory' : '') + '">' + q + '</label>' +
@@ -2755,7 +2767,8 @@
                 var acc = it.accept || PV_DOC_ACCEPT;
                 FormConfig.extraDocConfigs[it.field] = { label: it.label, spFolder: PV_DOC_FOLDER, multi: !!it.multi, accept: acc, required: !!it.required };
                 return '<div class="form-card"><div class="question-block" style="margin-bottom:0;">' +
-                       pvUploadHtml(it.field, it.label, !!it.multi, acc, !!it.required) + '</div></div>';
+                       pvUploadHtml(it.field, it.label, !!it.multi, acc, !!it.required) +
+                       (it.note ? pvNoteHtml(it.note) : '') + '</div></div>';
             }
             if (it.kind === 'yesnoReveal') {
                 var revealHtml = '';
@@ -2789,6 +2802,95 @@
             return '';
         }
 
+        // ── Passport photo pre-check (partner form only) ─────────────────────────
+        // Enforces the client's automatically-checkable requirements before the
+        // photo is uploaded: JPG/JPEG format, a readable image, and a colour (not
+        // greyscale) photograph. The requirements that cannot be detected without
+        // AI — taken within 6 months, no filters/editing/AI enhancement — are shown
+        // to the applicant in the on-screen note next to the question.
+        function pvPhotoChangeHandler(e) {
+            var input = e.target;
+            var file = input.files && input.files[0];
+            if (!file) return;
+            var uploadArea = input.closest('.upload-area');
+            var statusDiv = uploadArea ? uploadArea.querySelector('.upload-status') : null;
+
+            function showStatus(html, color) {
+                if (!statusDiv) return;
+                statusDiv.innerHTML = '<span style="color:' + color + ';">' + html + '</span>';
+                statusDiv.style.display = 'block';
+            }
+            function fail(msg) {
+                showStatus('❌ ' + msg, '#dc3545');
+                input.value = '';
+            }
+
+            // 1) Format must be JPG/JPEG (by extension and, when present, MIME type).
+            var ext = '.' + (file.name.split('.').pop() || '').toLowerCase();
+            var extOk = (ext === '.jpg' || ext === '.jpeg');
+            var mimeOk = (!file.type || file.type === 'image/jpeg' || file.type === 'image/jpg');
+            if (!extOk || !mimeOk) {
+                fail('The photograph must be a JPG or JPEG image. Please upload a .jpg or .jpeg file.');
+                return;
+            }
+
+            // 2) + 3) Must decode as an image, and must be a colour photograph.
+            showStatus('⏳ Checking photograph…', '#856404');
+            pvInspectPhoto(file).then(function (res) {
+                if (!res.ok) { fail(res.msg); return; }
+                // Passed the pre-checks — hand off to the standard uploader.
+                if (statusDiv) { statusDiv.innerHTML = ''; statusDiv.style.display = 'none'; }
+                FormUtils.handleFileSelect({ target: input });
+            }).catch(function () {
+                fail('This file could not be read as an image. Please upload a valid JPG or JPEG photograph.');
+            });
+        }
+
+        // Loads the image, confirms it decodes, and checks it is a colour photo.
+        // Returns a Promise<{ ok: bool, msg: string }>.
+        function pvInspectPhoto(file) {
+            return new Promise(function (resolve) {
+                var url = URL.createObjectURL(file);
+                var img = new Image();
+                img.onload = function () {
+                    var ok, msg = '';
+                    try {
+                        var MAXD = 80;
+                        var scale = Math.min(1, MAXD / Math.max(img.naturalWidth || img.width, img.naturalHeight || img.height));
+                        var w = Math.max(1, Math.round((img.naturalWidth || img.width) * scale));
+                        var h = Math.max(1, Math.round((img.naturalHeight || img.height) * scale));
+                        var canvas = document.createElement('canvas');
+                        canvas.width = w; canvas.height = h;
+                        var ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, w, h);
+                        var data = ctx.getImageData(0, 0, w, h).data;
+                        var total = w * h, colourful = 0;
+                        for (var i = 0; i < data.length; i += 4) {
+                            var r = data[i], g = data[i + 1], b = data[i + 2];
+                            var spread = Math.max(r, g, b) - Math.min(r, g, b);
+                            if (spread > 18) colourful++;   // noticeably coloured pixel
+                        }
+                        var frac = total ? (colourful / total) : 0;
+                        if (frac < 0.02) {
+                            ok = false;
+                            msg = 'The photograph must be in colour. This image appears to be black and white or greyscale.';
+                        } else {
+                            ok = true;
+                        }
+                    } catch (err) {
+                        ok = true; // if the colour check can't run, don't block the upload on it
+                    }
+                    URL.revokeObjectURL(url);
+                    resolve({ ok: ok, msg: msg });
+                };
+                img.onerror = function () {
+                    URL.revokeObjectURL(url);
+                    resolve({ ok: false, msg: 'This file could not be read as an image. Please upload a valid JPG or JPEG photograph.' });
+                };
+                img.src = url;
+            });
+        }
+
         function renderPartnerDocs() {
             FormConfig.extraDocConfigs = FormConfig.extraDocConfigs || {};
             PV_DOC_SECTIONS.forEach(function(sec) {
@@ -2797,9 +2899,15 @@
                 sec.items.forEach(function(it) { container.insertAdjacentHTML('beforeend', pvRenderItem(it)); });
             });
 
-            // Attach upload handlers to every generated file input
+            // Attach upload handlers to every generated file input.
+            // The passport photo gets a partner-only pre-check (JPG/JPEG, decodable, colour)
+            // before the standard uploader runs.
             document.querySelectorAll('#pvDocs1 .doc-file-input, #pvDocs2 .doc-file-input').forEach(function(inp) {
-                inp.addEventListener('change', FormUtils.handleFileSelect);
+                if (inp.getAttribute('data-field-name') === 'doc_photo') {
+                    inp.addEventListener('change', pvPhotoChangeHandler);
+                } else {
+                    inp.addEventListener('change', FormUtils.handleFileSelect);
+                }
             });
 
             // Wire the Yes/No reveals
